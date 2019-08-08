@@ -1,0 +1,750 @@
+
+
+DOCUMENTATION FOR DASM, a high level macro cross assembler for:
+
+	-6502 (and 6507)
+	-68705
+	-6803
+	-HD6303 (extension of 6803)
+	-68HC11
+
+DASM was created in 1988 by Matthew Dillon (dillon@apollo.backplane.com)
+and modified in 1995 by Olaf 'Rhialto' Seibert (rhialto@polderland.nl), and
+is now updated and maintained by Andrew Davie (atari2600@taswegian.com)
+
+DASM's homepage is http://www.atari2600.org/dasm
+
+DASM is freely re-distributable, and provided with full source-code to
+allow recompilation for other target-platforms.
+
+
+PREFACE FROM MATT:
+
+    Over the last year my work has included writing software to drive small
+    single-chip microcomputers for various things (remote telemetry units,
+    for instance).  I have had need to program quite a few different
+    processors over that time.
+
+    At the beginning, I used an awful macro assembler running on an IBM-PC.
+    I *really* wanted to do it on my Amiga.  Thus the writing of this
+    program.
+
+    Feel free to suggest other similar processors for me to add to the list!
+    The processor type is specified with a pseudo-op (see below).  This
+    assembler produces only binary output in one of three formats described
+    below.  In general, one has a master assembly file which INCLUDEs all
+    the modules.
+
+    Also provided is FTOHEX which converts an output file in one of the
+    three formats to an intel-hex format suitable for many intelligent
+    prom programmers (I have a GTEK).
+
+    YES it's packed with features!
+
+FEATURES:
+
+    -fast assembly
+    -supports several common 8 bit processor models (NOT 8086, thank god!)
+    -takes as many passes as needed
+    -automatic checksum generation, special symbol '...'
+    -several binary output formats available.  Format 2 allows reverse
+     indexed origins.
+    -multiple segments, BSS segments (no generation), relocatable origin.
+    -expressions, as in C but [] is used instead of () for parenthesis.
+     (all expressions are computed with 32 bit integers)
+    -no real limitation on label size, label values are 32 bits.
+    -complex pseudo ops, repeat loops, macros, etc....
+
+
+PREFACE FROM ANDREW (APRIL/2003)
+
+The documentation is lagging a bit behind the modifications.  Essentially the information contained herein is correct, but there have been minor changes to the formatting of output data.
+
+Please see the accompanying ‘README.TXT’ in the distributable root directory for a list of recent changes to the package.
+
+
+COMMAND LINE:
+
+	dasm srcfile [options]
+
+	options:    -f#     select output format 1-3 (default 1, see below)
+		    -oname  select output file name (else a.out)
+		    -lname  select list file name   (else none generated)
+		    -Lname  list file, containing all passes
+		    -sname  select symbol dump file (else none generated)
+		    -v#     select verboseness 0-4 (default 0, see below)
+		    -d	    debug mode
+		    -DSYMBOL		    predefine a symbol, set to 0
+		    -DSYMBOL=EXPRESSION     predefine a symbol, set to exp
+		    -MSYMBOL=EXPRESSION		define label as in EQM (same as –D)
+
+		     -Idir    search directory for include and incbin
+		     -p#    max number of passes
+		     -P#    max number of passes, with less checks
+
+		     -T#	sort symbol table by (0 = alphabetic (default)
+				or (non-zero= address/value)
+
+	Example:    dasm master.asm -f2 -oout -llist -v3 -DVER=4
+
+Note:	A slash (/) or dash (-) must prefix options.
+
+
+Return Value:
+
+	The assembler will return 0 on successful compilation, 1 otherwise.
+
+
+FORMAT OPTIONS:
+
+    1  (DEFAULT)
+
+	The output file contains a two byte origin in LSB,MSB order, then
+	data until the end of the file.
+
+	Restrictions:	Any instructions which generate output (within an
+	initialized segment) must do so with an ascending PC.  Initialized
+	segments must occur in ascending order.
+
+    2  RAS (Random Access Segment)
+
+	The output file contains one or more hunks.  Each hunk consists
+	of a 2 byte origin (LSB,MSB), 2 byte length (LSB,MSB), and that
+	number of data bytes.  The hunks occur in the same order as
+	initialized segments in the assembly.  There are no restrictions
+	to segment ordering (i.e. reverse indexed ORG statements are
+	allowed).  The next hunk begins after the previous hunk's data,
+	until the end of the file.
+
+    3  RAW (Raw)
+
+	The output file contains data only (format #1 without the 2 byte
+	header).  Restrictions are the same as for format #1.
+
+	Format 3    RAW (Raw format)
+	    Same as format 1, but NO header origin is generated.  You get
+	    nothing but data.
+
+VERBOSE OPTIONS:
+
+    0	(default)
+
+	Only warnings and errors are generated
+
+    1
+	-Segment list information generated after each pass
+	-Include file names are displayed
+	-statistics on why the assembler is going to make another pass
+	    R1,R2 reason code: R3
+	    where R1 is the number of times the assembler encountered
+	    something requiring another pass to resolve.  R2 is the
+	    number of references to unknown symbols which occured in the
+	    pass (but only R1 determines the need for another pass).  R3
+	    is a BITMASK of the reasons why another pass is required.
+	    See the end of this document for bit designations.
+
+    2
+	mismatches between program labels and equates are displayed
+	on every pass (usually none occur in the first pass unless you
+	have re-declared a symbol name).
+
+	displayed information for symbols:
+	    ???? = unknown value
+	    str  = symbol is a string
+	    eqm  = symbol is an eqm macro
+	    (r)  = symbol has been referenced
+	    (s)  = symbol created with SET or EQM pseudo-op
+
+    3
+	    Unresolved and unreferenced symbols are displayed every pass
+	    (unsorted, sorry)
+
+    4
+	    An entire symbol list is displayed every pass to STDOUT.
+	    (unsorted, sorry)
+
+
+
+PROCESSOR MODEL:
+
+    The processor model is chosen with the PROCESSOR pseudo-op and should
+    be the first thing you do in your assembly file.   Different processor
+    models use different integer formats (see below).  The word order does
+    not effect the headers in the output files (-f1 and -f2), which are
+    always LSB,MSB.  The word ordering effects all address, word, and
+    long generation.
+
+    Only one PROCESSOR pseudo-op may be declared in the entire assembly,
+    and should be the first thing encountered.
+
+	-6502	    LSB,MSB
+	-68HC11     MSB,LSB
+	-68705	    MSB,LSB
+	-6803	    MSB,LSB
+	-HD6303     MSB,LSB
+	-F8         ?
+
+SEGMENTS:
+    The SEG pseudo-op creates/sets the current segment.  Each segment has
+    it's own origin and is optionally an 'uninitialized' segment.
+    Unitialized segments produce no output and have no restrictions.  This
+    is useful for determining the size of a certain assembly sequence
+    without generating code, and for assigning RAM to labels.
+
+    'Initialized' segments produce output.  The following should be
+    considered when generating roms:
+
+    (1) The default fill character when using ORG (and format 1 or 3) to
+	skip forward is 00.  This is a GLOBAL default and effects all
+	segments.  See ORG.
+
+    (2) The default fill character for DS is 00 and is independant of
+	the default fill character for ORG (see DS).
+
+GENERAL:
+    Most everything is recursive.  You cannot have a macro DEFINITION
+    within a macro definition, but can nest macro calls, repeat loops,
+    and include files.
+
+    The other major feature in this assembler is the SUBROUTINE pseudo-op,
+    which logically separates local labels (starting with a dot).  This
+    allows you to reuse label names (for example, .1 .fail) rather than
+    think up crazy combinations of the current subroutine to keep it all
+    unique.
+
+    Almost nothing need be resolved in pass 1.	The assembler will make
+    multiple passes in an attempt to resolve the assembly (including just
+    one pass if everything is resolved immediately).
+
+
+PSEUDOPS:
+
+	INCLUDE     "name"
+
+	    Include another assembly file.
+
+#if OlafIncbin
+
+[label] INCBIN	    "name"
+
+	    Include another file literally in the output.
+#endif
+#if OlafIncdir
+
+	INCDIR	    "directory name"
+
+	    Add the given directory name to the list of places where
+	    INCLUDE and INCBIN search their files. First, the names are
+	    tried relative to the current directory, if that fails and
+	    the name is not an absolute pathname, the list is tried.
+	    You can optionally end the name with a /. AmigaDOS filename
+	    conventions imply that two slashes at the
+	    end of an INCDIR (dir//) indicates the parent directory, and
+	    so does an INCLUDE /filename.
+
+	    The command-line option -Idir is equivalent to an INCDIR
+	    directive placed before the source file.
+
+	    Currently the list is not cleared between passes, but each
+	    exact directory name is added to the list only once.
+	    This may change in subsequent releases.
+#endif
+[label] SEG[.U]     name
+
+	    This sets the current segment, creating it if neccessary.  If
+	    a .U extension is specified on segment creation, the segment
+	    is an UNINITIALIZED segment.  The .U is not needed when going
+	    back to an already created uninitialized segment, though it
+	    makes the code more readable.
+
+[label] DC[.BWL]    exp,exp,exp ...
+
+	    Declare data in the current segment.  No output is generated if
+	    within a .U segment.  Note that the byte ordering for the
+	    selected processor is used for each entry.
+
+	    The default size extension is a byte.
+#if OlafByte
+	    BYTE, WORD and LONG are synonyms for DC.B, DC.W and DC.L.
+#endif
+
+[label] DS[.BWL]    exp[,filler]
+
+	    declare space (default filler is 0). Data is not generated if
+	    within an uninitialized segment.  Note that the number of bytes
+	    generated is exp * entrysize (1,2, or 4)
+
+	    The default size extension is a byte.
+
+	    Note that the default filler is always 0 (has nothing to do
+	    with the ORG default filler).
+
+[label] DV[.BWL]    eqmlabel exp,exp,exp....
+
+	    This is equivalent to DC, but each exp in the list is passed
+	    through the symbolic expression specified by the EQM label.
+	    The expression is held in a special symbol dotdot '..' on each
+	    call to the EQM label.
+
+	    See EQM below
+
+[label] HEX	    hh hh hh..
+
+	    This sets down raw HEX data.  Spaces are optional between bytes.
+	    NO EXPRESSIONS are allowed.  Note that you do NOT place a $
+	    in front of the digits.  This is a short form for creating
+	    tables compactly.  Data is always layed down on a byte-by-byte
+	    basis.
+
+	    Example:	    HEX 1A45 45 13254F 3E12
+
+	ERR
+
+	    Abort assembly.
+
+[label] ORG	    exp[,DefaultFillVal]
+
+	    This pseudop sets the current origin.  You can also set the
+	    global default fill character (a byte value) with this
+	    pseudoop.  NOTE that no filler is generated until the first
+	    data-generating opcode/psueoop is encountered after this one.
+	    Sequences like:
+
+		org  0,255
+		org  100,0
+		org  200
+		dc   23
+
+	    will result in 200 zero's and a 23. This allows you to specify
+	    some ORG, then change your mind and specify some other (lower
+	    address) ORG without causing an error (assuming nothing is
+	    generated inbetween).
+
+	    Normally, DS and ALIGN are used to generate specific filler
+	    values.
+
+[label] RORG	    exp
+
+	    This activates the relocatable origin.  All generated
+	    addresses, including '.', although physically placed at the
+	    true origin, will use values from the relocatable origin.
+	    While in effect both the physical origin and relocatable origin
+	    are updated.
+
+	    The relocatable origin can skip around (no limitations).  The
+	    relocatable origin is a function of the segment.  That is, you
+	    can still SEG to another segment that does not have a
+	    relocatable origin activated, do other (independant) stuff
+	    there, and then switch back to the current segment and continue
+	    where you left off.
+
+	PROCESSOR model
+
+	    do not quote.  model is one of: 6502,6803,HD6303,68705,68HC11,F8
+	    Can only be executed once, and should be the first thing
+	    encountered by the assembler.
+
+	ECHO exp,exp,exp
+
+	    The expressions (which may also be strings), are echoed on the
+	    screen and into the list file.
+
+[label] REND
+
+	    Deactivate the relocatable origin for the current segment.
+	    Generation uses the real origin for reference.
+
+[label] ALIGN	    N[,fill]
+
+	    Align the current PC to an N byte boundry.	The default
+	    fill character is always 0, and has nothing to do with
+	    the default fill character specifiable in an ORG.
+
+[label] SUBROUTINE  name
+
+	    This isn't really a subroutine, but a boundry between sets of
+	    temporary labels (which begin with a dot).	Temporary label
+	    names are unique within segments of code bounded by SUBROUTINE:
+
+		CHARLIE subroutine
+			ldx #10
+		.1	dex
+			bne .1
+		BEN	subroutine
+			ldx #20
+		.qq	dex
+			bne .qq
+
+	    Automatic temporary label boundries occur for each macro level.
+	    Usually temporary labels are used in macros and within actual
+	    subroutines (so you don't have to think up a thousand different
+	    names)
+
+
+symbol	EQU	    exp
+#if OlafAsgn
+symbol	=	    exp
+#endif
+
+	    The expression is evaluated and the result assigned to the
+	    symbol.
+
+#if OlafDotAssign
+	    If this option is enabled, you can use the common idiom of
+
+		. EQU . + 3	(or . = .+3)
+
+	    in other words, you can assign to "." (or "*" if OlafStar
+	    is also enabled) instead of an ORG or RORG directive.
+	    More formally, a directive of the form ". EQU expr" is
+	    interpreted as if it were written " (R)ORG expr".
+	    The RORG is used if a relocatable origin is already in effect,
+	    otherwise ORG is used. Note that the first example is NOT
+	    equivalent with "DS.B 3" when the rorg is in effect.
+#endif
+
+symbol	EQM	    exp
+
+	    The STRING representing the expression is assigned to the
+	    symbol.  Occurances of the label in later expressions causes
+	    the string to be evaluated for each occurance.  Also used in
+	    conjuction with the DV psuedo-op.
+
+symbol	SET	    exp
+
+	    Same as EQU, but the symbol may be reassigned later.
+
+	MAC	    name
+
+	    Declare a macro.  lines between MAC and ENDM are the macro.
+	    You cannot recursively declare a macro.  You CAN recursively
+	    use a macro (reference a macro in a macro).  No label is
+	    allowed to the left of MAC or ENDM.
+
+	    Arguments passed to macros are referenced with: {#}.  The first
+	    argument passed to a macro would thus be {1}.  You should
+	    always use LOCAL labels (.name) inside macros which you use
+	    more than once. {0} represents an EXACT substitution of the
+	    ENTIRE argument line.
+
+	ENDM
+
+	    end of macro def.  NO LABEL ALLOWED ON THE LEFT!
+
+	MEXIT
+
+	    Used in conjuction with conditionals.  Exits the current macro
+	    level.
+
+[label] IFCONST     exp
+
+	    Is TRUE if the expression result is defined,  FALSE otherwise
+	    and NO error is generated if the expression is undefined.
+
+[label] IFNCONST    exp
+
+	    Is TRUE if the expression result is undefined, FALSE otherwise
+	    and NO error is generated if the expression is undefined.
+
+[label] IF	    exp
+
+	    Is TRUE if the expression result is defined AND non-zero.
+	    Is FALSE if the expression result is defined AND zero.
+	    Neither IF or ELSE will be executed if the expression result
+	    is undefined.  If the expression is undefined, another assembly
+	    pass is automatically taken.
+#if OlafPhase
+	    If this happens, phase errors in the next pass only will not
+	    be reported unless the verboseness is 1 or more.
+#endif
+
+[label] ELSE
+
+	    ELSE the current IF.
+
+[label] ENDIF
+[label] EIF
+
+	    Terminate an IF. ENDIF and EIF are equivalent.
+
+[label] REPEAT	    exp
+[label] REPEND
+
+	    Repeat code between REPEAT/REPEND 'exp' times.
+
+#if DAD
+  		if exp == 0,
+	    the code repeats forever.  exp is evaluated once.
+
+		If exp == 0, the repeat loop is ignored.
+		If exp < 0, a warning “REPEAT parameter < 0 (ignored)” is generated 		and the repeat loop is ignored.
+#endif
+		
+		Y   SET     0
+		    REPEAT  10
+		X   SET     0
+		    REPEAT  10
+		    DC	    X,Y
+		X   SET     X + 1
+		    REPEND
+		Y   SET     Y + 1
+		    REPEND
+
+	    generates an output table:	0,0 1,0 2,0 ... 9,0  0,1 1,1 2,1
+	    ... 9,1, etc...
+
+	    Labels within a REPEAT/REPEND should be temporary labels with a
+	    SUBROUTINE pseudo-op to keep them unique.
+
+	    The Label to the left of REPEND is assigned AFTER the loop
+	    FINISHES.
+
+
+[label] XXX[.force] operand
+
+	    XXX is some mnemonic, not necessarily three characters long.
+	    The .FORCE optional extension is used to force specific
+	    addressing modes (see below).
+
+[label] LIST ON or OFF
+
+	    Globally turns listing on or off, starting with the current
+	    line.
+#if OlafList
+	    When you give LOCALON or LOCALOFF the effect is local to the
+	    current macro or included file. For a line to be listed both
+	    the global and local list switches must be on.
+#endif
+
+#if OlafDotop
+	All pseudo-ops (and incidentally also the mnemonics) can be
+	prefixed with a . for compatibility with other assemblers.
+	So .IF is the same as IF. This works only because lone .FORCE
+	extensions are meaningless.
+#endif
+
+#if OlafFreeFormat
+	The format of each input line is free: first all leading
+	spaces are discarded, and the first word is examined. If it
+	does not look like a directive or opcode (as known at that point),
+	it is taken as a label. This is sort-of nasty if you like labels
+	with names like END.
+	The two xxxFormat options are mutually exclusive.
+#endif
+
+#if OlafHashFormat
+	With this option an initial # (after optional initial spaces)
+	turns the next word into a directive/opcode.
+	A ^ skips more spaces and makes the next word a label.
+#endif
+
+GENERAL:
+
+    The label will be set to the current ORG/RORG either before or after
+    a pseudo-op is executed.  Most of the time, the label to the left of a
+    pseudo-op is the current ORG/RORG. The following pseudo-op's labels are
+    created AFTER execution of the pseudo-op:
+
+	SEG, ORG, RORG, REND, ALIGN
+
+EXTENSIONS:
+
+    FORCE extensions are used to force an addressing mode.  In some cases,
+    you can optimize the assembly to take fewer passes by telling it the
+    addressing mode.  Force extensions are also used with DS,DC, and DV
+    to determine the element size.  NOT ALL EXTENSIONS APPLY TO ALL
+    PROCESSORS!
+
+	example:    lda.z   charlie
+
+	i   -implied
+	ind -indirect word
+	0   -implied
+	0x  -implied indexing (0,x)
+	0y  -implied indexing (0,y)
+	b   -byte address
+	bx  -byte address indexed x
+	by  -byte address indexed y
+	w   -word address
+	wx  -word address indexed x
+	wy  -word address indexed y
+	l   -longword (4 bytes) (DS/DC/DV)
+	r   -relative
+	u   -uninitialized (SEG)
+
+	First character equivalent substitutions:
+
+	b z d	    (byte, zeropage, direct)
+	w e a	    (word, extended, absolute)
+
+
+ASSEMBLER PASSES:
+    The assembler may have to make several passes through the source
+    code to resolve all generation.  The number of passes is not
+    limited to two.  Since this may result in an unexpected, verbose
+    option 2, 3, and 4 have been provided to allow determination of the
+    cause. The assembler will give up if it thinks it can't do the
+    assembly in *any* number of passes.
+
+    Error reporting could be better....
+
+#if OlafPasses
+
+    The check if another pass might resolve the source is pretty good, but
+    not perfect. You can specify the maximum number of passes to do
+    (default -p10), and with the -P option you can override the normal check.
+    This allows the following contrived example to resolve in 12 passes:
+
+	org 1
+	repeat [[x < 11] ? [x-11]] + 11
+	dc.b	x
+	repend
+    x:
+
+#endif
+
+EXPRESSIONS:
+	[] may be used to group expressions.  The precedense of operators
+	is the same as for the C language in almost all respects.  Use
+	brackets [] when you are unsure.  The reason () cannot be used to
+	group expressions is due to a conflict with the 6502 and other
+	assembly languages.
+#if OlafBraKet
+	It is possible to use () instead of [] in expressions following
+	pseudo-ops, but not following mnemonics. So this works:
+	if target & (pet3001 | pet4001), but this doesn't:
+	lda #target & (pet3001 | pet4001).
+#endif
+
+	Some operators, such as ||, can return a resolved value even if
+	one of the expressions is not resolved.   Operators are as follows:
+
+	NOTE WELL!  Some operations will result in non-byte values when a
+	byte value was wanted.	For example:	~1  is NOT $FF, but
+	$FFFFFFFF.  Preceding it with a < (take LSB of) will solve the
+	problem.  ALL ARITHMETIC IS CARRIED OUT IN 32 BITS.  The final
+	Result will be automatically truncated to the maximum handleable
+	by the particular machine language (usually a word) when applied
+	to standard mnemonics.
+
+	prec	    UNARY
+
+	20  ~exp    one's complement.
+	20  -exp    negation
+	20  !exp    not expression (returns 0 if exp non-zero, 1 if exp zero)
+	20  <exp    take LSB byte of a 16 bit expression
+	20  >exp    take MSB byte of an expression
+
+		    BINARY
+
+	19  *	    multiplication
+	19  /	    division
+	19  %	    mod
+	18  +	    addition
+	18  -	    subtraction
+	17  >>,<<   shift right, shift left
+	16  >,>=    greater, greater equal
+	16  <,<=    smaller, smaller equal
+	15  ==	    equal to.  Try to use this instead of =
+	15  =	    exactly the same as == (exists compatibility)
+	15  !=	    not equal to
+	14  &	    logical and
+	13  ^	    logical xor
+	12  |	    logical or
+	11  &&	    left expression is true AND right expression is true
+	10  ||	    left expression is true OR right expression is true
+	 9  ?	    if left expression is true, result is right expression,
+		    else result is 0.	[10 ? 20] returns 20
+	 8  []	    group expressions
+	 7  ,	    separate expressions in list (also used in
+		    addressing mode resolution, BE CAREFUL!
+
+    Note: The effect of the C conditional operator a ? b : c can be
+    had with [a ? b - c] + c.
+
+    Constants:
+
+	nnn	decimal
+	0nnn	octal
+	%nnn	binary
+	$nnn	hex
+	'c      character
+	"cc.."  string (NOT zero terminated if in DC/DS/DV)
+	[exp]d	the constant expressions is evaluated and it's decimal
+		result turned into an ascii string.
+
+    Symbols:
+
+	...	-holds CHECKSUM so far (of actual-generated stuff)
+	..	-holds evaluated value in DV pseudo op
+	.name	-represents a temporary symbol name.  Temporary symbols
+		 may be reused inside MACROS and between SUBROUTINES, but
+		 may not be referenced across macros or across SUBROUTINEs.
+	.	-current program counter (as of the beginning of the
+		 instruction).
+	name	-beginning with an alpha character and containing letters,
+		 numbers, or '_'.  Represents some global symbol name.
+#if OlafStar
+	*	-synonym for ., when not confused as an operator.
+#endif
+#if OlafDol
+	nnn$	-temporary label, much like .name, except that defining
+		 a non-temporary label has the effect that SUBROUTINE
+		 has on .name.	They are unique within macros, like
+		 .name.  Note that 0$ and 00$ are distinct, as are 8$
+		 and 010$.
+		 (mainly for compatibility with other assemblers.)
+#endif
+
+
+WHY codes:
+    Each bit in the WHY word (verbose option 1) is a reason (why
+    the assembler needs to do another pass), as follows:
+
+    bit 0   expression in mnemonic not resolved
+	1   -
+	2   expression in a DC not resolved
+	3   expression in a DV not resolved (probably in DV's EQM symbol)
+	4   expression in a DV not resolved (could be in DV's EQM symbol)
+	5   expression in a DS not resolved
+	6   expression in an ALIGN not resolved
+	7   ALIGN: Relocatable origin not known (if in RORG at the time)
+	8   ALIGN: Normal origin not known	(if in ORG at the time)
+	9   EQU:   expression not resolved
+	10  EQU:   value mismatch from previous pass (phase error)
+	11  IF:     expression not resolved
+	12  REPEAT: expression not resolved
+
+	13  a program label has been defined after it has been
+	    referenced (forward reference) and thus we need another
+	    pass
+	14  a program label's value is different from that of the
+	    previous pass (phase error)
+
+    Certain errors will cause the assembly to abort immediately, others
+    will wait until the current pass is other.	The remaining allow another
+    pass to occur in the hopes the error will fix itself.
+
+
+VERSIONS:
+
+    V2.12
+	-Fixed macro naming bug (macros wouldn't work if the name after
+	 the 'mac' was in upper case).
+
+    V2.11
+	-Fixed <exp >exp bug, <exp now means LSB, >exp MSB (it used to
+	 be reversed).
+	-Fixed many bugs in macros and other things
+	-Added automatic checksumming ... no more doing checksums manually!
+	-Added several new processors, including 6502.
+	-Source is now 16/32 bit int compatible, and will compile on an
+	 IBM-PC (the ultimate portability test)
+
+    V2.01
+
+	-can now have REPEAT/REPEND's within macros
+	-fill field for DS.W is a word (used to be a byte fill)
+	-fill field for DS.L is a long (used to be a byte fill)
+
+
