@@ -52,7 +52,7 @@ build:
 
 # release version to use for archive name
 # supply this to make when you run it as
-#   RELEASE=2.20.11
+#   RELEASE=2.20.12
 # on the command line, that's the easiest
 # thing to do
 RELEASE=unknown-version-number

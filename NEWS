@@ -1,11 +1,21 @@
 $Id: NEWS 327 2014-02-09 13:06:55Z adavie $
 
-This file records only user-visible changes to DASM, the ChangeLog
+This file records only user-visible changes to Dasm, the ChangeLog
 file records all internal changes as well (almost all anyway).
 
-=============
-The DASM News
-=============
+=========
+Dasm News
+=========
+
+2.20.12 -- 08 August 2019
+
+    * Dasm moved to GitHub! The new website for dasm is now available 
+      at https://dasm-assembler.github.io/ 
+    
+    * Finally Dasm has a logo (see https://dasm-assembler.github.io/)
+      The logo has 'dasm' in lower case to match the casing of the 
+      binary. And because it has a more approachable and casual vibe.
+      In writing, 'Dasm' is the preferred way; no more yelling DASM!
 
 2.20.11 -- 07 April 2008
 
