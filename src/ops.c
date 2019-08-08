@@ -416,15 +416,27 @@ getfilename(char *str)
 void
 v_include(char *str, MNEMONIC *dummy)
 {
-    char    *buf;
-    
-    programlabel();
+  SYMBOL *sym;
+  
+  programlabel();
+  
+  sym = eval(str, 0);
+  if (sym->flags & SYM_STRING )
+  {
+    pushinclude(sym->string);
+  }
+  else
+  {
+    char *buf;
     buf = getfilename(str);
     
     pushinclude(buf);
     
     if (buf != str)
-        free(buf);
+      free(buf);
+  }
+  
+  FreeSymbolList(sym);
 }
 
 
