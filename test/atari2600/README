@@ -1,0 +1,11 @@
+$Id: README 106 2008-04-08 01:29:49Z phf $
+
+Some DASM test cases for Atari 2600 software
+
+For all of these examples, I received express written permission
+from all authors to include the code in the DASM distribution.
+
+boing26.asm
+  Rob Kudla's Amiga Boing! demo from http://www.qotile.net/minidig/
+boing26.bin.ref
+  Cartridge ROM by Rob Kudla from http://www.qotile.net/minidig/

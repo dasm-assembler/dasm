@@ -1,0 +1,19 @@
+$Id: README 198 2008-05-02 17:07:38Z phf $
+
+Some DASM test cases for Channel-F software
+
+For all of these examples, I received express written permission
+from all authors to include the code in the DASM distribution.
+
+lights.asm
+  Sean Riddle's Lights Out game from http://members.cox.net/seanriddle/
+  Ported to DASM (well, actually DASM2 :-) by Thomas Mathys
+lights.bin.ref
+  Cartridge ROM by Sean Riddle from http://members.cox.net/seanriddle/
+  Generated with f8tool, another assembler for the F8
+tetris.asm
+  Peter Trauner's Tetris game from http://members.cox.net/seanandalicia/
+  Ported to DASM (well, two lines were added :-) by Peter Froehlich
+tetris.bin.ref
+  Cartridge ROM by Peter Trauner from http://members.cox.net/seanandalicia/
+  Generated with f8tool, another assembler for the F8

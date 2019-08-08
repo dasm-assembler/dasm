@@ -1,0 +1,122 @@
+$Id: NEWS 327 2014-02-09 13:06:55Z adavie $
+
+This file records only user-visible changes to DASM, the ChangeLog
+file records all internal changes as well (almost all anyway).
+
+=============
+The DASM News
+=============
+
+2.20.11 -- 07 April 2008
+
+    * Peter H. Froehlich <phf at acm dot org> took over as maintainer
+      from Andrew Davie, but both Andrew and Thomas Mathys still help.
+
+    * DASM moved to sourceforge.net, the new website for DASM is now
+      available at <http://dasm-dillon.sourceforge.net/>.
+
+    * Fixed (the obvious version of) the long-standing "-1 bug" that
+      made DASM reject sources with negative integer literals; there
+      may still be signed/unsigned problems in other areas; there is
+      certainly still a range checking error.
+
+    * Fixed the usage message to reflect that symbol table sorting is
+      controlled by -T and not by -t as the message claimed; also the
+      format of the usage message is now more GNU-like.
+
+    * The range of values for -T is now checked, you have to stick to
+      0 or 1, arbitrary numbers will not work anymore.
+
+    * Removed spurious output when running DASM. In general command
+      line tools should only make output when there's something to
+      report (a central Unix tenent). Sorry if you miss the messages,
+      just look at the usage information instead. :-)
+
+    * Added new -E# option to select format of error messages; -E0 is
+      the default MS style, -E1 is "classic" style from Matthew Dillon,
+      -E2 is GNU style from their coding standards.
+
+2.20.10 -- 31 October 2004
+
+    * Thomas Mathys added support for the Fairchild F8 processor to
+      DASM. Thank you, Thomas!
+
+    * Support files for the Channel-F Video Entertainment System (VES)
+      added.
+
+2.20.08 -- unreleased
+
+    * Documentation changed from Word documents back to text files.
+
+2.20.07 -- 17 July 2003
+
+    * No user-visible changes.
+
+2.20.05 -- unreleased
+
+    * Symbol table dump is now performed even if an error occurred.
+
+    * Symbol table dump now displays string symbols in string form.
+
+2.20.04 -- 24 April 2003
+
+    * Command line options now allow "/" as prefix in addition to "-"
+      as before.
+
+    * Division by zero is now treated as an unrecoverable error.
+
+    * Error messages now contain more information about the error,
+      including the actual source code where possible.
+
+    * Output reworked. Typically, the -v option is now unnecessary as
+      more appropriate messages allow you to find errors better.
+      Compatibility with the -v option has been maintained, although
+      there may be a few minor changes.
+
+    * Branch out of range errors now list the distance to the branch.
+
+    * Undefined symbols are now always listed in a separate table. If
+      an unresolved symbol causes an error, the table is displayed
+      automatically at the end of assembly. (Note: It can be alright
+      to have a referenced but undefined symbol, for example when
+      IFCONST is used. In this case, the undefined table will only
+      be displayed if there is another undefined label, but it will
+      contain *all* unresolved symbols.)
+
+    * New command line option -T# where # is 0 or 1; 0 sorts symbol
+      table alphabetically (default), 1 sorts symbol table by address.
+      If available memory precludes sorting, the table is unsorted.
+
+2.20.02 -- 24 April 2003
+
+    * John Saeger contributed support for all illegal 6502 opcodes.
+      Thank you, John! This fixes the LAX opcode as well.
+
+2.20.01 -- 22 March 2003
+
+    * Andrew Davie <atari2600 at taswegian dot com> took up the DASM
+      project, starting from Olaf "Rhialto" Seibert's 2.12.04 version
+      with both Olaf's and Matthew Dillon's blessing.
+
+    * REPEAT now detects negative loop count (used to lock up).
+
+    * Errors are now in the format "file (line): Error: string" to
+      be compatible with MS VisualStudio.
+
+    * Support files for the Atari 2600 Video Computer System (VCS)
+      added.
+
+    * Support for illegal 6502/6507 opcodes NOP zp and LAZ (zp),y
+      added.
+
+2.12.14 -- 19 August 1995
+
+    * Olaf "Rhialto" Seibert's release of DASM with many changes to
+      Matthew Dillon's 2.12 release.
+
+Note that everything before 2.20.11 was *reconstructed* by Peter
+Froehlich for the 2.20.11 release. Peter had no first-hand knowledge
+of the early years but tried to be as accurate as possible, working
+from multiple sources. Please feel free to submit any corrections you
+may have regarding dates, features, and people.
+

@@ -1,0 +1,68 @@
+# $Id: svn-eol-style.txt 77 2008-04-05 22:13:29Z phf $
+#
+# Adapted from http://www.apache.org/dev/svn-eol-style.txt
+#
+# Merge this stuff into your local
+#
+#   ~/.subversion/config
+#   (Unix)
+#
+# or
+#
+#   C:\Documents and Settings\{username}\Application Data\Subversion\config
+#   (Windoze)
+#
+# file. For best dasm compliance, prefer these settings
+# over existing ones. Do not default svn:executable=*!
+
+[miscellany]
+enable-auto-props = yes
+
+[auto-props]
+# text
+*.cat = svn:eol-style=native;svn:keywords=Id
+*.man = svn:eol-style=native;svn:keywords=Id
+*.tex = svn:eol-style=native;svn:keywords=Id
+*.txt = svn:eol-style=native;svn:keywords=Id
+*.rst = svn:eol-style=native;svn:keywords=Id
+README = svn:eol-style=native;svn:keywords=Id
+# web
+*.html = svn:eol-style=native;svn:keywords=Id
+*.shtml = svn:eol-style=native;svn:keywords=Id
+*.xhtml = svn:eol-style=native;svn:keywords=Id
+*.xml = svn:eol-style=native;svn:keywords=Id
+# programming
+*.asm = svn:eol-style=native;svn:keywords=Id
+*.bat = svn:eol-style=native;svn:keywords=Id
+*.c = svn:eol-style=native;svn:keywords=Id
+*.cgi = svn:eol-style=native;svn:keywords=Id
+*.cpp = svn:eol-style=native;svn:keywords=Id
+*.css = svn:eol-style=native;svn:keywords=Id
+*.dot = svn:eol-style=native;svn:keywords=Id
+*.h = svn:eol-style=native;svn:keywords=Id
+*.java = svn:eol-style=native;svn:keywords=Id
+*.php = svn:eol-style=native;svn:keywords=Id
+*.pl = svn:eol-style=native;svn:keywords=Id
+*.py = svn:eol-style=native;svn:keywords=Id
+*.rb = svn:eol-style=native;svn:keywords=Id
+*.s = svn:eol-style=native;svn:keywords=Id
+*.sh = svn:eol-style=native;svn:keywords=Id
+# tools
+*.ac = svn:eol-style=native;svn:keywords=Id
+*.am = svn:eol-style=native;svn:keywords=Id
+*.dsp = svn:eol-style=CRLF
+*.dsw = svn:eol-style=CRLF
+*.in = svn:eol-style=native;svn:keywords=Id
+Makefile = svn:eol-style=native;svn:keywords=Id
+# archives
+*.gz = svn:mime-type=application/x-gzip
+*.lha = svn:mime-type=application/x-lzh
+*.lzh = svn:mime-type=application/x-lzh
+*.tgz = svn:mime-type=application/x-gzip
+*.zip = svn:mime-type=application/zip
+*.zoo = svn:mime-type=application/zip
+# media
+*.jpg = svn:mime-type=image/jpeg
+*.pdf = svn:mime-type=application/pdf
+*.png = svn:mime-type=image/png
+*.ps = svn:mime-type=application/postscript

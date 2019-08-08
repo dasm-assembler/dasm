@@ -1,0 +1,60 @@
+/*
+  $Id: default.css 22 2008-03-30 01:09:28Z phf $
+*/
+
+body {
+  font-family: "Arial", sans-serif;
+  background: #eee;
+  color: #000;
+  margin: 0px;
+  padding: 0px;
+}
+
+#header {
+  background: #eee;
+  padding: 1em 1em 1.2em 1em;
+  border-bottom: 1px solid #000;
+}
+#header span.left {
+  font-size: 2.4em;
+}
+#header span.right {
+  font-size: 1.2em;
+  float: right;
+  text-align: right;
+}
+
+#footer {
+  background: #eee;
+  padding: 1em 1em 1.2em 1em;
+  border-top: 1px solid #000;
+}
+#footer span.left {
+}
+#footer span.right {
+  float: right;
+  text-align: right;
+}
+
+#main {
+ background: #fff;
+ padding: 1em;
+ line-height: 1.2em;
+}
+
+#main p {
+  text-align: justify;
+  margin-left: 1em;
+}
+
+/*
+  Logo using CSS, forget PNG. :-)
+*/
+
+span.logo {
+  font-family: "Arial", sans-serif;
+}
+span.logo strong {
+  font-family: "Arial Black", sans-serif;
+  font-weight: 900;
+}

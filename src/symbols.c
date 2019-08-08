@@ -1,34 +1,37 @@
 /*
-DASM Assembler
-Portions of this code are Copyright (C)1988 Matthew Dillon
-and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: symbols.c 327 2014-02-09 13:06:55Z adavie $
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    the DASM macro assembler (aka small systems cross assembler)
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-      
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
-*  SYMBOLS.C
-*
-*  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
-*/
+ *  SYMBOLS.C
+ */
 
 #include "asm.h"
 
+SVNTAG("$Id: symbols.c 327 2014-02-09 13:06:55Z adavie $");
 
-static unsigned int hash1(char *str, int len);
+static unsigned int hash1(const char *str, int len);
 SYMBOL *allocsymbol(void);
 
 static SYMBOL org;
@@ -41,7 +44,7 @@ void setspecial(int value, int flags)
     special.flags = flags;
 }
 
-SYMBOL *findsymbol(char *str, int len)
+SYMBOL *findsymbol(const char *str, int len)
 {
     unsigned int h1;
     SYMBOL *sym;
@@ -95,7 +98,7 @@ SYMBOL *findsymbol(char *str, int len)
     return sym;
 }
 
-SYMBOL *CreateSymbol( char *str, int len )
+SYMBOL *CreateSymbol( const char *str, int len )
 {
     SYMBOL *sym;
     unsigned int h1;
@@ -130,7 +133,7 @@ SYMBOL *CreateSymbol( char *str, int len )
     return sym;
 }
 
-static unsigned int hash1(char *str, int len)
+static unsigned int hash1(const char *str, int len)
 {
     unsigned int result = 0;
     
@@ -200,12 +203,18 @@ void programlabel(void)
             * previous pass, don't complain about phase errors
             * too loudly.
                 */
-                if (F_verbose >= 1 || !(Redo_if & (REASON_OBSCURE)))
+
+                //FIX: calling asmerr with ERROR_LABEL_MISMATCH is fatal. The clause
+                //     below was causing aborts if verbosity was up, even when the
+                //     phase errors were the result of unevaluated IF expressions in
+                //     the previous pass.
+
+                //if (F_verbose >= 1 || !(Redo_if & (REASON_OBSCURE))) 
+
+                if (!(Redo_if & (REASON_OBSCURE)))
                 {
-                    char sBuffer[ MAX_SYM_LEN * 2 ];
+                    char sBuffer[ MAX_SYM_LEN * 4 ];
                     sprintf( sBuffer, "%s %s", sym->name, sftos( sym->value, 0 ) );
-                    /*, sftos(sym->value,
-                    sym->flags) ); , sftos(pc, cflags & 7));*/
                     asmerr( ERROR_LABEL_MISMATCH, false, sBuffer );
                 }
                 ++Redo;
@@ -240,11 +249,14 @@ SYMBOL *allocsymbol(void)
     return sym;
 }
 
-void freesymbol(SYMBOL *sym)
+/* defined but not used [phf] */
+/*
+static void freesymbol(SYMBOL *sym)
 {
     sym->next = SymAlloc;
     SymAlloc = sym;
 }
+*/
 
 
 

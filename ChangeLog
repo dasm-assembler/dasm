@@ -1,0 +1,136 @@
+$Id: ChangeLog 114 2008-04-08 02:50:35Z phf $
+
+Note that we document changes to the source files and
+closely related files (Makefile, test cases) only, this
+is *not* a complete record of every single change ever
+made. Check the Subversion logs for that. :-)
+
+2008-04-07  Peter H. Froehlich  <phf at acm dot org>
+
+	* Makefile (dist:): added README.ANDREW and CREDITS;
+	  corrected test/atari2600/ pattern
+
+	* test/atari2600/*: removed one Atari 2600 test case
+	  due to concerns about the original Atari copyright
+	  on the code; adjusted Makefile accordingly
+
+	* src/main.c, doc/dasm.txt: synchronized usage information
+	  between dasm itself and the documentation for dasm
+
+	* src/main.c: completely removed deprecated -t option
+
+	* src/ftohex.c: removed _fmode stuff that was necessary
+	  for ancient C compilers for DOS
+
+2008-04-06  Peter H. Froehlich  <phf at acm dot org>
+
+	* Makefile: removed Apple specific warning option, added
+	  -p to mkdir in build target (thanks to Andrew Davie);
+	  added a test target to run all tests from trunk; added
+	  "recursive clean" for test directory to clean target;
+	  fixed dist target to allow for correctly structured
+	  source and binary releases; default target now builds
+	  DASM; install target added but just prints a warning
+
+	* test/*: imported Matt Dillon's original test cases from
+	  his 2.16 release
+
+	* test/atari2600/*: added two "real" Atari 2600 programs as
+	  test cases and created a trivial testing framework
+
+	* test/Makefile, test/run_tests.sh: created a slightly more
+	  advanced testing framework, still far from decent though
+
+	* ChangeLog: finally wrote this file for everything that
+	  happened since I took over :-)
+
+2008-04-05  Peter H. Froehlich  <phf at acm dot org>
+
+	* src/main.c: made command line behavior more Unix-like by
+	  removing "spurious" output (version, completed); added a
+	  new -E option to control format of error messages; also
+	  refactored asmerr() to make it somewhat cleaner
+
+	* src/asm.h src/global.c src/main.c: turned -T sortmode stuff
+	  into a proper enum type and refactored main.c code to use
+	  enum constants for range checking
+
+	* Makefile: added to produce beta releases as well as final
+	  releases; beta releases work, final releases don't yet
+
+	* src/*: introduced the new "standard header" in all our
+	  source files
+
+2008-04-04  Peter H. Froehlich  <phf at acm dot org>
+
+	* src/asm.h: completely removed the old "bool" defines,
+	  were not in use anymore anyway (see 2008-04-01)
+
+	* src/main.c: replaced calls of non-standard atoi() with
+	  standard strtol(), no error checking yet; added range
+	  checking for -T option
+
+	* src/asm.h src/globals.c src/main.c: introduced a "regular"
+	  configuration variable F_sortmode for the -T option; the
+	  bTableSort hack is however not gone yet
+
+	* src/Makefile: switched on many more warning options,
+	  including -Wextra temporarily
+
+	* src/*: fixed more warnings, many of which came from
+	  what -Wextra said about field initializations in the
+	  opcode tables
+
+	* src/asm.h src/mne*.c: added MNEMONIC_NULL macro to
+	  mark the end of MNEMONIC tables correctly and without
+	  duplicating the code in every file
+
+2008-04-03  Peter H. Froehlich  <phf at acm dot org>
+
+	* src/Makefile: added target to make an alpha release,
+	  reorganized structure to be more obvious
+
+2008-04-02  Peter H. Froehlich  <phf at acm dot org>
+
+	* src/main.c (CompareAlpha, CompareAddress): rewrote
+	  CompareAlpha() to call strcasecmp() instead of
+          allocating memory for both strings, converting
+	  them to lower case inline with one loop for each
+	  string, calling strcmp(), and then freeing memory
+	  again; also corrected the casts from const void*
+	  to const SYMBOL** following the example for qsort(3)
+	  from the Linux man page
+
+	* src/Makefile: switched on many more warning options
+
+	* src/*: fixed lots of warnings: shadowing, some
+	  more static, lots and lots of const (and casts
+	  losing const when they shouldn't)
+
+2008-04-01  Peter H. Froehlich  <phf at acm dot org>
+
+	* src/mnef8.c: replaced uses of non-standard stricmp() with
+	  standard strcasecmp()
+
+	* src/asm.h (SYMBOL): made "value" field signed again, fixing
+	  the long-standing "-1 bug" (partially for sure)
+
+	* src/asm.h: switched to stdbool.h from custom define for bool
+
+	* test/negative.h: added a new test case for negative literals
+
+	* src/Makefile: use gcc to build on Unix systems, added mnef8.c
+	  to dependencies, added a "clean" target, switched to C99 and
+	  enabled many warning options
+
+	* src/*: fixed lots of warnings in all source files, mostly
+	  concerned with initializion of MNEMONIC tables and various
+          printf format codes; also added "static" to many functions
+	  that are used only within one file and removed several of
+	  the prototypes that were unnecessary because of this
+
+Note that there is a long and involved history of changes from
+before 2.20.11 that was not reconstructed here. It would be an
+interesting (if Quixotic) project to actually do the necessary
+research, but it's not on my agenda for the near future.
+

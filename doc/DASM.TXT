@@ -1,3 +1,4 @@
+$Id: dasm.txt 327 2014-02-09 13:06:55Z adavie $
 
 
 DOCUMENTATION FOR DASM, a high level macro cross assembler for:
@@ -8,14 +9,38 @@ DOCUMENTATION FOR DASM, a high level macro cross assembler for:
 	-HD6303 (extension of 6803)
 	-68HC11
 
-DASM was created in 1988 by Matthew Dillon (dillon@apollo.backplane.com)
-and modified in 1995 by Olaf 'Rhialto' Seibert (rhialto@polderland.nl), and
-is now updated and maintained by Andrew Davie (atari2600@taswegian.com)
 
-DASM's homepage is http://www.atari2600.org/dasm
+ABSTRACT
 
-DASM is freely re-distributable, and provided with full source-code to
-allow recompilation for other target-platforms.
+    This file contains the main documentation for DASM. It explains how
+    to use DASM and what the supported assembler directives are.
+
+    DASM's homepage is http://dasm-dillon.sourceforge.net/ since release
+    2.20.11.
+
+
+LEGALESE
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
 PREFACE FROM MATT:
@@ -58,32 +83,43 @@ FEATURES:
 
 PREFACE FROM ANDREW (APRIL/2003)
 
-The documentation is lagging a bit behind the modifications.  Essentially the information contained herein is correct, but there have been minor changes to the formatting of output data.
+    The documentation is lagging a bit behind the modifications.
+    Essentially the information contained herein is correct, but
+    there have been minor changes to the formatting of output data.
 
-Please see the accompanying ‘README.TXT’ in the distributable root directory for a list of recent changes to the package.
+    Please see the accompanying text files in the distribution's
+    root directory for a list of recent changes to DASM.
+
+
+PREFACE FROM PETER (APRIL/2008)
+    
+    Everything Andrew says above is still true, there have been a
+    few sporadic updates to the documentation but no major ones,
+    not even Olaf Seibert's changes from 1995 have been integrated,
+    to say nothing of Thomas Mathys' F8 backend from 2004. We are
+    urgently looking for volunteers to help with the documentation!
 
 
 COMMAND LINE:
 
-	dasm srcfile [options]
+	dasm sourcefile [options]
 
-	options:    -f#     select output format 1-3 (default 1, see below)
-		    -oname  select output file name (else a.out)
-		    -lname  select list file name   (else none generated)
-		    -Lname  list file, containing all passes
-		    -sname  select symbol dump file (else none generated)
-		    -v#     select verboseness 0-4 (default 0, see below)
-		    -d	    debug mode
-		    -DSYMBOL		    predefine a symbol, set to 0
-		    -DSYMBOL=EXPRESSION     predefine a symbol, set to exp
-		    -MSYMBOL=EXPRESSION		define label as in EQM (same as –D)
-
-		     -Idir    search directory for include and incbin
-		     -p#    max number of passes
-		     -P#    max number of passes, with less checks
-
-		     -T#	sort symbol table by (0 = alphabetic (default)
-				or (non-zero= address/value)
+	options:    -f#     output format 1-3 (default 1, see below)
+		    -oname  output file name (else a.out)
+		    -lname  list file name (else none generated) 
+		    -Lname  list file name, containing all passes
+		    -sname  symbol dump file name (else none generated)
+		    -v#     verboseness 0-4 (default 0, see below)
+		    -d      debug mode (for developers)
+		    -Dsymbol		define symbol, set to 0
+		    -Dsymbol=expression	define symbol, set to expression
+		    -Msymbol=expression	define symbol using EQM (same as -D)
+		    -Idir   search directory for include and incbin
+		    -p#     maximum number of passes
+		    -P#     maximum number of passes, with fewer checks
+		    -T#     symbol table sorting (default 0 = alphabetical,
+			    1 = address/value)
+		    -E#     error format (default 0 = MS, 1 = Dillon, 2 = GNU)
 
 	Example:    dasm master.asm -f2 -oout -llist -v3 -DVER=4
 
@@ -477,7 +513,7 @@ symbol	SET	    exp
 	    the code repeats forever.  exp is evaluated once.
 
 		If exp == 0, the repeat loop is ignored.
-		If exp < 0, a warning “REPEAT parameter < 0 (ignored)” is generated 		and the repeat loop is ignored.
+		If exp < 0, a warning "REPEAT parameter < 0 (ignored)" is generated 		and the repeat loop is ignored.
 #endif
 		
 		Y   SET     0
@@ -746,5 +782,4 @@ VERSIONS:
 	-can now have REPEAT/REPEND's within macros
 	-fill field for DS.W is a word (used to be a byte fill)
 	-fill field for DS.L is a long (used to be a byte fill)
-
 

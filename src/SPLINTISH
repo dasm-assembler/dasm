@@ -1,0 +1,10 @@
+$Id$
+
+splint statistics over time, just for DASM itself
+
+Just do "make splint" in this directory to see where we are... :-)
+
+r274: Finished checking --- 832 code warnings
+r291: Finished checking --- 712 code warnings
+r310: Finished checking --- 691 code warnings
+r317: Finished checking --- 639 code warnings

@@ -1,0 +1,106 @@
+$Id: TODO 321 2008-11-15 08:14:38Z phf $
+
+===========================
+Things to fix at some point
+===========================
+
+Note: All of these are "nice to have" things, not essential
+for functionality and (hopefully) not the cause of bugs. We
+are hiding the file all the way down here for a reason...
+
+- find all external accesses to F_listfile to really centralize
+  error handling in errors module!
+  - be careful though, there *is* a purpose for a listing file
+    after all, unrelated to error messages!
+
+- negative.asm test case still not quite right
+  - need to make range checking for literals fool proof
+  - this is painful for lots of reasons
+    - there are checks in ops.c AND mnef8.c (since that
+      replaces a lot more than just opcodes?)
+    - the structure of opcodes and addressing modes is
+      confusing
+    - there's no centralized and clear range checking
+      - probably hard since it can differ by opcode of
+        course, given a certain machine...
+
+- use GNU indent to make code more consistent
+  - current .indent.pro not right, need to adjust
+  - when to do this? before 2.20.12?
+  - maybe astyle is a better, more conservative choice?
+
+- work on refactoring hash?() has found some problems
+  - first hash_symbols() has a length argument because DASM
+    doesn't seem to do enough parsing to properly split off
+    only symbols to look up, how weird
+  - second the hash functions are sometimes called with
+    empty strings, probably from findmne, which seems like
+    a bug or at least is ugly
+
+- MNEMONIC tables could be simplified
+  - currently they are written directly, could
+    use a macro (or several) to fill in mostly
+    identical information
+  - a deeper issues is that the same struct is
+    use statically as is dynamically later; so
+    I think we could get rid of the whole NULL
+    for the *next if we had a version for the
+    static stuff and a version (close to the
+    current one) for the dynamic stuff; do we
+    even need the static stuff in the first
+    place? a function to add an opcode and
+    the relevant information might work just
+    as well...
+
+- both memusage and valgrind say that we are leaking
+  - however, this probably only matters for Amiga OS 3 users
+    - even there the C library hopefully takes care of it?
+  - any OS out there where memory is not freed on exit?
+  - I think the reason is permalloc() which doesn't have a
+    corresponding free(), I already had some replacement
+    code that can free() but it ended up to complicated to
+    be a good replacement for now :-/
+
+- Matt Dillon's fixes and extensions
+  - dasm-2.15 permalloc patch for SPARC? seems simple
+    - actually, the union hack in our DASM seems to make it
+      superflous after all; did Olaf come up with that or
+      Andrew? nice either way... :-)
+  - new version of ftohex? should import easily...
+    - actually, there's more to this as we should add options
+      - to select CTRL-Z at the end (old EEPROM programmers)
+      - CR/LF separators (Intel's standard is flexible)
+      - see Matt's email 2008/04/06
+  - harder: compare DASM code bases for other fixes! :-/
+
+- new copyright/license header
+  - should Thomas be in there because of F8 support?
+  - who else holds a copyright on some piece of DASM?
+
+- remember the >> issue for signed left operands
+  - details in ftohex.c
+
+- strlcpy/strlcat should be used throughout instead of strcpy/strcat
+  - huge job to adjust everything, not even started... :-/
+
+- need to address unit testing (and system testing)
+  - minunit looks too simplistic to be useful
+    - however, it would be better than what we have
+  - CUnit looks decent
+    - however it doesn't fork
+  - Check looks perfect
+    - however it wants autotools for almost everything
+  - at least add coverage analysis darn it
+    - gcov is not hard to add to current scripts
+
+- remember that NULL in printf() segfaults on Solaris, seems that
+  only the Apple version has the nice "(null)" feature... :-/
+
+- fseeko/ftello instead of fseek/ftell could be useful to some
+  extent
+
+- integrating Michael Marvin Morrison's 65c02 stuff is hard since
+  there are not just new/changed opcodes but also new addressing
+  modes; those, however, are hardcoded into the rest of DASM; I
+  guess that's why Thomas had to rewrite so much of DASM for F8,
+  and why he said his Z80 work died off...

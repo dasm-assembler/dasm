@@ -1,0 +1,200 @@
+$Id: PATCHES 321 2008-11-15 08:14:38Z phf $
+
+================================================
+Collection of random patches from around the net
+================================================
+
+This is a random collection of patches for DASM I ran across
+over time; some of these may be included in future releases,
+others will probably never make it in. But it's good to have
+them in one place. I use a *very* long line one "-" between
+each one, hopefully that'll work out okay. :-)
+
+-------------------------------------------------------------------------------
+FROM: http://biglist.com/lists/stella/archives/200205/msg00008.html
+-------------------------------------------------------------------------------
+
+Subject: Re: [stella] help! distella -> dasm case sensitivity (fwd)
+From: Adam Wozniak <adam@xxxxxxxxxxxxxxxx>
+Date: Wed, 1 May 2002 09:53:05 -0700 (PDT)
+On Wed, 1 May 2002, Chris Wilkson wrote:
+> Though I really would like to turn off case sensitivity in DASM.  Any way to
+> do that?  It would really help speed up testing for the new TIA....
+
+It is fairly simple to hack the DASM source to behave
+the way you want it to.
+
+The patch below modifies two functions;  the symbol table
+is now hashed in a case insensitive manner, and the symbol
+table lookup tries an caseless compare when an exact match
+fails.
+
+The patch below is against DASM 2.15
+
+--Adam Wozniak
+
+===BEGIN SCRIPT ===============================
+Script started on Wed May  1 08:52:28 2002
+[adam dasm]$ cat test.asm
+   processor 6502
+
+   seg.u code
+   org 0
+
+      nop
+      bne   skip
+      nop
+Skip  nop
+      nop
+
+   seg.u data
+   org 100
+
+   seg.u bss
+   org 200
+
+[adam dasm]$ dasm/bin/dasm test.asm
+DASM V2.15, (c)Copyright 1988-2002 Matthew Dillon, All Rights Reserved
+Error: source is not resolvable.
+re-run with verbose option 2 or higher to determine problem
+
+[adam dasm]$ dasm-caseless/bin/dasm test.asm
+DASM V2.15, (c)Copyright 1988-2002 Matthew Dillon, All Rights Reserved
+
+[adam dasm]$ exit
+
+Script done on Wed May  1 08:52:57 2002
+===END SCRIPT==================================
+
+===BEGIN PATCH ================================
+diff -urbBN dasm/src/asm.h dasm-caseless/src/asm.h
+--- dasm/src/asm.h	Sat Jan  2 22:59:46 1999
++++ dasm-caseless/src/asm.h	Wed May  1 08:38:36 2002
+@@ -10,6 +10,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <ctype.h>
+ 
+ #define Prototype extern
+ 
+diff -urbBN dasm/src/symbols.c dasm-caseless/src/symbols.c
+--- dasm/src/symbols.c	Sat Jan  2 22:59:46 1999
++++ dasm-caseless/src/symbols.c	Wed May  1 08:38:20 2002
+@@ -74,6 +74,13 @@
+ 	if (sym->namelen == len && bcmp(sym->name, str, len) == 0)
+ 	    break;
+     }
++    if (!sym)
++    {
++        for (sym = SHash[h1]; sym; sym = sym->next) {
++	    if (sym->namelen == len && strncasecmp(sym->name, str, len) == 0)
++	        break;
++        }
++    }
+     return(sym);
+ }
+ 
+@@ -118,7 +125,7 @@
+     register uword result = 0;
+ 
+     while (len--)
+-	result = (result << 2) ^ *str++;
++	result = (result << 2) ^ tolower(*str++);
+     return(result & SHASHAND);
+ }
+ 
+===END PATCH ==================================
+
+
+-- 
+This is  n ?nrcu?cemert for thc transcendental r?n? The train now standirg
+leavc? for higher ?l?nes. Due tc a derai|rent, thcre vill be no other train.
+Sc wry rot h?? cn this cre? 
+
+adam@xxxxxxxxxxxxxxxx        http://cuddlepuddle.org/~adam/pgp.txt
+
+-------------------------------------------------------------------------------
+FROM: forwarded by Andrew Davie
+-------------------------------------------------------------------------------
+
+-----Original Message-----
+From: Ben Combee [mailto:ben.combee@gmail.com] On Behalf Of Ben Combee
+Sent: Thursday, February 28, 2008 8:56 AM
+To: atari2600@taswegian.com
+Subject: Bitmap format patch for DASM
+
+Hi, Andrew... I just started up a 2600 project of my own, and I've done
+a few local modifications to the DASM source -- most are to make it
+compile without warnings in CodeWarrior for Windows, but I also added a
+new integer representation inspired by some of the disassemblies I've
+seen.  I call it bitmap format, and instead of a leading %, you use a
+leading | followed by dots and Xs.  A trailing | is allowed, but not
+required.  Here's an example.
+
+PfDataStart
+   .byte |..XXX...|
+   .byte |....X...|
+   .byte |X..XX..X|
+   .byte |.XX..XXX|
+   .byte |.XX..XXX|
+   .byte |X..XX..X|
+   .byte |....X...|
+   .byte |..XXX...|
+PfDataEnd
+
+I find it easier to visualize the bitmaps in the code using this format,
+as 0's and 1's aren't that distinctive.
+
+Here's the code change made to exp.c.  I added this new function just
+before pushbin():
+
+char *pushbitmap(char *str)
+{
+    long val = 0;
+    while (*str == '.' || *str == 'X') {
+        val = (val << 1) | (*str == 'X');
+        ++str;
+    }
+    if (*str == '|') {
+        ++str;
+    }
+    stackarg(val, 0, NULL);
+    return str;
+}
+
+Then I modified the case statement around line 314:
+
+
+        case '|':   /*  13: |   11: ||              */
+
+            if (str[1] == '.' || str[1] == 'X')
+            {
+                str = pushbitmap(str+1);
+            }
+            else if (str[1] == '|')
+            {
+                doop((opfunc_t)op_oror, 11);
+                str += 2;
+            }
+            else
+            {
+                doop((opfunc_t)op_or, 13);
+                ++str;
+            }
+            break;
+
+
+I'd be glad to send the other changes, but they're mostly just adding
+"static" in front of local functions and cleaning up some loops that
+used a ";" to do nothing into using "{ }" instead (it tells the compiler
+that you intended on the empty action rather than just using a semicolon
+accidentally by habit.
+
+I'm looking forward to Boulder Dash and I'm also enjoying your old
+tutorial series on Atari Age.  Thanks!
+
+-------------------------------------------------------------------------------
+TODO: Find more patches... :-)
+-------------------------------------------------------------------------------
+

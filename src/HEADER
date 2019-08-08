@@ -1,0 +1,43 @@
+====================
+Standard file header
+====================
+
+/*
+    $Id: HEADER 72 2008-04-05 20:49:29Z phf $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+We're sticking with Matt's 1988 claim, even though ftohex.c
+had a 1987 copyright originally, and Matt released version
+2.0 in 1988, making a 1987 version 1.x likely. It's just not
+available anywhere, not even from Matt... :-/ We're also
+extending his copyright to 2002 compared to Andrew's release
+since we plan on integrating more of Matt's 2.16 stuff.
+
+Note that this header only lists the "main" maintainers and
+not all contributors. Those are listed in the AUTHORS file,
+and sometimes their contributions are in the NEWS file or
+other documentation. Note entirely sure that this is right,
+but the alternative is to have a *really* long list of
+copyright lines in every single file... :-/
+
