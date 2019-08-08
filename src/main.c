@@ -35,7 +35,7 @@
 
 SVNTAG("$Id: main.c 327 2014-02-09 13:06:55Z adavie $");
 
-static const char dasm_id[] = "DASM 2.20.11 20140304";
+static const char dasm_id[] = "dasm 2.20.12";
 
 #define MAXLINE 1024
 #define ISEGNAME    "INITIAL CODE SEGMENT"
@@ -1347,7 +1347,7 @@ void pushinclude(char *str)
     INCFILE *inf;
     FILE *fi;
     
-    if ((fi = pfopen(str, "r")) != NULL) {
+    if ((fi = pfopen(str, "rb")) != NULL) {
         if (F_verbose > 1 && F_verbose != 5 )
             printf("%.*s Including file \"%s\"\n", Inclevel*4, "", str);
         ++Inclevel;
