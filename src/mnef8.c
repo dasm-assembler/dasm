@@ -1,12 +1,41 @@
 /*
- * MNEMONICF8.C
+    $Id: mnef8.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+/*
+ *  MNEF8.C
  *
- * Fairchild F8 support code for DASM
- * 2004 by Thomas Mathys
+ *  Fairchild F8 support code for DASM
+ *  Copyright (c) 2004 by Thomas Mathys.
  */
+
 #include <ctype.h>
+#include <strings.h>
+
 #include "asm.h"
 
+SVNTAG("$Id: mnef8.c 327 2014-02-09 13:06:55Z adavie $");
 
 /*
  * special registers. must use numbers from 16 and up,
@@ -43,7 +72,7 @@ enum REGISTERS {
  * abort    : false = don't abort assembly
  *            true = abort assembly
  */
-static void f8err(int err, char *mnename, char *opstring, bool abort) {
+static void f8err(int err, const char *mnename, const char *opstring, bool bAbort) {
 
     char *buf;
 
@@ -51,7 +80,7 @@ static void f8err(int err, char *mnename, char *opstring, bool abort) {
     strcpy(buf, mnename);
     strcat(buf, " ");
     strcat(buf, opstring);
-    asmerr(err, abort, buf);
+    asmerr(err, bAbort, buf);
     free(buf);
 }
 
@@ -103,7 +132,7 @@ static void emit_opcode3(unsigned char byte0, unsigned char byte1, unsigned char
  * result : zero = current program counter is unknown
  *          nonzero = current program counter is known
  */
-int isPCKnown(void) {
+static int isPCKnown(void) {
     unsigned char pcf;
     pcf= (Csegment->flags & SF_RORG) ? Csegment->rflags : Csegment->flags;
     return ((pcf & (SF_UNKNOWN|2)) == 0) ? 1 : 0;
@@ -181,29 +210,29 @@ static int parse_scratchpad_register(char *str, unsigned char *reg) {
     unsigned long regnum;
 
     /* parse special cases where ISAR is used as index */
-    if (!stricmp("s", str) || !stricmp("(is)", str)) {
+    if (!strcasecmp("s", str) || !strcasecmp("(is)", str)) {
         *reg = 0x0c;
         return 0;
     }
-    if (!stricmp("i", str) || !stricmp("(is)+", str)) {
+    if (!strcasecmp("i", str) || !strcasecmp("(is)+", str)) {
         *reg = 0x0d;
         return 0;
     }
-    if (!stricmp("d", str) || !stricmp("(is)-", str)) {
+    if (!strcasecmp("d", str) || !strcasecmp("(is)-", str)) {
         *reg = 0x0e;
         return 0;
     }
 
     /* parse aliases for scratchpad registers */
-    if (!stricmp("j", str)) {
+    if (!strcasecmp("j", str)) {
         *reg = 0x09;
         return 0;
     }
-    if (!stricmp("hu", str)) {
+    if (!strcasecmp("hu", str)) {
         *reg = 0x0a;
         return 0;
     }
-    if (!stricmp("hl", str)) {
+    if (!strcasecmp("hl", str)) {
         *reg = 0x0b;
         return 0;
     }
@@ -228,43 +257,43 @@ static int parse_scratchpad_register(char *str, unsigned char *reg) {
  */
 static int parse_special_register(char *str) {
 
-    if (!stricmp("a", str)) {
+    if (!strcasecmp("a", str)) {
         return REG_A;
     }
-    if (!stricmp("dc0", str) || !stricmp("dc", str) ) {
+    if (!strcasecmp("dc0", str) || !strcasecmp("dc", str) ) {
         return REG_DC0;
     }
-    if (!stricmp("h", str)) {
+    if (!strcasecmp("h", str)) {
         return REG_H;
     }
-    if (!stricmp("is", str)) {
+    if (!strcasecmp("is", str)) {
         return REG_IS;
     }
-    if (!stricmp("k", str)) {
+    if (!strcasecmp("k", str)) {
         return REG_K;
     }
-    if (!stricmp("ku", str)) {
+    if (!strcasecmp("ku", str)) {
         return REG_KU;
     }
-    if (!stricmp("kl", str)) {
+    if (!strcasecmp("kl", str)) {
         return REG_KL;
     }
-    if (!stricmp("pc0", str) || !stricmp("p0", str)) {
+    if (!strcasecmp("pc0", str) || !strcasecmp("p0", str)) {
         return REG_PC0;
     }
-    if (!stricmp("pc1", str) || !stricmp("p", str)) {
+    if (!strcasecmp("pc1", str) || !strcasecmp("p", str)) {
         return REG_PC1;
     }
-    if (!stricmp("q", str)) {
+    if (!strcasecmp("q", str)) {
         return REG_Q;
     }
-    if (!stricmp("qu", str)) {
+    if (!strcasecmp("qu", str)) {
         return REG_QU;
     }
-    if (!stricmp("ql", str)) {
+    if (!strcasecmp("ql", str)) {
         return REG_QL;
     }
-    if (!stricmp("w", str)) {
+    if (!strcasecmp("w", str)) {
         return REG_W;
     }
     else {
@@ -488,6 +517,7 @@ static void v_lr(char *str, MNEMONIC *mne) {
     }
 }
 
+extern int pass;
 
 /*
  * generates branch opcodes
@@ -512,10 +542,12 @@ static void generate_branch(unsigned char opcode, char *str) {
     /* calculate displacement */
     if (isPCKnown()) {
         disp = target_adr - getPC() - 1;
-        if (disp > 127 || disp < -128) {
-            char buf[64];
-            sprintf(buf, "%d", (int)disp);
-            asmerr(ERROR_BRANCH_OUT_OF_RANGE, false, buf);
+
+        if (disp > 127 || disp < -128)
+        {
+                char buf[64];
+                sprintf(buf, "%d", (int)disp);
+                asmerr(ERROR_BRANCH_OUT_OF_RANGE, false, buf);
         }
     } else {
         /* unknown pc, will be (hopefully) resolved in future passes */
@@ -627,12 +659,12 @@ static void v_byteop(char *str, MNEMONIC *mne) {
 MNEMONIC MneF8[] = {
 
     /* ds is an f8 opcode, so we replace the ds directive by res */
-    {NULL, v_ds, "res", 0, 0},
+    {NULL, v_ds, "res", 0, 0, {0,}},
 
     /* add db/dw/dd directives for f8tool compatibility */
-    {NULL, v_dc, "db", 0, 0},
-    {NULL, v_dc, "dw", 0, 0},
-    {NULL, v_dc, "dd", 0, 0},
+    {NULL, v_dc, "db", 0, 0, {0,}},
+    {NULL, v_dc, "dw", 0, 0, {0,}},
+    {NULL, v_dc, "dd", 0, 0, {0,}},
 
     /*
      * f8 opcodes
@@ -683,12 +715,12 @@ MNEMONIC MneF8[] = {
     {NULL, v_ins_outs, "ins", 0, AF_IMP, {0xa0}},       /* base opcode */
     {NULL, v_wordop,   "jmp", 0, AF_IMP, {0x29}},
     {NULL, v_byteop,   "li" , 0, AF_IMP, {0x20}},
-    {NULL, v_lis,      "lis", 0, 0},
+    {NULL, v_lis,      "lis", 0, 0, {0,}},
     {NULL, v_lisu_lisl,"lisl",0, AF_IMP, {0x68}},       /* base opcode */
     {NULL, v_lisu_lisl,"lisu",0, AF_IMP, {0x60}},       /* base opcode */
     {NULL, v_mnemonic, "lm" , 0, AF_IMP, {0x16}},
     {NULL, v_mnemonic, "lnk", 0, AF_IMP, {0x19}},
-    {NULL, v_lr,       "lr" , 0, 0},
+    {NULL, v_lr,       "lr" , 0, 0, {0,}},
     {NULL, v_byteop,   "ni" , 0, AF_IMP, {0x21}},
     {NULL, v_mnemonic, "nm" , 0, AF_IMP, {0x8a}},
     {NULL, v_mnemonic, "nop", 0, AF_IMP, {0x2b}},
@@ -707,5 +739,6 @@ MNEMONIC MneF8[] = {
     {NULL, v_byteop,   "xi" , 0, AF_IMP, {0x23}},
     {NULL, v_mnemonic, "xm" , 0, AF_IMP, {0x8c}},
     {NULL, v_sreg_op,  "xs" , 0, AF_IMP, {0xe0}},       /* base opcode */
-    NULL
+    MNEMONIC_NULL
 };
+

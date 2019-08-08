@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: exp.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,25 +18,24 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
-*/
 /*
-*  EXP.C
-*
-*  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
-*  Modifications Copyright 1995 by Olaf Seibert. All Rights Reserved.
-*
-*  Handle expression evaluation and addressing mode decode.
-*
-*  NOTE! If you use the string field in an expression you must clear
-*  the SYM_MACRO and SYM_STRING bits in the flags before calling
-*  FreeSymbolList()!
-*/
+ *  EXP.C
+ *
+ *  Handle expression evaluation and addressing mode decode.
+ *
+ *  NOTE! If you use the string field in an expression you must clear
+ *  the SYM_MACRO and SYM_STRING bits in the flags before calling
+ *  FreeSymbolList()!
+ */
 
 #include "asm.h"
+
+SVNTAG("$Id: exp.c 327 2014-02-09 13:06:55Z adavie $");
 
 #define UNION	0
 
@@ -55,7 +59,7 @@ typedef void (*opfunc_t)();
 
 #endif
 
-void stackarg(long val, int flags, char *ptr1);
+static void stackarg(long val, int flags, const char *ptr1);
 
 void doop(opfunc_t, int pri);
 void evaltop(void);
@@ -86,15 +90,15 @@ op_invert(long v1, int f1),
 op_not(long v1, int f1);
 
 
-char *pushsymbol(char *str);
-char *pushstr(char *str);
-char *pushbin(char *str);
-char *pushoct(char *str);
-char *pushdec(char *str);
-char *pushhex(char *str);
-char *pushchar(char *str);
+const char *pushsymbol(const char *str);
+const char *pushstr(const char *str);
+const char *pushbin(const char *str);
+const char *pushoct(const char *str);
+const char *pushdec(const char *str);
+const char *pushhex(const char *str);
+const char *pushchar(const char *str);
 
-int alphanum(int c);
+int IsAlphaNum( int c );
 
 /*
 *  evaluate an expression.  Figure out the addressing mode:
@@ -132,14 +136,14 @@ opfunc_t Opdis[MAXOPS];
 int	Argi, Opi, Lastwasop;
 int	Argibase, Opibase;
 
-SYMBOL *eval(char *str, int wantmode)
+SYMBOL *eval(const char *str, int wantmode)
 {
     SYMBOL *base, *cur;
     int oldargibase = Argibase;
     int oldopibase = Opibase;
     int scr;
     
-    char *pLine = str;
+    const char *pLine = str;
 
     Argibase = Argi;
     Opibase = Opi;
@@ -182,7 +186,7 @@ SYMBOL *eval(char *str, int wantmode)
 
         case '%':
             if (Lastwasop) {
-                str = (char *)pushbin(str+1);
+                str = pushbin(str+1);
             } else {
                 doop((opfunc_t)op_mod, 20);
                 ++str;
@@ -348,6 +352,19 @@ SYMBOL *eval(char *str, int wantmode)
                     cur->addrmode = AM_INDBYTEY;
                     str += 2;
                 }
+		//FIX: detect illegal opc (zp),x syntax...
+                if (cur->addrmode == AM_INDWORD && str[1] == ',' && (str[2]|0x20) == 'x')
+                {
+                   char sBuffer[128];
+                   sprintf( sBuffer, "%s", str );
+                   asmerr( ERROR_ILLEGAL_ADDRESSING_MODE,false, pLine );
+                   ++Redo;
+                   Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+
+                   //we treat the opcode as valid to allow passes to continue, which should
+                   //allow other errors (like phase errros) to resolve before our "++Redo"
+                   //ultimately forces a failure.
+                }
                 ++str;
                 break;
             }
@@ -402,15 +419,47 @@ SYMBOL *eval(char *str, int wantmode)
                 cur->addrmode = AM_INDBYTEX;
                 ++str;
             }
+            //FIX: detect illegal opc (zp,y) syntax...
+            else if ((cur->addrmode == AM_INDWORD && scr == 'y' && str[2]==')')&&(wantmode))
+            {
+                   char sBuffer[128];
+                   sprintf( sBuffer, "%s", str );
+                   asmerr( ERROR_ILLEGAL_ADDRESSING_MODE,false, pLine );
+                   ++Redo;
+                   Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+
+                   //we treat the opcode as valid to allow passes to continue, which should
+                   //allow other errors (like phase errros) to resolve before our "++Redo"
+                   //ultimately forces a failure.
+                   cur->addrmode = AM_0Y; 
+                   ++str;
+
+            }
             else if (scr == 'x' && !IsAlphaNum(str[2]))
             {
                 cur->addrmode = AM_0X;
                 ++str;
+
+                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
+                if(Mnext==AM_WORDADR)
+                     Mnext=AM_WORDADRX;
+                if(Mnext==AM_BYTEADR)
+                     Mnext=AM_BYTEADRX;
+                if(Mnext==AM_INDWORD)
+                     Mnext=AM_0X;
             }
             else if (scr == 'y' && !IsAlphaNum(str[2]))
             {
                 cur->addrmode = AM_0Y;
                 ++str;
+
+                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
+                if(Mnext==AM_WORDADR)
+                     Mnext=AM_WORDADRY;
+                if(Mnext==AM_BYTEADR)
+                     Mnext=AM_BYTEADRY;
+                if(Mnext==AM_INDWORD)
+                     Mnext=AM_0Y;
             }
             else
             {
@@ -449,7 +498,7 @@ SYMBOL *eval(char *str, int wantmode)
 
         default:
             {
-                char *dol = str;
+                const char *dol = str;
                 while (*dol >= '0' && *dol <= '9')
                     dol++;
                 if (*dol == '$')
@@ -544,7 +593,7 @@ void evaltop(void)
     }
 }
 
-void stackarg(long val, int flags, char *ptr1)
+static void stackarg(long val, int flags, const char *ptr1)
 {
     char *str = NULL;
     
@@ -554,7 +603,11 @@ void stackarg(long val, int flags, char *ptr1)
     Lastwasop = 0;
     if (flags & SYM_STRING)
     {
-        unsigned char *ptr = (unsigned char *)ptr1;
+        /*
+           Why unsigned char? Looks like we're converting to
+           long in a very strange way... [phf]
+        */
+        const unsigned char *ptr = (const unsigned char *)ptr1;
         char *new;
         int len;
         val = len = 0;
@@ -772,7 +825,7 @@ void op_or(long v1, long v2, int f1, int f2)
     stackarg(v1|v2, f1|f2, NULL);
 }
 
-char *pushchar(char *str)
+const char *pushchar(const char *str)
 {
     if (*str) {
         stackarg((long)*str, 0, NULL);
@@ -783,7 +836,7 @@ char *pushchar(char *str)
     return str;
 }
 
-char *pushhex(char *str)
+const char *pushhex(const char *str)
 {
     long val = 0;
     for (;; ++str) {
@@ -801,7 +854,7 @@ char *pushhex(char *str)
     return str;
 }
 
-char *pushoct(char *str)
+const char *pushoct(const char *str)
 {
     long val = 0;
     while (*str >= '0' && *str <= '7') {
@@ -812,7 +865,7 @@ char *pushoct(char *str)
     return str;
 }
 
-char *pushdec(char *str)
+const char *pushdec(const char *str)
 {
     long val = 0;
     while (*str >= '0' && *str <= '9') {
@@ -823,7 +876,7 @@ char *pushdec(char *str)
     return str;
 }
 
-char *pushbin(char *str)
+const char *pushbin(const char *str)
 {
     long val = 0;
     while (*str == '0' || *str == '1') {
@@ -834,7 +887,7 @@ char *pushbin(char *str)
     return str;
 }
 
-char *pushstr(char *str)
+const char *pushstr(const char *str)
 {
     stackarg(0, SYM_STRING, str);
     while (*str && *str != '\"')
@@ -844,10 +897,10 @@ char *pushstr(char *str)
     return str;
 }
 
-char *pushsymbol(char *str)
+const char *pushsymbol(const char *str)
 {
     SYMBOL *sym;
-    char *ptr;
+    const char *ptr;
     unsigned char macro = 0;
     
     for (ptr = str;

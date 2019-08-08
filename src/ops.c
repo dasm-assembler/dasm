@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: ops.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,22 +18,20 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
-*  OPS.C
-*
-*  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
-*
-*  Handle mnemonics and pseudo ops
-*
-*/
+ *  OPS.C
+ *
+ *  Handle mnemonics and pseudo ops
+ */
 
 #include "asm.h"
+
+SVNTAG("$Id: ops.c 327 2014-02-09 13:06:55Z adavie $");
 
 unsigned char Gen[256];
 unsigned char OrgFill = DEFORGFILL;
@@ -130,6 +133,9 @@ void v_processor(char *str, MNEMONIC *dummy)
 
 #define badcode(mne,adrmode)  (!(mne->okmask & (1L << adrmode)))
 
+extern int pass;
+extern int nMaxPasses;
+
 void v_mnemonic(char *str, MNEMONIC *mne)
 {
     int addrmode;
@@ -173,6 +179,7 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     
     while (badcode(mne,addrmode) && Cvt[addrmode])
         addrmode = Cvt[addrmode];
+
     
     if ( bTrace )
         printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d\n", mne->okmask, addrmode, Cvt[addrmode]);
@@ -183,9 +190,13 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         sprintf( sBuffer, "%s %s", mne->name, str );
         asmerr( ERROR_ILLEGAL_ADDRESSING_MODE, false, sBuffer );
         FreeSymbolList(symbase);
+        //FIX
+            ++Redo;
+            Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
         return;
     }
     
+
     if (Mnext >= 0 && Mnext < NUMOC)            /*	Force	*/
     {
         addrmode = Mnext;
@@ -194,6 +205,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         {
             asmerr( ERROR_ILLEGAL_FORCED_ADDRESSING_MODE, false, mne->name );
             FreeSymbolList(symbase);
+
+               //FIX: Cause assembly to fail when an invalid mode is used for an opcode... 
+               ++Redo;
+               Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
             return;
         }
     }
@@ -210,6 +225,14 @@ void v_mnemonic(char *str, MNEMONIC *mne)
             if (sym->flags & SYM_UNKNOWN)
                 break;
             
+            //FIX: for negative operands...
+            if ( (addrmode == AM_IMM8) && (sym->value <0) )
+            {
+                opsize=1;
+                sym->value=(char)(sym->value & 255);
+                break;
+            }
+
             sprintf( sBuffer, "%s %s", mne->name, str );
             asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
             break;
@@ -322,12 +345,20 @@ void v_mnemonic(char *str, MNEMONIC *mne)
             if ((pcf & (SF_UNKNOWN|2)) == 0)
             {
                 dest = sym->value - pc - opidx;
+
                 if (dest >= 128 || dest < -128)
                 {
-                    char sBuffer[64];
-                    sprintf( sBuffer, "%d", dest );
-                    asmerr( ERROR_BRANCH_OUT_OF_RANGE, false, sBuffer );
-                    
+                    //FIX: sometimes zero page addressing will first be assumed to be absolute until
+                    //     another pass. ERROR_BRANCH_OUT_OF_RANGE was made non-fatal, but we keep 
+                    //     pushing for Redo so assembly won't actually be succesfull until the branch
+                    //     actually works.
+                        char sBuffer[64];
+                        sprintf( sBuffer, "%ld", dest );
+                        asmerr( ERROR_BRANCH_OUT_OF_RANGE, false, sBuffer );
+            		++Redo;
+            		Redo_why |= REASON_BRANCH_OUT_OF_RANGE;
+                        sym->flags=sym->flags | SYM_UNKNOWN; 
+                        dest = 0;
                 }
             }
             else
@@ -364,7 +395,7 @@ void v_list(char *str, MNEMONIC *dummy)
         ListMode = 1;
 }
 
-char *
+static char *
 getfilename(char *str)
 {
     if (*str == '\"') {
@@ -525,24 +556,24 @@ v_dc(char *str, MNEMONIC *mne)
 
     /* for byte, .byte, word, .word, long, .long */
     if (mne->name[0] != 'd') {
-        static char tmp[4];
-        strcpy(tmp, "x.x");
-        tmp[2] = mne->name[0];
-        findext(tmp);
+        static char sTmp[4];
+        strcpy(sTmp, "x.x");
+        sTmp[2] = mne->name[0];
+        findext(sTmp);
     }
 
 	/* F8... */
 
     /* db, dw, dd */
     if ( (mne->name[0] == 'd') && (mne->name[1] != 'c') ) {
-        static char tmp[4];
-        strcpy(tmp, "x.x");
+        static char sTmp[4];
+        strcpy(sTmp, "x.x");
         if ('d' == mne->name[1]) {
-			tmp[2] = 'l';
+			sTmp[2] = 'l';
 		} else {
-            tmp[2] = mne->name[1];
+            sTmp[2] = mne->name[1];
 		}
-        findext(tmp);
+        findext(sTmp);
     }
 
 	/* ...F8 */
@@ -782,7 +813,7 @@ v_align(char *str, MNEMONIC *dummy)
         }
         else
         {
-            fill = sym->value;
+            fill = sym->next->value;
         }
     }
     if (rorg) {
@@ -933,10 +964,13 @@ v_echo(char *str, MNEMONIC *dummy)
                 sprintf(buf,"$%lx", s->value);
             if (FI_listfile)
                 fprintf(FI_listfile, " %s", buf);
-            printf(" %s", buf);
+            //printf(" %s", buf); 
+            addmsg(" "); // -FXQ supress output until final pass
+            addmsg(buf);
         }
     }
-    puts("");
+    //puts("");
+    addmsg("\n");
     if (FI_listfile)
         putc('\n', FI_listfile);
 }
@@ -971,7 +1005,7 @@ v_execmac(char *str, MACRO *mac)
         return;
     }
     ++Mlevel;
-    base = (STRLIST *)ckmalloc(sizeof(STRLIST)-STRLISTSIZE+strlen(str)+1);
+    base = (STRLIST *)ckmalloc(STRLISTSIZE+strlen(str)+1);
     base->next = NULL;
     strcpy(base->buf, str);
     psl = &base->next;
@@ -979,7 +1013,7 @@ v_execmac(char *str, MACRO *mac)
         s1 = str;
         while (*str && *str != '\n' && *str != ',')
             ++str;
-        sl = (STRLIST *)ckmalloc(sizeof(STRLIST)-STRLISTSIZE+1+(str-s1));
+        sl = (STRLIST *)ckmalloc(STRLISTSIZE+1+(str-s1));
         sl->next = NULL;
         *psl = sl;
         psl = &sl->next;
@@ -1234,7 +1268,7 @@ v_incdir(char *str, MNEMONIC *dummy)
         free(buf);
 }
 
-void
+static void
 addpart(char *dest, const char *dir, const char *file)
 {
 #if 0	/* not needed here */

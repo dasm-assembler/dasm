@@ -1,0 +1,25 @@
+$Id: FUTURE 91 2008-04-06 22:53:41Z phf $
+
+===============
+The DASM Oracle
+===============
+
+Climbing the last few steps, you have finally reached the mystical
+Oracle of DASM my weary apprentice. Come now and gaze upon a future
+once unknown to mere mortals.
+
+    * ftohex seems to be broken compared to Matt Dillon's 2.16 so we
+      will probably import his version; while at it we'll grab his
+      ftobin tool as well
+
+    * error messages currently going to stdout will go to stderr
+      instead; prepare to adjust your development environments if
+      you're using those messages for something automated
+
+    * command line option parsing will get an overhaul, either we
+      switch to GNU getopt, or we'll roll our own improved parsing;
+      gone will be the days of not being able to put a space where
+      you wanted one; we'll also have --long-options (we hope)
+
+If you have any ideas for DASM's future, please feel free to contact
+us. Visit http://dasm-dillon.sf.net/ for more information.

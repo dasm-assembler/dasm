@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: asm.h 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,17 +18,13 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
  *  ASM65.H
- *
- *  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
- *  Modifications Copyright 1995 by Olaf Seibert. All Rights Reserved.
  *
  *  Structures and definitions
  */
@@ -31,6 +32,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
+/* tag object files going into dasm executable */
+#define SVNTAG(id) static const char _svnid[] = id
 
 #define OlafFreeFormat    0    /* Decide on looks of word if it is opcode */
 #define OlafHashFormat    1    /* Decide on # and ^ if it is an opcode */
@@ -39,16 +44,28 @@
 #error This cannot be!
 #endif
 
+/* for -T option [phf] */
+typedef enum
+{
+  SORTMODE_DEFAULT,
+  SORTMODE_ALPHA = SORTMODE_DEFAULT,
+  SORTMODE_ADDRESS,
+  SORTMODE_MAX
+} sortmode_t;
+
+/* for -E option [phf] */
+typedef enum
+{
+  ERRORFORMAT_DEFAULT,
+  ERRORFORMAT_WOE = ERRORFORMAT_DEFAULT,
+  ERRORFORMAT_DILLON,
+  ERRORFORMAT_GNU,
+  ERRORFORMAT_MAX
+} errorformat_t;
+
 #define DAD
 
 #ifdef DAD
-
-#ifndef bool
-#define bool int
-#define false 0
-#define true 1
-#endif
-
 
 enum FORMAT
 {
@@ -111,7 +128,7 @@ enum FORMAT
     {
         int nErrorType;                                 /* ASM_ERROR_EQUATES value */
         bool bFatal;                                    /* 0 = OK, non-zero = cannot continue compilation */
-        char *sDescription;                             /* Error message */
+        const char *sDescription;                             /* Error message */
 
     } ERROR_DEFINITION;
 
@@ -132,7 +149,8 @@ enum FORMAT
         REASON_IF_NOT_RESOLVED = 1 << 11,
         REASON_REPEAT_NOT_RESOLVED = 1 << 12,
         REASON_FORWARD_REFERENCE = 1 << 13,
-        REASON_PHASE_ERROR = 1 << 14
+        REASON_PHASE_ERROR = 1 << 14,
+        REASON_BRANCH_OUT_OF_RANGE = 1 << 15
     };
 
 
@@ -212,7 +230,9 @@ STRLIST {
     char    buf[4];
 };
 
-#define STRLISTSIZE    4
+//#define STRLISTSIZE    4
+//FIX: the above is only true on 32-bit. Thanks to Olaf 'Rhialto' Seibert. 
+#define STRLISTSIZE    (sizeof(STRLIST)-4)
 
 #define MF_IF					0x04
 #define MF_MACRO				0x08
@@ -224,11 +244,14 @@ STRLIST {
 MNEMONIC {
     MNEMONIC     *next;        /*    hash        */
     void    (*vect)(char *, MNEMONIC *);    /*  dispatch        */
-    char    *name;        /*    actual name    */
+    const char    *name;        /*    actual name    */
     unsigned char   flags;        /*    special flags    */
     unsigned long   okmask;
     unsigned int opcode[NUMOC];  /*    hex codes, byte or word (>xFF) opcodes    */
 };
+
+/* MNEMONIC with all fields 0, used as end-of-table marker. */
+#define MNEMONIC_NULL {NULL, NULL, NULL, 0, 0, {0,}}
 
 MACRO {
     MACRO   *next;
@@ -310,7 +333,7 @@ SYMBOL {
     char    *string;    /*  if symbol is actually a string  */
     unsigned char   flags;    /*  flags                */
     unsigned char   addrmode;    /*  addressing mode (expressions)   */
-    unsigned long   value;    /*  current value            */
+    long value; /* current value, never EVER change this to unsigned! */
     unsigned int namelen;    /*  name length             */
 };
 
@@ -344,8 +367,10 @@ extern unsigned long    Redo_if;
 extern unsigned long    Localindex, Lastlocalindex;
 extern unsigned long    Localdollarindex, Lastlocaldollarindex;
 extern int   F_format;
+extern sortmode_t F_sortmode; /* -T option [phf] */
+extern errorformat_t F_errorformat; /* -E option [phf] */
 extern unsigned char    F_verbose;
-extern char    *F_outfile;
+extern const char    *F_outfile;
 extern char    *F_listfile;
 extern char    *F_symfile;
 extern FILE    *FI_listfile;
@@ -362,7 +387,7 @@ extern unsigned long  CheckSum;
 /* main.c */
 /*extern unsigned char Listing;*/
 void    findext(char *str);
-int    asmerr(int err, bool abort, char *sText);
+int    asmerr(int err, bool bAbort, const char *sText);
 char   *sftos(long val, int flags);
 void    rmnode(void **base, int bytes);
 void    addhashtable(MNEMONIC *mne);
@@ -375,9 +400,9 @@ char   *strlower(char *str);
 /* symbols.c */
 void    setspecial(int value, int flags);
 SYMBOL *allocsymbol(void);
-SYMBOL *findsymbol(char *str, int len);
-SYMBOL *CreateSymbol( char *str, int len );
-void    freesymbollist(SYMBOL *sym);
+SYMBOL *findsymbol(const char *str, int len);
+SYMBOL *CreateSymbol( const char *str, int len );
+void    FreeSymbolList(SYMBOL *sym);
 void    programlabel(void);
 
 /* ops.c */
@@ -386,6 +411,7 @@ extern    int Glen;
 void    v_set(char *str, MNEMONIC *);
 void    v_mexit(char *str, MNEMONIC *);
 void    closegenerate(void);
+void    generate(void);
 
 void v_list(char *, MNEMONIC *);
 void v_include(char *, MNEMONIC *);
@@ -425,7 +451,7 @@ FILE *pfopen(const char *, const char *);
 
 
 /* exp.c */
-SYMBOL *eval(char *str, int wantmode);
+SYMBOL *eval(const char *str, int wantmode);
 
 
 

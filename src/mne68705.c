@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: mne68705.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,19 +18,18 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
  *  MNE68705.C
- *
- *  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
  */
 
 #include "asm.h"
+
+SVNTAG("$Id: mne68705.c 327 2014-02-09 13:06:55Z adavie $");
 
 #define AFSTD	AF_BYTEADR|AF_BYTEADRX|AF_WORDADR|AF_WORDADRX|AF_0X
 
@@ -118,6 +122,6 @@ MNEMONIC Mne68705[] = {
     { NULL, v_mnemonic, "tsta", 0,AF_IMP, { 0x4D } },
     { NULL, v_mnemonic, "tstx", 0,AF_IMP, { 0x5D } },
     { NULL, v_mnemonic, "txa", 0, AF_IMP, { 0x9F } },
-    NULL
+    MNEMONIC_NULL
 };
 

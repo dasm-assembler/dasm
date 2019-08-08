@@ -1,8 +1,30 @@
+/*
+    $Id: mne6811.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 /*
  *  MNE6811.C
- *
- *  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
  *
  *  68HC11 processor
  *
@@ -22,6 +44,8 @@
  */
 
 #include "asm.h"
+
+SVNTAG("$Id: mne6811.c 327 2014-02-09 13:06:55Z adavie $");
 
 #define AF_STD	 (AF_BYTEADR|AF_BYTEADRX|AF_BYTEADRY|AF_WORDADR)
 #define AF_STDI  (AF_IMM8|AF_STD)
@@ -176,8 +200,6 @@ MNEMONIC Mne68HC11[] = {
     { NULL, v_mnemonic, "wai",    0, AF_IMP, { 0x3E } },
     { NULL, v_mnemonic, "xgdx",   0, AF_IMP, { 0x8F } },
     { NULL, v_mnemonic, "xgdy",   0, AF_IMP, { 0x188F } },
-    NULL
+    MNEMONIC_NULL
 };
-
-
 

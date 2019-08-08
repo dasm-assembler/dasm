@@ -1,0 +1,12 @@
+$Id: README 116 2008-04-09 05:11:06Z phf $
+
+This is a directory to keep experiments in, stuff that was
+written to explore some aspect of DASM and improve on it.
+
+Do *not* put an actual *branch* of DASM here, that's what
+the branches/ directory in the SVN root is for! (However,
+snippets of potential replacement code are okay I guess?)
+
+We don't put this stuff into distributions, but people who
+use SVN to track DASM will see it.
+

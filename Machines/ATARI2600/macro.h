@@ -147,7 +147,6 @@ VERSION_MACRO         = 106
 ;
 ; eg: BOUNDARY 5    ; position at byte #5 in page
 
-__DASM__TOTAL_FREE_MEMORY	SET 0
 .FREE_BYTES SET 0   
    MAC BOUNDARY
       REPEAT 256
@@ -158,7 +157,6 @@ __DASM__TOTAL_FREE_MEMORY	SET 0
             .byte $00
          ENDIF
       REPEND
-__DASM__TOTAL_FREE_MEMORY SET __DASM__TOTAL_FREE_MEMORY + .FREE_BYTES
    ENDM
 
 

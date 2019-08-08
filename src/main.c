@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: main.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,37 +18,56 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /*
-*  MAIN.C
-*  DASM   sourcefile
-*  NOTE: must handle mnemonic extensions and expression decode/compare.
-*/
+ *  MAIN.C
+ *  DASM   sourcefile
+ *  NOTE: must handle mnemonic extensions and expression decode/compare.
+ */
 
+#include <strings.h>
 
 #include "asm.h"
 
+SVNTAG("$Id: main.c 327 2014-02-09 13:06:55Z adavie $");
+
+static const char dasm_id[] = "DASM 2.20.11 20140304";
 
 #define MAXLINE 1024
 #define ISEGNAME    "INITIAL CODE SEGMENT"
 
-char *cleanup(char *buf, bool bDisable);
+/*
+   replace old atoi() calls; I wanted to protect this using
+   #ifdef strtol but the C preprocessor doesn't recognize
+   function names, at least not GCC's; we should be safe
+   since MS compilers document strtol as well... [phf]
+*/
+#define atoi(x) ((int)strtol(x, (char **)NULL, 10))
+
+static const char *cleanup(char *buf, bool bDisable);
 
 MNEMONIC *parse(char *buf);
-void panic(char *str);
+void panic(const char *str);
 MNEMONIC *findmne(char *str);
 void clearsegs(void);
 void clearrefs(void);
 
-static unsigned int hash1(char *str);
-static void outlistfile(char *);
 
+static unsigned int hash1(const char *str);
+static void outlistfile(const char *);
 
+void addmsg(char *message); // add to message buffer (FXQ)
+
+// buffers to supress errors and messages until last pass - FXQ
+static char errorbuffer[1000000]; // per-pass error buffer
+static char erroradd1[500]; // temp error holders
+static char erroradd2[500];
+static char erroradd3[500];
+static char msgbuffer[10000]; // user echo buffer
 
 /* Table encapsulates errors, descriptions, and fatality flags. */
 
@@ -66,7 +90,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_NOT_ENOUGH_ARGUMENTS_PASSED_TO_MACRO,   true,   "Not enough args passed to Macro."   },
     { ERROR_PREMATURE_EOF,                          false,  "Premature EOF."   },
     { ERROR_ILLEGAL_CHARACTER,                      true,   "Illegal character '%s'."   },
-    { ERROR_BRANCH_OUT_OF_RANGE,                    true,   "Branch out of range (%s bytes)."   },
+    { ERROR_BRANCH_OUT_OF_RANGE,                    false,   "Branch out of range (%s bytes)."   },
     { ERROR_ERR_PSEUDO_OP_ENCOUNTERED,              true,   "ERR pseudo-op encountered."  },
     { ERROR_ORIGIN_REVERSE_INDEXED,                 false,  "Origin Reverse-indexed."   },
     { ERROR_EQU_VALUE_MISMATCH,                     false,  "EQU: Value mismatch."   },
@@ -86,27 +110,28 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_VALUE_MUST_BE_LT_F,						true,	"Value in '%s' must be <$f." },
 	{ ERROR_VALUE_MUST_BE_LT_10000,					true,	"Value in '%s' must be <$10000." },
 	{ ERROR_ILLEGAL_OPERAND_COMBINATION,			true,	"Illegal combination of operands '%s'" },
-    NULL
+    {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
 #define MAX_ERROR (( sizeof( sErrorDef ) / sizeof( ERROR_DEFINITION )))
 
 bool bStopAtEnd = false;
 
+int nMaxPasses = 10;
 
 char     *Extstr;
 /*unsigned char     Listing = 1;*/
+
 int     pass;
 
 unsigned char     F_ListAllPasses = 0;
 
 
 
-const char name[] = "DASM V2.20.10, Macro Assembler (C)1988-2004";
 
 
 
-int CountUnresolvedSymbols()
+static int CountUnresolvedSymbols(void)
 {
     SYMBOL *sym;
     int nUnresolved = 0;
@@ -122,7 +147,7 @@ int CountUnresolvedSymbols()
 }
 
 
-int ShowUnresolvedSymbols()
+static int ShowUnresolvedSymbols(void)
 {
     SYMBOL *sym;
     int i;
@@ -145,80 +170,39 @@ int ShowUnresolvedSymbols()
 }
 
 
-int CompareAlpha( const void *arg1, const void *arg2 )
+static int CompareAlpha( const void *arg1, const void *arg2 )
 {
     /* Simple alphabetic ordering comparison function for quicksort */
+
+    const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
+    const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
     
-    SYMBOL **sym1, **sym2;
-    int nSym1Size, nSym2Size;
-    char *pSym1LC, *pSym2LC;
-    char *pSrc, *pDest;
-    int nCompare;
-    
-    sym1 = (SYMBOL **) arg1;
-    sym2 = (SYMBOL **) arg2;
-    
-    nSym1Size = strlen( (*sym1)->name ) + 1;
-    nSym2Size = strlen( (*sym2)->name ) + 1;
-    
-    
-    
-    /* Primitive manual to lowercase conversion */
-    
-    pSym1LC = ckmalloc( nSym1Size );
-    pDest = pSym1LC;
-    pSrc = (*sym1)->name;
-    while ( *pSrc )
-    {
-        if ( *pSrc >= 'A' && *pSrc <= 'Z' )
-            *pDest = *pSrc - 'A' + 'a';
-        else
-            *pDest = *pSrc;
-        
-        *pDest++;
-        *pSrc++;
-    }
-    *pDest = 0;         /* terminator */
-    
-    /* Primitive manual to lowercase conversion */
-    
-    pSym2LC = ckmalloc( nSym2Size );
-    pDest = pSym2LC;
-    pSrc = (*sym2)->name;
-    while ( *pSrc )
-    {
-        if ( *pSrc >= 'A' && *pSrc <= 'Z' )
-            *pDest = *pSrc - 'A' + 'a';
-        else
-            *pDest = *pSrc;
-        
-        *pDest++;
-        *pSrc++;
-    }
-    *pDest = 0;         /* terminator */
-    
-    nCompare = strcmp( pSym1LC, pSym2LC );
-    
-    free( pSym2LC );
-    free( pSym1LC );
-    
-    return nCompare;
+    /*
+       The cast above is wild, thank goodness the Linux man page
+       for qsort(3) has an example explaining it... :-) [phf]
+
+       TODO: Note that we compare labels case-insensitive here which
+       is not quite right; I believe we should be case-sensitive as
+       in other contexts where symbols (labels) are compared. But
+       the old CompareAlpha() was case-insensitive as well, so I
+       didn't want to change that right now... [phf]
+    */
+
+    return strcasecmp(sym1->name, sym2->name);
 }
 
-int CompareAddress( const void *arg1, const void *arg2 )
+static int CompareAddress( const void *arg1, const void *arg2 )
 {
     /* Simple numeric ordering comparison function for quicksort */
     
-    SYMBOL **sym1, **sym2;
+    const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
+    const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
     
-    sym1 = (SYMBOL **) arg1;
-    sym2 = (SYMBOL **) arg2;
-    
-    return (*sym1)->value - (*sym2)->value;
+    return sym1->value - sym2->value;
 }
 
-
-void ShowSymbols( FILE *file, bool bTableSort )
+/* bTableSort true -> by address, false -> by name [phf] */
+static void ShowSymbols( FILE *file, bool bTableSort )
 {
     /* Display sorted (!) symbol table - if it runs out of memory, table will be displayed unsorted */
     
@@ -290,11 +274,11 @@ void ShowSymbols( FILE *file, bool bTableSort )
 
 
 
-void ShowSegments()
+static void ShowSegments(void)
 {
     SEGMENT *seg;
-    char *bss;
-    char *sFormat = "%-24s %-3s %-8s %-8s %-8s %-8s\n\0";
+    const char *bss;
+    const char *sFormat = "%-24s %-3s %-8s %-8s %-8s %-8s\n\0";
     
     
     
@@ -360,6 +344,9 @@ void ShowSegments()
         
         if ( Redo_why & REASON_PHASE_ERROR )
             printf( " - Label value is different from that of the previous pass (phase error).\n" );
+
+        if ( Redo_why & REASON_BRANCH_OUT_OF_RANGE )
+            printf( " - Branch was out of range.\n" );
     }
     
     printf( "\n" );
@@ -368,7 +355,7 @@ void ShowSegments()
 
 
 
-void DumpSymbolTable( bool bTableSort )
+static void DumpSymbolTable( bool bTableSort )
 {
     if (F_symfile)
     {
@@ -387,14 +374,13 @@ void DumpSymbolTable( bool bTableSort )
 }
 
 
-int MainShadow(int ac, char **av, bool *pbTableSort )
+static int MainShadow(int ac, char **av, bool *pbTableSort )
 {
     
     
     
     int nError = ERROR_NONE;
     bool bDoAllPasses = false;
-    int nMaxPasses = 10;
     
     char buf[MAXLINE];
     int i;
@@ -406,31 +392,39 @@ int MainShadow(int ac, char **av, bool *pbTableSort )
     
     addhashtable(Ops);
     pass = 1;
-    
+
     if (ac < 2)
     {
-        
+
 fail:
-    puts("redistributable for non-profit only");
+    puts(dasm_id);
+    puts("Copyright (c) 1988-2008 by various authors (see file AUTHORS).");
+    puts("License GPLv2+: GNU GPL version 2 or later (see file COPYING).");
+    puts("DASM is free software: you are free to change and redistribute it.");
+    puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law.");
     puts("");
-    puts("DASM sourcefile [options]");
-    puts(" -f#      output format");
-    puts(" -oname   output file");
-    puts(" -lname   list file");
-    puts(" -Lname   list file, containing all passes");
-    puts(" -sname   symbol dump");
-    puts(" -v#      verboseness");
-    puts(" -t#      Symbol Table sorting preference (#1 = by address.  default #0 = alphabetic)" );
-    puts(" -Dname=exp   define label");
-    puts(" -Mname=exp   define label as in EQM");
-    puts(" -Idir    search directory for include and incbin");
-    puts(" -p#      max number of passes");
-    puts(" -P#      max number of passes, with less checks");
-    
+    puts("Usage: dasm sourcefile [options]");
+    puts("");
+    puts("-f#      output format 1-3 (default 1)");
+    puts("-oname   output file name (else a.out)");
+    puts("-lname   list file name (else none generated)");
+    puts("-Lname   list file, containing all passes");
+    puts("-sname   symbol dump file name (else none generated)");
+    puts("-v#      verboseness 0-4 (default 0)");
+    puts("-d       debug mode (for developers)");
+    puts("-Dsymbol              define symbol, set to 0");
+    puts("-Dsymbol=expression   define symbol, set to expression");
+    puts("-Msymbol=expression   define symbol using EQM (same as -D)");
+    puts("-Idir    search directory for INCLUDE and INCBIN");
+    puts("-p#      maximum number of passes");
+    puts("-P#      maximum number of passes, with fewer checks");
+    puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value)");
+    puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
+    puts("");
+    puts("Report bugs to dasm-dillon-discuss@lists.sf.net please!");
+
     return ERROR_COMMAND_LINE;
     }
-    
-    puts(name);
     
     for (i = 2; i < ac; ++i)
     {
@@ -439,16 +433,32 @@ fail:
             char *str = av[i]+2;
             switch(av[i][1])
             {
-                
+            /* TODO: need to improve option parsing and errors for it */
+            case 'E':
+                F_errorformat = atoi(str);
+                if (F_errorformat < ERRORFORMAT_DEFAULT
+                   || F_errorformat >= ERRORFORMAT_MAX )
+                {
+                    panic("Invalid error format for -E, must be 0, 1, 2");
+                }
+                break;
+
             case 'T':
-                *pbTableSort = ( atoi( str ) != 0 );
+                F_sortmode = atoi(str);
+                if (F_sortmode < SORTMODE_DEFAULT
+                   || F_sortmode >= SORTMODE_MAX )
+                {
+                    panic("Invalid sorting mode for -T option, must be 0 or 1");
+                }
+                /* TODO: refactor into regular configuration [phf] */
+                *pbTableSort = (F_sortmode != SORTMODE_DEFAULT);
                 break;
                 
             case 'd':
                 Xdebug = atoi(str) != 0;
                 printf( "Debug trace %s\n", Xdebug ? "ON" : "OFF" );
                 break;
-                
+
             case 'M':
             case 'D':
                 while (*str && *str != '=')
@@ -506,9 +516,6 @@ nofile:
                 F_verbose = atoi(str);
                 break;
                 
-            case 't':   /*  F_temppath  */
-                break;
-                
             case 'I':
                 v_incdir(str, NULL);
                 break;
@@ -539,6 +546,9 @@ nofile:
         Ifstack = ifs;
     }
     
+    // ready error and message buffer...
+    errorbuffer[0]='\0';
+    msgbuffer[0]='\0';
     
 nextpass:
     
@@ -577,7 +587,7 @@ nextpass:
     while ( pIncfile )
     {
         for (;;) {
-            char *comment;
+            const char *comment;
             if ( pIncfile->flags & INF_MACRO) {
                 if ( pIncfile->strlist == NULL) {
                     Av[0] = "";
@@ -682,9 +692,13 @@ nextpass:
 
             Redo_if <<= 1;
             ++pass;
+
             
             if ( bStopAtEnd )
             {
+                // Only print errors if assembly is unsuccessful!!!!!
+                // by FXQ
+                printf("%s\n",errorbuffer);
                 printf("Unrecoverable error(s) in pass, aborting assembly!\n");
             }
             else if ( pass > nMaxPasses )
@@ -696,19 +710,33 @@ nextpass:
             }
             else
             {
+                // flush error and message buffer after each pass. -FXQ
+                errorbuffer[0]='\0';
+                msgbuffer[0]='\0';
+
                 clearrefs();
                 clearsegs();
                 goto nextpass;
             }
     }
-    
+    // Do not print any errors if assembly is successful!!!!! -FXQ
+    // only print messages from last pass and if there's no errors
+    if (!bStopAtEnd)
+    {
+        msgbuffer[0]=' ';
+        printf("%s\n",msgbuffer);
+    }
     printf( "Complete.\n" );
-    
     return nError;
 }
 
+void addmsg(char *message) // add to message buffer (FXQ)
+{
+  strcat(msgbuffer,message);
+}
 
-int tabit(char *buf1, char *buf2)
+
+static int tabit(char *buf1, char *buf2)
 {
     char *bp, *ptr;
     int j, k;
@@ -740,14 +768,14 @@ int tabit(char *buf1, char *buf2)
     return (int)(bp - buf2);
 }
 
-static void outlistfile(char *comment)
+static void outlistfile(const char *comment)
 {
     char xtrue;
     char c;
     static char buf1[MAXLINE+32];
     static char buf2[MAXLINE+32];
-    char *ptr;
-    char *dot;
+    const char *ptr;
+    const char *dot;
     int i, j;
     
 
@@ -865,12 +893,12 @@ void clearrefs(void)
 
 
 
-char *cleanup(char *buf, bool bDisable)
+static const char *cleanup(char *buf, bool bDisable)
 {
     char *str;
     STRLIST *strlist;
     int arg, add;
-    char *comment = "";
+    const char *comment = "";
     
     for (str = buf; *str; ++str)
     {
@@ -945,7 +973,7 @@ char *cleanup(char *buf, bool bDisable)
                 add += strlen(strlist->buf);
                 
                 if (Xdebug)
-                    printf("strlist: '%s' %d\n", strlist->buf, strlen(strlist->buf));
+                    printf("strlist: '%s' %zu\n", strlist->buf, strlen(strlist->buf));
                 
                 if (str + add + strlen(str) + 1 > buf + MAXLINE)
                 {
@@ -982,7 +1010,7 @@ br2:
     return comment;
 }
 
-void panic(char *str)
+void panic(const char *str)
 {
     puts(str);
     exit(1);
@@ -1157,7 +1185,7 @@ MNEMONIC *parse(char *buf)
     mne = findmne(Av[0]);
     if (mne != NULL) {
     /* Yes, it is. So there is no label, and the rest
-    * of the line is the argument
+     * of the line is the argument
         */
         Avbuf[0] = 0;    /* Make an empty string */
         Av[1] = Av[0];    /* The opcode is the previous first word */
@@ -1255,7 +1283,7 @@ void v_macro(char *str, MNEMONIC *dummy)
         MHash[i] = (MNEMONIC *)mac;
     }
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
-        char *comment;
+        const char *comment;
         
         if (Xdebug)
             printf("%08lx %s\n", (unsigned long) pIncfile, buf);
@@ -1305,7 +1333,7 @@ void addhashtable(MNEMONIC *mne)
 }
 
 
-static unsigned int hash1(char *str)
+static unsigned int hash1(const char *str)
 {
     unsigned int result = 0;
     
@@ -1342,10 +1370,12 @@ void pushinclude(char *str)
 
 
 
-int asmerr(int err, bool abort, char *sText )
+int asmerr(int err, bool bAbort, const char *sText )
 {
-    char *str;
+    const char *str;
     INCFILE *pincfile;
+    /* file pointer we print error messages to */
+    FILE *error_file = NULL;
     
     if ( err >= MAX_ERROR || err < 0 )
     {
@@ -1359,39 +1389,85 @@ int asmerr(int err, bool abort, char *sText )
         
         for ( pincfile = pIncfile; pincfile->flags & INF_MACRO; pincfile=pincfile->next);
         str = sErrorDef[err].sDescription;
-        
-#ifdef DAD
-        
-        /* Error output format changed to be Visual-Studio compatible.
-        Output now file (line): error: string
+
+        /*
+            New error format selection for 2.20.11 since some
+            people *don't* use MS products. For historical
+            reasons we currently send errors to stdout when
+            they should really go to stderr, but we'll switch
+            eventually I hope... [phf]
         */
-        
-        if (F_listfile)
+
+        /* determine the file pointer to use */
+        error_file = (F_listfile != NULL) ? FI_listfile : stdout;
+
+        /* print first part of message, different formats offered */
+        switch (F_errorformat)
         {
-            fprintf(FI_listfile, "%s (%d): error: ", pincfile->name, pincfile->lineno );
-            fprintf(FI_listfile, str, sText ? sText : "" );
-            fprintf(FI_listfile, "\n" );
+            case ERRORFORMAT_WOE:
+                /*
+                    Error format for MS VisualStudio and relatives:
+                    "file (line): error: string"
+                */
+                if(error_file!=stdout)
+                    fprintf(error_file, "%s (%lu): error: ",
+                        pincfile->name, pincfile->lineno);
+                sprintf(erroradd1, "%s (%lu): error: ",
+                    pincfile->name, pincfile->lineno); // -FXQ
+                break;
+            case ERRORFORMAT_DILLON:
+                /*
+                    Matthew Dillon's original format, except that
+                    we don't distinguish writing to the terminal
+                    from writing to the list file for now. Matt's
+                    2.16 uses these:
+
+                      "*line %4ld %-10s %s\n" (list file)
+                      "line %4ld %-10s %s\n" (terminal)
+                */
+                if(error_file!=stdout)
+                    fprintf(error_file, "line %7ld %-10s ",
+                        pincfile->lineno, pincfile->name);
+                sprintf(erroradd1, "line %7ld %-10s ",
+                    pincfile->lineno, pincfile->name); // -FXQ
+                break;
+            case ERRORFORMAT_GNU:
+                /*
+                    GNU format error messages, from their coding
+                    standards.
+                */
+                if(error_file!=stdout)
+                    fprintf(error_file, "%s:%lu: error: ",
+                        pincfile->name, pincfile->lineno);
+                sprintf(erroradd1, "%s:%lu: error: ",
+                    pincfile->name, pincfile->lineno); // -FXQ
+                break;
+            default:
+                /* TODO: really panic here? [phf] */
+                panic("Invalid error format, internal error!");
+                break;
         }
-        printf( "%s (%d): error: ", pincfile->name, pincfile->lineno );
-        printf( str, sText ? sText : "" );
-        printf( "\n" );
-        
-        
-#else
-        
-        if (F_listfile)
-            fprintf(FI_listfile, "*line %7ld %-10s %s\n", pincfile->lineno, pincfile->name, str);
-        printf("line %7ld %-10s %s\n", pincfile->lineno, pincfile->name, str);
-        
-#endif
-        
-        if ( abort )
+
+        if(error_file!=stdout)
         {
-            puts("Aborting assembly");
-            if (F_listfile)
-                fputs("Aborting assembly\n", FI_listfile);
-            
-            exit( 1 );
+            /* print second part of message, always the same for now */
+            fprintf(error_file, str, sText ? sText : "");
+            fprintf(error_file, "\n");
+        }
+        sprintf(erroradd2, str, sText ? sText : "");
+        sprintf(erroradd3, "\n");
+
+        strcat(errorbuffer,erroradd1);
+        strcat(errorbuffer,erroradd2);
+        strcat(errorbuffer,erroradd3);
+        
+        if ( bAbort )
+        {
+            msgbuffer[0]=' ';
+            printf("%s\n",msgbuffer); // dump messages from this pass
+            fprintf(error_file, "Aborting assembly\n");
+            printf("%s\n",errorbuffer); // time to dump the errors from this pass!
+            exit(EXIT_FAILURE);
         }
     }
     
@@ -1465,9 +1541,18 @@ int main(int ac, char **av)
 {
     bool bTableSort = false;
     int nError = MainShadow( ac, av, &bTableSort );
-    
+
     if ( nError )
+    {
+	// dump messages when aborting due to errors
+        msgbuffer[0]=' ';
+        printf("%s\n",msgbuffer); // dump messages from this pass
+
+        // Only print errors if assembly is unsuccessful!!!!! - FXQ
+        printf("%s\n",errorbuffer);
+
         printf( "Fatal assembly error: %s\n", sErrorDef[nError].sDescription );
+    }
     
     DumpSymbolTable( bTableSort );
     

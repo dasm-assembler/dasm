@@ -1,0 +1,61 @@
+$Id: HACKING 99 2008-04-07 04:34:12Z phf $
+
+TODO: this is preliminary for now, please send me whatever feedback
+you have before we do the first new release! [phf]
+
+============
+Hacking dasm
+============
+
+Thank you for considering dasm as a project to hack on. Here are a
+few short rules to ensure things go smoothly.
+
+- if you add a new text file to the repository, make sure you set
+  the svn:eol-style=native property so we can get rid of linefeed
+  issues once and for all; we've adapted
+
+    svn-eol-style.txt
+    (see http://www.apache.org/dev/svn-eol-style.txt for original)
+
+  from the Apache project for dasm, you can just merge that into
+  your local SVN configuration and you're good to go; for most
+  file extensions anyway, feel free to add more and submit a new
+  version of svn-eol-style.txt to us; do *not* ever *remove*
+  svn:eol-style=native from any files!
+
+- before committing a new version of .c or .h files, please run
+  them through GNU indent; the src/ directory has our default
+
+    .indent.pro
+
+  file, just stick to it; this will ensure a minimally consistent
+  style for all dasm code, although it doesn't enforce anything
+  beyond formatting; we tuned the parameters for GNU indent to
+  approximate the existing style (due to Matt, Olaf, and Andrew)
+  although a few changes had to be made to accomodate GNU indent
+
+- make sure that all your text files, including source code, fit
+  nicely on 80 character wide terminals; ideally you break lines
+  at about 70 characters; if in doubt, indent will do it for you
+  but maybe not the way you wanted it to...
+
+- do *not* use fancy formatting for your comments in source code,
+  do simple stuff as in the existing code; indent will not clean
+  up fancy comment formats, but someone will have to, to keep the
+  code in shape...
+
+- do *not* commit code that doesn't compile without warnings; it
+  took quite an effort to make sure everything is C99 compliant
+  and works well on POSIX systems; if you find a warning in the
+  existing code base (with a newer version of gcc for example),
+  let us know ASAP and (ideally) submit a fix right away
+
+- do *not* commit code that doesn't pass all the test cases; if
+  your changes are intentionally yielding different results, we
+  need to discuss them on the developer mailing list before you
+  commit the code
+
+There will probably be a few more rules in the future, and the
+current rules are subject to change as well as the world keeps
+turning. Check back here if in doubt about anything. :-)
+

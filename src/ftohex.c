@@ -1,7 +1,12 @@
 /*
-    DASM Assembler
-    Portions of this code are Copyright (C)1988 Matthew Dillon
-    and (C) 1995 Olaf Seibert, (C)2003 Andrew Davie 
+    $Id: ftohex.c 327 2014-02-09 13:06:55Z adavie $
+
+    the DASM macro assembler (aka small systems cross assembler)
+
+    Copyright (c) 1988-2002 by Matthew Dillon.
+    Copyright (c) 1995 by Olaf "Rhialto" Seibert.
+    Copyright (c) 2003-2008 by Andrew Davie.
+    Copyright (c) 2008 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,40 +18,34 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 /*
  *  FTOHEX.C
- *
- *  (c)Copyright 1988, Matthew Dillon, All Rights Reserved.
  *
  *  FTOHEX format infile [outfile]
  *
  *  format: format used when assembling (asm705/asm65)
  *	    1,2,3	    -generate straight hex file
  *
- *  compilable on an ibm-pc or Amiga  _fmode is for Lattice C on the ibm,
- *  is IGNORED by Aztec C on the Amiga.  Note that INT and CHAR are not
- *  used as ibm's lattice C uses 16 bit ints and unsigned chars.  Change
- *  as needed.	No guarentees for the IBMPC version.
- *  FTOHEX format infile [outfile]
+ *  Note that int and char are not used as Lattice C on IBM PCs uses
+ *  16 bit ints and unsigned chars.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
+static const char svnid[] = "$Id: ftohex.c 327 2014-02-09 13:06:55Z adavie $";
 
 #define PERLINE 16
 
-void exiterr(char *str);
+void exiterr(const char *str);
 void convert(int format, FILE *in, FILE *out);
 unsigned int getwlh(FILE *in);
 void puth(unsigned char c, FILE *out);
-
-unsigned int _fmode = 0;
 
 int
 main(int ac, char **av)
@@ -55,11 +54,10 @@ main(int ac, char **av)
     FILE *infile;
     FILE *outfile;
 
-    _fmode = 0x8000;
     if (ac < 3) {
 	puts("FTOHEX format infile [outfile]");
 	puts("format 1,2, or 3.  3=raw");
-	puts("(C)Copyright 1987 by Matthew Dillon, All Rights Reserved");
+	puts("Copyright (c) 1988-2008 by various authors (see file AUTHORS).");
 	exit(1);
     }
     format = atoi(av[1]);
@@ -79,7 +77,7 @@ main(int ac, char **av)
 }
 
 void
-exiterr(char *str)
+exiterr(const char *str)
 {
     fputs(str, stderr);
     fputs("\n", stderr);
@@ -121,7 +119,7 @@ convert(int format, FILE *in, FILE *out)
     for (;;) {
 	while (len > 0) {
 	    register unsigned char chk;
-	    register int i;
+	    register unsigned int i;
 
 	    idx = (len > PERLINE) ? PERLINE : len;
 	    fread(buf, idx, 1, in);
