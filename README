@@ -1,58 +1,58 @@
 ===================
-Dasm 2.20.12 readme
+DASM 2.20.12 readme
 ===================
 
-    Welcome to Dasm, a versatile macro assembler with support for several
+    Welcome to DASM, a versatile macro assembler with support for several
     8-bit microprocessors including MOS 6502 & 6507; Motorola 6803, 68705,
     and 68HC11; Hitachi HD6303 (extended Motorola 6801); and Fairchild F8.
 
-    This file describes the Dasm distribution, how to compile and install
-    Dasm, and where to get more information about Dasm.
+    This file describes the DASM distribution, how to compile and install
+    DASM, and where to get more information about DASM.
 
-    Dasm's homepage is https://dasm-assembler.github.io/ since release
+    DASM's homepage is https://dasm-assembler.github.io/ since release
     2.20.12.
 
 ----------------
 The Distribution
 ----------------
 
-    The Dasm distribution contains the following important files and
+    The DASM distribution contains the following important files and
     directories of interest to all users:
 
-        bin/        Executables for Dasm and related tools
+        bin/        Executables for DASM and related tools
                     (only if you downloaded a binary distribution)
         doc/        Documentation and manuals
         machines/   Support files for various 8-bit machines
-        AUTHORS     List of contributors to Dasm
+        AUTHORS     List of contributors to DASM
         COPYING     GNU General Public License
-        FUTURE      Plans for the next releases of Dasm
-        NEWS        Recent changes to Dasm
+        FUTURE      Plans for the next releases of DASM
+        NEWS        Recent changes to DASM
         README      The file you are reading right now :-)
 
     In addition, developers are going to be interested in the following
     files and directories:
 
-        src/        Source code for Dasm and related tools
-        test/       Test cases for Dasm and related tools
+        src/        Source code for DASM and related tools
+        test/       Test cases for DASM and related tools
                     (as of release 2.20.11 the test framework is incomplete)
-        ChangeLog   Source level changes to Dasm
-        Makefile    Makefile to build Dasm executables, run tests, and
+        ChangeLog   Source level changes to DASM
+        Makefile    Makefile to build DASM executables, run tests, and
                     create distributions
 
-    Even more files for developers are available from the Dasm Subversion
+    Even more files for developers are available from the DASM Subversion
     repository, see http://dasm-dillon.sf.net/ for details.
 
 ------------------------
 Compiling and Installing
 ------------------------
 
-    If you are using Dasm on a Unix system, you should be able to simply
+    If you are using DASM on a Unix system, you should be able to simply
     give the command
 
         make
 
-    in the root directory of the Dasm distribution and Dasm should build.
-    A bin/ directory containing Dasm executables will be created as part
+    in the root directory of the DASM distribution and DASM should build.
+    A bin/ directory containing DASM executables will be created as part
     of this process. You can also give the command
 
         make test
@@ -63,18 +63,18 @@ Compiling and Installing
 
         make install
 
-    does not work as of release 2.20.11 either, mostly because Dasm does
-    not yet use GNU autotools. You have to install Dasm by hand, either
+    does not work as of release 2.20.11 either, mostly because DASM does
+    not yet use GNU autotools. You have to install DASM by hand, either
     by adding the bin/ directory to your path, or by copying executables
     to another directory in your path. For include files in the machines/
-    directory you currently have to use Dasm's -I command line option.
+    directory you currently have to use DASM's -I command line option.
 
     NOTE: Several compiler warnings will be displayed during the build
           process. We are confident that you can ignore these warnings.
           They will be dealt with in a future release. (And if you know
           how to fix them reliably, we welcome your contributions!)
 
-    Dasm has been built and tested successfully on the following machines
+    DASM has been built and tested successfully on the following machines
     and operating systems:
 
         - SunOS 5.10 Generic_118822-11 sun4u sparc
@@ -84,41 +84,41 @@ Compiling and Installing
         - Linux 2.6.24-1-686 i686 GNU/Linux
         - Linux-based cross-compile for Windows/Wine
 
-    If you have successfully built and tested Dasm on a different machine
+    If you have successfully built and tested DASM on a different machine
     or operating system, we would love to hear about it.
 
 ----------
-Using Dasm
+Using DASM
 ----------
 
-    The simplest way to get a brief introduction to Dasm is to run the
+    The simplest way to get a brief introduction to DASM is to run the
     bin/dasm executable without options, which will print a short help
     message summarizing all available options.
 
-    The Dasm distribution includes documentation in the doc/ directory.
+    The DASM distribution includes documentation in the doc/ directory.
     However, the documentation is incomplete as of release 2.20.11. We
     are urgently looking for volunteers to bring it up to date.
 
-    Documentation for using Dasm to produce code for the F8 processor
+    Documentation for using DASM to produce code for the F8 processor
     is currently in the directory machines/channel-f/ but will be
     integrated into the main documentation in the future.
 
     The sourceforge.net project page provides access to two mailing
-    lists, one for announcements from the developers and one for Dasm
+    lists, one for announcements from the developers and one for DASM
     users to discuss problems, help each other, and communicate with
     the developers. See http://sourceforge.net/projects/dasm-dillon/
     for details.
 
     There is also a vibrant community of developers writing games and
-    demos for the Atari 2600 VCS using Dasm. The mailing lists for the
-    Stella emulator are a particularly useful resource for Dasm users,
+    demos for the Atari 2600 VCS using DASM. The mailing lists for the
+    Stella emulator are a particularly useful resource for DASM users,
     not only those intent on programming for the VCS.
 
 --------
 Legalese
 --------
 
-    the Dasm macro assembler (aka small systems cross assembler)
+    the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
