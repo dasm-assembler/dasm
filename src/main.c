@@ -31,11 +31,12 @@
 
 #include <strings.h>
 
+#include "version.h"
 #include "asm.h"
 
 SVNTAG("$Id: main.c 327 2014-02-09 13:06:55Z adavie $");
 
-static const char dasm_id[] = "dasm 2.20.12";
+static const char dasm_id[] = DASM_ID;
 
 #define MAXLINE 1024
 #define ISEGNAME    "INITIAL CODE SEGMENT"
