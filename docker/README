@@ -1,0 +1,20 @@
+
+This directory contains files to create a 'dasm build machine' Docker image that targets all supported platforms (i.e. Linux, Windows and macOS) in a single go!
+
+Steps to create the Docker image:
+
+0. Make sure you have Docker Desktop installed on your machine
+1. Open a command prompt (Windows) or a bash shell (Linux/macOS) into this folder (which contains the Dockerfile)
+2. Run the command: `docker build -t dasm:build .`  
+   Note: this will download/install all build tools and takes a while.
+
+Steps to run the Docker container and build dasm for all platforms:
+
+1. Now run the container: `docker run -it --rm dasm:build`  
+   Note: this opens a shell to the container.
+2. From the container shell, cd into a shared drive that contains a local git clone of the dasm repo.  
+   Or do a 'git clone' on the container itself, e.g.  
+   `git clone --single-branch --branch release/2.20.12 https://github.com/dasm-assembler/dasm.git`
+3. cd into the dasm/docker folder from within the container shell
+4. Run: `./make_dasm_all_platforms.sh`
+5. This will call 'make' for all target platforms and copies the different dasm binaries into the ~ (or /root) directory.
