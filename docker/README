@@ -17,4 +17,4 @@ Steps to run the Docker container and build dasm for all platforms:
    `git clone --single-branch --branch release/2.20.12 https://github.com/dasm-assembler/dasm.git`
 3. cd into the dasm/docker folder from within the container shell
 4. Run: `./make_dasm_all_platforms.sh`
-5. This will call 'make' for all target platforms and copies the different dasm binaries into the ~ (or /root) directory.
+5. This will call 'make' for all target platforms and copies the different dasm binaries into the /bin directory.
