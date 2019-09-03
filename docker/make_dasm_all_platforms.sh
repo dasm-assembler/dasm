@@ -1,5 +1,5 @@
 #!/bin/sh
-# builds dasm for all three supported platforms (linux, windows, macOS/darwin)
+# this script builds platform-specific dasm binaries for all three supported OSs (Linux, Windows and macOS)
 
 cd ..
 mkdir -p bin
@@ -12,7 +12,7 @@ make
 cp dasm ../bin/dasm.Linux.x86
 make clean
 
-#step 2: build dasm for macOS x86 32-bit
+#step 2: build dasm for Windows x86 32-bit
 export CC=i686-w64-mingw32-gcc
 export CFLAGS=' -m32'
 export LDFLAGS=' -m32 -L/usr/lib32'
