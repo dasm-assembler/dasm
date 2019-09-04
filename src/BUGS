@@ -1,0 +1,40 @@
+====
+BUGS
+====
+
+A collection of bugs that would require major DASM surgery
+and are unlikely to get a fix soon. If possible we offer
+workarounds.
+
+---------------------
+Broken HD6303 Opcodes
+---------------------
+
+It has been reported several times (by Alan Nash in 2008,
+by Rob Hookham in 2014) that the AIM, OIM, EIM, and TIM
+opcodes are broken. These instructions are *three* bytes
+long according to the data sheets, yet in DASM they are
+treated as *two* byte instructions.
+
+It's my understanding that the instructions are supposed
+to work as follows (from Rob's email):
+
+	tim	#$10,$C2
+	tim	#$80,$00,x
+
+So there's an immediate value *and* a zero-page address
+for these instructions! DASM, however, only accepts these:
+
+	tim	$10
+	tim	$10,x
+
+I don't know what Matthew Dillon was thinking back in the
+day, but in retrospect it seems obvious that these opcodes
+simply don't fit into the "regular pattern" of 8-bit CPUs
+we deal with in DASM. Fixing this will require changes to
+DASM beyond just fixing the instruction table, I don't
+think the parser code is even remotely ready for this. :-/
+
+The "workaround" for now is to use macros instead of the
+actual instructions, see ../test/broken6303hack.asm for
+details.
