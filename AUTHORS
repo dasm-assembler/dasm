@@ -1,4 +1,3 @@
-$Id: AUTHORS 110 2008-04-08 02:43:12Z phf $
 
 ===========
 The Authors
@@ -20,7 +19,7 @@ over the years (alphabetical by first name):
       - lots of extensions (1995)
 
     * Peter H. Froehlich <phf at acm dot org>
-      - current maintainer (2008-)
+      - maintainer (2008-2015)
 
     * Thomas Mathys <mathys66 at bluewin dot ch>
       - support for Fairchild F8 processor (2004)
@@ -30,6 +29,6 @@ and have agreed to distribute DASM and their individual contributions
 under the GNU General Public License (see file COPYING).
 
 If you have contributed code to this distribution of DASM but are not
-listed above, please contact us! Visit http://dasm-dillon.sf.net/ for
-more information.
+listed above, please contact us! Visit https://dasm-assembler.github.io/ 
+for more information.
 

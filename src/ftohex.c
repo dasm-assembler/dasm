@@ -1,6 +1,4 @@
 /*
-    $Id: ftohex.c 327 2014-02-09 13:06:55Z adavie $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -37,8 +35,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-static const char svnid[] = "$Id: ftohex.c 327 2014-02-09 13:06:55Z adavie $";
 
 #define PERLINE 16
 

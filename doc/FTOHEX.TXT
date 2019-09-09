@@ -1,4 +1,3 @@
-$Id: ftohex.txt 107 2008-04-08 01:31:12Z phf $
 
 FTOHEX  Convert assembly output file to INTEL-HEX format suitable for, say,
 a GTEK prom programmer.

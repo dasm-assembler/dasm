@@ -1,6 +1,4 @@
 /*
-    $Id: main.c 327 2014-02-09 13:06:55Z adavie $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -33,8 +31,6 @@
 
 #include "version.h"
 #include "asm.h"
-
-SVNTAG("$Id: main.c 327 2014-02-09 13:06:55Z adavie $");
 
 static const char dasm_id[] = DASM_ID;
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# $Id: compare_hashes.py 118 2008-04-09 05:21:52Z phf $
 #
 # Experiment to compare various basic hash functions.
 #

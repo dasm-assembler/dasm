@@ -1,4 +1,3 @@
-; $Id: fill.asm 145 2008-04-12 16:12:23Z phf $
 ;
 ; Test various directives that "fill" memory.
 ;

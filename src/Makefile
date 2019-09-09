@@ -1,4 +1,3 @@
-# $Id: Makefile 327 2014-02-09 13:06:55Z adavie $
 #
 # the DASM macro assembler (aka small systems cross assembler)
 #

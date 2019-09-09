@@ -19,13 +19,15 @@ The Distribution
     The DASM distribution contains the following important files and
     directories of interest to all users:
 
-        bin/        Executables for DASM and related tools
-                    (only if you downloaded a binary distribution)
+        bin/        This is were the compiled executables for DASM and
+                    related tools will be placed after you do a 'make'
         doc/        Documentation and manuals
+        docker/     Contains files & instructions to create a docker image
+                    to run a 'dasm build machine' container
         machines/   Support files for various 8-bit machines
         AUTHORS     List of contributors to DASM
-        COPYING     GNU General Public License
-        FUTURE      Plans for the next releases of DASM
+        CREDITS     People that allowed us to distribute their example code 
+        LICENSE     GNU General Public License
         NEWS        Recent changes to DASM
         README      The file you are reading right now :-)
 
@@ -35,12 +37,13 @@ The Distribution
         src/        Source code for DASM and related tools
         test/       Test cases for DASM and related tools
                     (as of release 2.20.11 the test framework is incomplete)
+        research/   A directory where we keep experiments
         ChangeLog   Source level changes to DASM
         Makefile    Makefile to build DASM executables, run tests, and
                     create distributions
 
-    Even more files for developers are available from the DASM Subversion
-    repository, see http://dasm-dillon.sf.net/ for details.
+    Even more files for developers are available from the DASM GitHub
+    repository, see https://github.com/dasm-assembler/dasm for details.
 
 ------------------------
 Compiling and Installing
@@ -123,7 +126,7 @@ Legalese
     Copyright (c) 1988-2002 by Matthew Dillon.
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
-    Copyright (c) 2008 by Peter H. Froehlich.
+    Copyright (c) 2008-2015 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

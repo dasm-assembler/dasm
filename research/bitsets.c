@@ -1,6 +1,4 @@
 /*
-  $Id: bitsets.c 280 2008-11-03 05:29:53Z phf $
-
   Experiments with bit sets.
 */
 

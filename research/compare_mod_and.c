@@ -1,6 +1,4 @@
 /*
-    $Id: compare_mod_and.c 126 2008-04-11 01:37:55Z phf $
-
     Simple hack to compare performance of % and & on modern
     machines. Seems that & still wins on a wide variety of
     machines, so we'll stick with it for DASM's compression

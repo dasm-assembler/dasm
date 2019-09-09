@@ -1,6 +1,4 @@
 /*
-    $Id: test_errors.c 317 2008-11-15 05:02:48Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.

@@ -1,6 +1,4 @@
 /*
-    $Id: version.h 313 2008-11-13 21:01:26Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -29,17 +27,6 @@
 /**
  * @file
  */
-
-/**
- * @brief Macro to tag files going into DASM executables
- * with Subversion "Id" keywords.
- *
- * @warning Only .c files should be tagged, for obvious
- * reasons.
- */
-
-/* TODO: add some kind of __unused annotation to make sure they stay? */
-#define SVNTAG(id) static const char _svnid[] = id
 
 /**
  * @brief Macro to provide current DASM release as a string.

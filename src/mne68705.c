@@ -1,6 +1,4 @@
 /*
-    $Id: mne68705.c 327 2014-02-09 13:06:55Z adavie $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -28,8 +26,6 @@
  */
 
 #include "asm.h"
-
-SVNTAG("$Id: mne68705.c 327 2014-02-09 13:06:55Z adavie $");
 
 #define AFSTD	AF_BYTEADR|AF_BYTEADRX|AF_WORDADR|AF_WORDADRX|AF_0X
 

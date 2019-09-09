@@ -1,6 +1,4 @@
 /*
-    $Id: errors.c 313 2008-11-13 21:01:26Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -52,9 +50,6 @@
     be verified again and addressed, maybe there are a few fatals
     that should really be panics...
 */
-
-/*@unused@*/
-SVNTAG("$Id: errors.c 313 2008-11-13 21:01:26Z phf $");
 
 static error_format_t F_error_format = ERRORFORMAT_DEFAULT;
 static error_level_t F_error_level = ERRORLEVEL_DEFAULT;

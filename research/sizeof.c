@@ -1,6 +1,4 @@
 /*
-  $Id: sizeof.c 324 2009-09-22 14:42:22Z phf $
-
   Simple sizeof experiment to judge appropriate types to replace
   the DASM chaos with. Looks like we can easily go for "int" all
   over the place these days. If we want to be compatible with 16

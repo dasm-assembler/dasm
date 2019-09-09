@@ -1,6 +1,4 @@
 /*
-    $Id: util.c 313 2008-11-13 21:01:26Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -44,7 +42,7 @@
     The code was modified to include assertions and to make splint happier
     but is otherwise unchanged.
     The documentation comments were moved into the util.h header file for
-    consistency and were reformatted for Doxygen.
+    consistency.
 
     The function hash_string() is based on code fragments posted by Daniel
     Bernstein to comp.lang.c on 1990/12/04. As far as we know, the code is
@@ -63,9 +61,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-
-/*@unused@*/
-SVNTAG("$Id: util.c 313 2008-11-13 21:01:26Z phf $");
 
 /*@out@*/
 void *checked_malloc(size_t bytes)
