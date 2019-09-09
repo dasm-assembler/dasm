@@ -1163,7 +1163,7 @@ MNEMONIC *parse(char *buf)
 #endif
 
     Av[0] = Avbuf + j;
-    while (buf[i] && buf[i] != ' ') {
+    while (buf[i] && buf[i] != ' ' && buf[i] != '=') {
 
         if (buf[i] == ':') {
             i++;
@@ -1194,7 +1194,10 @@ MNEMONIC *parse(char *buf)
         while (buf[i] == ' ')
             ++i;
         Av[1] = Avbuf + j;
-        while (buf[i] && buf[i] != ' ') {
+        if (buf[i] == '=') {
+            /* '=' directly seperates Av[0] and Av[2] */
+            Avbuf[j++] = buf[i++];
+        } else while (buf[i] && buf[i] != ' ') {
             if ((unsigned char)buf[i] == 0x80)
                 buf[i] = ' ';
             Avbuf[j++] = buf[i++];
