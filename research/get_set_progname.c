@@ -1,6 +1,4 @@
 /*
-    $Id: get_set_progname.c 173 2008-04-19 20:41:25Z phf $
-
     Test potentially unportable get/setprogname(3) functions.
 
     WORKS:

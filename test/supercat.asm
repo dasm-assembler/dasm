@@ -1,5 +1,3 @@
-; $Id: supercat.asm 322 2008-11-16 10:22:06Z phf $
-;
 ; Pretty horrible bug... :-/ Switching to signed instead
 ; of unsigned arithmetic made this easier to handle but
 ; bad use of .ds can still lead to huge files since DASM

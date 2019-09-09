@@ -3,14 +3,12 @@ Standard file header
 ====================
 
 /*
-    $Id: HEADER 72 2008-04-05 20:49:29Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
-    Copyright (c) 2008 by Peter H. Froehlich.
+    Copyright (c) 2008-2015 by Peter H. Froehlich.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

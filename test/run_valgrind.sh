@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# $Id: run_valgrind.sh 273 2008-11-02 05:07:08Z phf $
-#
 # Simple test script adapted from Matt Dillon's 2.16  release.
 # It's harder to do this in a Makefile, so let's use a script.
 

@@ -1,6 +1,4 @@
 /*
-    $Id: asm.h 327 2014-02-09 13:06:55Z adavie $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -33,9 +31,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-/* tag object files going into dasm executable */
-#define SVNTAG(id) static const char _svnid[] = id
 
 #define OlafFreeFormat    0    /* Decide on looks of word if it is opcode */
 #define OlafHashFormat    1    /* Decide on # and ^ if it is an opcode */

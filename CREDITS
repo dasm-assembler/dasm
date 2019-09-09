@@ -1,35 +1,7 @@
-$Id: CREDITS 327 2014-02-09 13:06:55Z adavie $
 
 ===========
 The Credits
 ===========
-
-The following people hacked DASM, but their modifications have not
-been integrated yet (alphabetical by first name):
-
-    * Lasse Oeoerni <loorni at gmail dot com>
-      - fixed various problems (1999-2004)
-
-The following people helped by building binaries/executables for
-various platforms (alphabetical by first name):
-
-    * James Wilkinson <james at slor dot net>
-      - BeOS and Linux (2005)
-
-    * Jason Rein <jjrein at earthlink dot net>
-      - Mac OS 9 (2003)
-
-    * Jay Carlson <nop at nop dot com>
-      - MS-DOS and Unix (1993)
-
-    * Jeremy Penner <jeremy at sporktania dot com>
-      - Mac OS X (2003)
-
-    * Peter Gordon <pete at petergordon dot org dot uk>
-      - Amiga OS3 and OS4 (2003)
-
-    * Rob Kudla <webmaster at kudla dot org>
-      - Linux including RPMs (2003)
 
 The following people allowed us to distribute their example code
 with DASM (alphabetical by first name):
@@ -44,5 +16,5 @@ listed above, read the license on their code carefully, or contact
 them directly for permission if in doubt.
 
 If you helped with DASM but are not listed here, please contact us!
-Visit http://dasm-dillon.sf.net/ for more information.
+Visit https://dasm-assembler.github.io/ for more information.
 

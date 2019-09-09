@@ -2,8 +2,6 @@
 #define _DASM_ERRORS_H
 
 /*
-    $Id: errors.h 313 2008-11-13 21:01:26Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.

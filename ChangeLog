@@ -1,9 +1,16 @@
-$Id: ChangeLog 114 2008-04-08 02:50:35Z phf $
 
 Note that we document changes to the source files and
 closely related files (Makefile, test cases) only, this
 is *not* a complete record of every single change ever
-made. Check the Subversion logs for that. :-)
+made. Check the GitHub commit history for that. :-)
+
+DASM version 2.20.12:
+
+	* Fix for handling linux linefeeds under Windows 
+	  (fix by msaarna)
+
+	* Support using constants for include files 
+	  (enhancement by SpiceWare)
 
 2008-04-07  Peter H. Froehlich  <phf at acm dot org>
 

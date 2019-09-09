@@ -2,8 +2,6 @@
 #define _DASM_SYMBOLS_H
 
 /*
-    $Id: symbols.h 321 2008-11-15 08:14:38Z phf $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.

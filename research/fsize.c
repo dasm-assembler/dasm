@@ -1,8 +1,4 @@
 /*
-  $Id: fsize.c 315 2008-11-14 16:12:15Z phf $
-
-  Get the size of a file, the portable and safe way.
-
   The issue here was to avoid fseek() and friends to get away
   from potential issue with how long "long" really is. So we
   "abuse" freopen() in append mode to get to the end of the

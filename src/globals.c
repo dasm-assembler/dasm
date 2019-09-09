@@ -1,6 +1,4 @@
 /*
-    $Id: globals.c 327 2014-02-09 13:06:55Z adavie $
-
     the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
@@ -28,8 +26,6 @@
  */
 
 #include "asm.h"
-
-SVNTAG("$Id: globals.c 327 2014-02-09 13:06:55Z adavie $");
 
 SYMBOL *SHash[SHASHSIZE];   /*	symbol hash table   */
 

@@ -1,5 +1,3 @@
-# $Id: Makefile 327 2014-02-09 13:06:55Z adavie $
-
 # demo.asm doesn't compile!
 # no useful reference output for suitef8.asm right now
 
@@ -18,4 +16,4 @@ test:
 
 clean:
 	(cd atari2600; make clean; cd ..)
-	rm -rf *.bin *.hex
+	rm -rf *.bin *.hex *.list.txt

@@ -1,4 +1,3 @@
-# $Id: Makefile 327 2014-02-09 13:06:55Z adavie $
 #
 # the DASM macro assembler (aka small systems cross assembler)
 #
@@ -69,7 +68,7 @@ BINARY=
 # binaries
 BINS=bin/*
 # documentation
-DOCS=AUTHORS ChangeLog COPYING CREDITS FUTURE NEWS README README.ANDREW doc/* # HACKING? svn-eol-style.txt?
+DOCS=AUTHORS ChangeLog LICENSE CREDITS NEWS README  doc/*
 # support files for various machines
 MACS=machines/atari2600/* machines/channel-f/*
 # source files for dasm and ftohex

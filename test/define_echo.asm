@@ -1,5 +1,3 @@
-	; $Id: define_echo.asm 284 2008-11-07 01:05:04Z phf $
-	;
 	; Test case for -D and -M options and echo pseudo-op.
 
 SOURCE_SYMBOL	equ	255

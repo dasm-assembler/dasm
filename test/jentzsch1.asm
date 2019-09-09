@@ -1,5 +1,3 @@
-; $Id: jentzsch1.asm 299 2008-11-10 02:17:18Z phf $
-;
 ; Thomas Jentzsch <tjentzsch@web.de> test case for bug
 ; in error handling.
 
