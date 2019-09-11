@@ -25,8 +25,7 @@ The Distribution
         docker/     Contains files & instructions to create a docker image
                     to run a 'dasm build machine' container
         machines/   Support files for various 8-bit machines
-        AUTHORS     List of contributors to DASM
-        CREDITS     People that allowed us to distribute their example code 
+        AUTHORS     List of contributors to DASM 
         LICENSE     GNU General Public License
         NEWS        Recent changes to DASM
         README      The file you are reading right now :-)
