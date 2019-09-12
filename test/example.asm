@@ -4,6 +4,12 @@
 
 	    processor	6502
 
+; no spaces should be required before or after '=' char
+LABEL1 = 1		
+LABEL2= 2
+LABEL3 =3
+LABEL4=4
+
 	    mac     ldax
 	    lda     [{1}]
 	    ldx     [{1}]+1
