@@ -56,7 +56,7 @@ main(int ac, char **av)
 
     if (ac < 3) {
 	puts("FTOHEX format infile [outfile]");
-	puts("format 1,2, or 3.  3=raw");
+	puts("format 1 = DEFAULT, 2 = RAS, or 3 = RAW");
 	puts("Copyright (c) 1988-2008 by various authors (see file AUTHORS).");
 	exit(1);
     }
