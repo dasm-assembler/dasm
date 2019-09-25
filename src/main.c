@@ -1138,17 +1138,10 @@ MNEMONIC *parse(char *buf)
     i = 0;
     j = 1;
 
-#if OlafFreeFormat
-    /* Skip all initial spaces */
-    while (buf[i] == ' ')
-        ++i;
-#endif
-
-#if OlafHashFormat
-        /*
-        * If the first non-space is a ^, skip all further spaces too.
-        * This means what follows is a label.
-        * If the first non-space is a #, what follows is a directive/opcode.
+    /*
+        If the first non-space is a ^, skip all further spaces too.
+        This means what follows is a label.
+        If the first non-space is a #, what follows is a directive/opcode.
     */
     while (buf[i] == ' ')
         ++i;
@@ -1160,7 +1153,6 @@ MNEMONIC *parse(char *buf)
         buf[i] = ' ';   /* label separator */
     } else
         i = 0;
-#endif
 
     Av[0] = Avbuf + j;
     while (buf[i] && buf[i] != ' ' && buf[i] != '=') {
@@ -1176,37 +1168,23 @@ MNEMONIC *parse(char *buf)
     }
     Avbuf[j++] = 0;
 
-#if OlafFreeFormat
-    /* Try if the first word is an opcode */
-    findext(Av[0]);
-    mne = findmne(Av[0]);
-    if (mne != NULL) {
-    /* Yes, it is. So there is no label, and the rest
-     * of the line is the argument
-        */
-        Avbuf[0] = 0;    /* Make an empty string */
-        Av[1] = Av[0];    /* The opcode is the previous first word */
-        Av[0] = Avbuf;    /* Point the label to the empty string */
-    } else
-#endif
-
-    {    /* Parse the second word of the line */
-        while (buf[i] == ' ')
-            ++i;
-        Av[1] = Avbuf + j;
-        if (buf[i] == '=') {
-            /* '=' directly seperates Av[0] and Av[2] */
-            Avbuf[j++] = buf[i++];
-        } else while (buf[i] && buf[i] != ' ') {
-            if ((unsigned char)buf[i] == 0x80)
-                buf[i] = ' ';
-            Avbuf[j++] = buf[i++];
-        }
-        Avbuf[j++] = 0;
-        /* and analyse it as an opcode */
-        findext(Av[1]);
-        mne = findmne(Av[1]);
+    /* Parse the second word of the line */
+    while (buf[i] == ' ')
+        ++i;
+    Av[1] = Avbuf + j;
+    if (buf[i] == '=') {
+        /* '=' directly seperates Av[0] and Av[2] */
+        Avbuf[j++] = buf[i++];
+    } else while (buf[i] && buf[i] != ' ') {
+        if ((unsigned char)buf[i] == 0x80)
+            buf[i] = ' ';
+        Avbuf[j++] = buf[i++];
     }
+    Avbuf[j++] = 0;
+    /* and analyse it as an opcode */
+    findext(Av[1]);
+    mne = findmne(Av[1]);
+
     /* Parse the rest of the line */
     while (buf[i] == ' ')
         ++i;

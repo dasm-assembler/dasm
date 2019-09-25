@@ -32,13 +32,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define OlafFreeFormat    0    /* Decide on looks of word if it is opcode */
-#define OlafHashFormat    1    /* Decide on # and ^ if it is an opcode */
-
-#if OlafHashFormat && OlafFreeFormat
-#error This cannot be!
-#endif
-
 /* for -T option [phf] */
 typedef enum
 {

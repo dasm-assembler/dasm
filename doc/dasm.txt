@@ -557,21 +557,6 @@ symbol	SET	    exp
 	extensions are meaningless.
 #endif
 
-#if OlafFreeFormat
-	The format of each input line is free: first all leading
-	spaces are discarded, and the first word is examined. If it
-	does not look like a directive or opcode (as known at that point),
-	it is taken as a label. This is sort-of nasty if you like labels
-	with names like END.
-	The two xxxFormat options are mutually exclusive.
-#endif
-
-#if OlafHashFormat
-	With this option an initial # (after optional initial spaces)
-	turns the next word into a directive/opcode.
-	A ^ skips more spaces and makes the next word a label.
-#endif
-
 GENERAL:
 
     The label will be set to the current ORG/RORG either before or after
