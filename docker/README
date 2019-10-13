@@ -13,11 +13,18 @@ Steps to create the Docker image:
 
 Steps to run the Docker container and build dasm for all 3 platforms:
 
-1. Now run the container: `docker run -it --rm dasm:build`  
-   Note: this opens a shell to the container.
+1. Now run the container: `docker run -it --rm dasm:build`, which opens a shell
+   to the container.
+   Note: unless you want fetch a clone the dasm git repo and build that, it is
+   probably easier to mount a shared drive in your docker container.
+   On Windows, you can mount your c: drive on /mnt/c by running
+   `docker run -it --rm -v c:\:/mnt/c dasm:build` (*)
+   (*) This requires drive-sharing enabled in Docker Desktop, and sometimes
+   needs this powershell command to allow that:
+   `Set-NetConnectionProfile -interfacealias "vEthernet (DockerNAT)" -NetworkCategory Private`
 2. From the container shell, cd into a shared drive that contains a local git  
    clone of the dasm repo. Or do a 'git clone' on the container itself, e.g.  
-   `git clone --single-branch --branch release/2.20.12 https://github.com/dasm-assembler/dasm.git`
+   `git clone --single-branch --branch master https://github.com/dasm-assembler/dasm.git`
 3. cd into the dasm/docker folder from within the container shell
 4. Run: `./make_dasm_all_platforms.sh`
 5. This will sequentally call 'make' for all target platforms and copies the  
