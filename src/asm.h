@@ -107,7 +107,7 @@ enum FORMAT
         ERROR_VALUE_MUST_BE_LT_F,                       /* 28 */
         ERROR_VALUE_MUST_BE_LT_10000,                   /* 29 */
         ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 30 */
-	
+        ERROR_UNRECOVERABLE,                            /* 31 */
 	
 	
 	};
@@ -218,9 +218,7 @@ STRLIST {
     char    buf[4];
 };
 
-//#define STRLISTSIZE    4
-//FIX: the above is only true on 32-bit. Thanks to Olaf 'Rhialto' Seibert. 
-#define STRLISTSIZE    (sizeof(STRLIST)-4)
+#define STRLISTSIZE    sizeof(STRLIST *)
 
 #define MF_IF					0x04
 #define MF_MACRO				0x08
