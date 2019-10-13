@@ -107,7 +107,6 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_VALUE_MUST_BE_LT_F,						true,	"Value in '%s' must be <$f." },
 	{ ERROR_VALUE_MUST_BE_LT_10000,					true,	"Value in '%s' must be <$10000." },
 	{ ERROR_ILLEGAL_OPERAND_COMBINATION,			true,	"Illegal combination of operands '%s'" },
-    { ERROR_UNRECOVERABLE,                          true,   "Unrecoverable error(s) in pass, aborting assembly!" },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -697,13 +696,14 @@ nextpass:
                 // Only print errors if assembly is unsuccessful!!!!!
                 // by FXQ
                 printf("%s\n",errorbuffer);
-                return ERROR_UNRECOVERABLE;
+                printf("Unrecoverable error(s) in pass, aborting assembly!\n");
             }
             else if ( pass > nMaxPasses )
             {
                 char sBuffer[64];
                 sprintf( sBuffer, "%d", pass );
                 return asmerr( ERROR_TOO_MANY_PASSES, false, sBuffer );
+                
             }
             else
             {
