@@ -107,7 +107,6 @@ enum FORMAT
         ERROR_VALUE_MUST_BE_LT_F,                       /* 28 */
         ERROR_VALUE_MUST_BE_LT_10000,                   /* 29 */
         ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 30 */
-        ERROR_UNRECOVERABLE,                            /* 31 */
 	
 	
 	};
