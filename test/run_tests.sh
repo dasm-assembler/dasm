@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Simple test script adapted from Matt Dillon's 2.16  release.
 # It's harder to do this in a Makefile, so let's use a script.
