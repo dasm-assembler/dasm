@@ -25,7 +25,6 @@ The Distribution
         docker/     Contains files & instructions to create a docker image
                     to run a 'dasm build machine' container
         machines/   Support files for various 8-bit machines
-        AUTHORS     List of contributors to DASM 
         LICENSE     GNU General Public License
         NEWS        Recent changes to DASM
         README      The file you are reading right now :-)
@@ -76,15 +75,8 @@ Compiling and Installing
           They will be dealt with in a future release. (And if you know
           how to fix them reliably, we welcome your contributions!)
 
-    DASM has been built and tested successfully on the following machines
-    and operating systems:
-
-        - SunOS 5.10 Generic_118822-11 sun4u sparc
-        - Linux 2.6.23.15-80.fc7 i386 GNU/Linux
-        - Darwin 8.11.0 powerpc
-        - NetBSD 3.0 qube mips
-        - Linux 2.6.24-1-686 i686 GNU/Linux
-        - Linux-based cross-compile for Windows/Wine
+    DASM has been built and tested successfully on recent versions of Linux,
+    macOS and Windows.
 
     If you have successfully built and tested DASM on a different machine
     or operating system, we would love to hear about it.
@@ -126,6 +118,7 @@ Legalese
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008-2015 by Peter H. Froehlich.
+    Copyright (c) 2019 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

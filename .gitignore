@@ -1,4 +1,7 @@
 *.o
+test/**/*.bin
+test/**/*.hex
+test/**/*.list.txt
 bin
 dasm
 ftohex
