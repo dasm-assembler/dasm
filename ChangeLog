@@ -15,6 +15,11 @@ DASM version 2.20.12:
 	* 64-bit versions of DASM are now part of the release for 
 	  all platforms.
 
+	* Dockerfile for building a 'dasm build machine' docker image 
+	  based on Ubuntu 16.04. This allows you to build the dasm 
+	  executables for all platforms (Linux, Windows, macOS) in a 
+	  single go for any branch of dasm.
+
 2008-04-07  Peter H. Froehlich  <phf at acm dot org>
 
 	* Makefile (dist:): added README.ANDREW and CREDITS;
