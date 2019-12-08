@@ -107,7 +107,6 @@ beta:
 	echo "The purpose is to identify regressions, nothing more." >>README.BETA
 	echo "Please do *not* re-distribute this release in any form!" >>README.BETA
 	echo "Please do *not* distribute binaries derived from it either!" >>README.BETA
-	echo "See http://dasm-dillon.sf.net/ for details on DASM." >>README.BETA
 	-tar zcvf dasm-beta-`date +%F`.tar.gz README.BETA $(MACS) $(OTHS) $(SRCS) $(TSTS)
 	rm -rf README.BETA
 
