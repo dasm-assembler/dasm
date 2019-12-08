@@ -1,5 +1,5 @@
 
-DOCUMENTATION FOR Dasm, a high level macro cross assembler for:
+DOCUMENTATION FOR DASM, a high level macro cross assembler for:
 
 	-6502 (and 6507)
 	-68705
@@ -10,21 +10,22 @@ DOCUMENTATION FOR Dasm, a high level macro cross assembler for:
 
 ABSTRACT
 
-    This file contains the main documentation for Dasm. It explains how
+    This file contains the main documentation for DASM. It explains how
     to use Dasm and what the supported assembler directives are.
 
-    Dasm's homepage is https://dasm-assembler.github.io/ since release
+    DASM's homepage is https://dasm-assembler.github.io/ since release
     2.20.12.
 
 
 LEGALESE
 
-    the Dasm macro assembler (aka small systems cross assembler)
+    the DASM macro assembler (aka small systems cross assembler)
 
     Copyright (c) 1988-2002 by Matthew Dillon.
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008 by Peter H. Froehlich.
+	Copyright (c) 2019 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ PREFACE FROM ANDREW (APRIL/2003)
     there have been minor changes to the formatting of output data.
 
     Please see the accompanying text files in the distribution's
-    root directory for a list of recent changes to Dasm.
+    root directory for a list of recent changes to DASM.
 
 
 PREFACE FROM PETER (APRIL/2008)

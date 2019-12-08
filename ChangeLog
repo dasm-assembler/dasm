@@ -12,6 +12,9 @@ DASM version 2.20.12:
 	* Support using constants for include files 
 	  (enhancement by SpiceWare)
 
+	* 64-bit versions of DASM are now part of the release for 
+	  all platforms.
+
 2008-04-07  Peter H. Froehlich  <phf at acm dot org>
 
 	* Makefile (dist:): added README.ANDREW and CREDITS;
