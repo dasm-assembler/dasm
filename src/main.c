@@ -34,7 +34,6 @@
 
 static const char dasm_id[] = DASM_ID;
 
-#define MAXLINE 1024
 #define ISEGNAME    "INITIAL CODE SEGMENT"
 
 /*

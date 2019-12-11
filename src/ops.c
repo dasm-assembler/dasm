@@ -29,7 +29,7 @@
 
 #include "asm.h"
 
-unsigned char Gen[256];
+unsigned char Gen[MAXLINE];
 unsigned char OrgFill = DEFORGFILL;
 int	 Glen;
 

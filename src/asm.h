@@ -63,7 +63,7 @@ enum FORMAT
     FORMAT_MAX
 };
 
-
+#define MAXLINE 1024
 #define MAX_SYM_LEN 1024
 
     enum ASM_ERROR_EQUATES
