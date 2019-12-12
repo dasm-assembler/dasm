@@ -416,8 +416,13 @@ v_include(char *str, MNEMONIC *dummy)
   
   programlabel();
   
-  sym = eval(str, 0);
-  if (sym->flags & SYM_STRING )
+  // only eval the string if it's compliant with symbol naming
+  if ((*str<'0')||(*str>'9')) //check could be more comprehensive
+    sym = eval(str, 0);
+  else
+    sym = NULL;
+
+  if ( (sym) && (sym->flags & SYM_STRING ) )
   {
     pushinclude(sym->string);
   }
@@ -432,7 +437,8 @@ v_include(char *str, MNEMONIC *dummy)
       free(buf);
   }
   
-  FreeSymbolList(sym);
+  if (sym)
+    FreeSymbolList(sym);
 }
 
 
