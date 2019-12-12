@@ -5,7 +5,7 @@ DASM=../bin/dasm
 FTOHEX=../bin/ftohex
 
 test:
-	(cd atari2600; make test; cd ..)
+	(cd atari2600; $(MAKE) test; cd ..)
 	./run_tests.sh
 
 %.bin: %.asm
@@ -15,5 +15,5 @@ test:
 	$(FTOHEX) 1 $< $@
 
 clean:
-	(cd atari2600; make clean; cd ..)
+	(cd atari2600; $(MAKE) clean; cd ..)
 	rm -rf *.bin *.hex *.list.txt

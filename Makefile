@@ -38,13 +38,13 @@ install: build
 # just run all the tests
 test: build
 	echo "Running tests..."
-	(cd test; make; cd ..)
+	(cd test; $(MAKE); cd ..)
 	echo "Tests were run, but testing is not fully automated yet."
 	echo "In other words, don't rely on what you saw too much."
 
 # just build everything and copy binaries to trunk/bin/
 build:
-	(cd src; make; cd ..)
+	(cd src; $(MAKE); cd ..)
 	mkdir -p bin
 	cp src/dasm bin/dasm
 	cp src/ftohex bin/ftohex
@@ -114,6 +114,6 @@ beta:
 # regular build from this Makefile; don't delete the
 # "real" distribution archives
 clean:
-	(cd src; make clean; cd ..)
-	(cd test; make clean; cd ..)
+	(cd src; $(MAKE) clean; cd ..)
+	(cd test; $(MAKE) clean; cd ..)
 	-rm -rf dasm-beta-*.tar.gz bin/
