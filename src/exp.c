@@ -390,6 +390,7 @@ SYMBOL *eval(const char *str, int wantmode)
                     Argstring[Argi-1] = strcpy(ckmalloc(strlen(buf)+1),buf);
                 }
             }
+	    Lastwasop = 0;
             break;
 
         case '#':
@@ -693,10 +694,12 @@ void op_not(long v1, int f1)
 void op_mult(long v1, long v2, int f1, int f2)
 {
     stackarg(v1 * v2, f1|f2, NULL);
+    Lastwasop = 1;
 }
 
 void op_div(long v1, long v2, int f1, int f2)
 {
+    Lastwasop = 1;
     if (f1|f2) {
         stackarg(0L, f1|f2, NULL);
         return;
@@ -722,6 +725,7 @@ void op_mod(long v1, long v2, int f1, int f2)
         stackarg(v1, 0, NULL);
     else
         stackarg(v1 % v2, 0, NULL);
+    Lastwasop = 1;
 }
 
 void op_question(long v1, long v2, int f1, int f2)
@@ -735,11 +739,13 @@ void op_question(long v1, long v2, int f1, int f2)
 void op_add(long v1, long v2, int f1, int f2)
 {
     stackarg(v1 + v2, f1|f2, NULL);
+    Lastwasop = 1;
 }
 
 void op_sub(long v1, long v2, int f1, int f2)
 {
     stackarg(v1 - v2, f1|f2, NULL);
+    Lastwasop = 1;
 }
 
 void op_shiftright(long v1, long v2, int f1, int f2)
