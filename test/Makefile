@@ -6,6 +6,7 @@ FTOHEX=../bin/ftohex
 
 test:
 	(cd atari2600; $(MAKE) test; cd ..)
+	(cd atari7800; $(MAKE) test; cd ..)
 	./run_tests.sh
 
 %.bin: %.asm
@@ -16,4 +17,5 @@ test:
 
 clean:
 	(cd atari2600; $(MAKE) clean; cd ..)
+	(cd atari7800; $(MAKE) clean; cd ..)
 	rm -rf *.bin *.hex *.list.txt

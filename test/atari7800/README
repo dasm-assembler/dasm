@@ -1,0 +1,8 @@
+
+Some DASM test cases for Atari 7800 software
+
+For all of these examples, I received express written permission
+from all authors to include the code in the DASM distribution.
+
+spritesample.asm
+  Dan Boris' simple sprite sample
