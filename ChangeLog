@@ -4,12 +4,17 @@ closely related files (Makefile, test cases) only, this
 is *not* a complete record of every single change ever
 made. Check the GitHub commit history for that. :-)
 
+DASM version 2.20.13:
+	* ...
+
 DASM version 2.20.12:
 
 	* Fix for handling linux linefeeds under Windows 
 	  (fix by msaarna)
 
-	* Support using constants for include files 
+	* Fix for segfault on long lines
+
+	* Supports using constants for include files 
 	  (enhancement by SpiceWare)
 
 	* 64-bit versions of DASM are now part of the release for 
