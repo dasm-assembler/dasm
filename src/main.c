@@ -93,7 +93,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ADDRESS_MUST_BE_LT_100,                 true,   "Value in '%s' must be <$100."  },
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },
     { ERROR_NOT_ENOUGH_ARGS,                        true,   "Not enough arguments."   },
-    { ERROR_LABEL_MISMATCH,                         true,   "Label mismatch...\n --> %s"  },
+    { ERROR_LABEL_MISMATCH,                         false,   "Label mismatch...\n --> %s"  },
     { ERROR_VALUE_UNDEFINED,                        true,   "Value Undefined."   },
     { ERROR_PROCESSOR_NOT_SUPPORTED,                true,   "Processor '%s' not supported."  },
     { ERROR_REPEAT_NEGATIVE,                        false,  "REPEAT parameter < 0 (ignored)."   },
