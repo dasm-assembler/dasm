@@ -89,10 +89,11 @@ enum FORMAT
         ERROR_ORIGIN_REVERSE_INDEXED,                   /* 12 */
         ERROR_EQU_VALUE_MISMATCH,                       /* 13 */
         ERROR_ADDRESS_MUST_BE_LT_100,                   /* 14 */
-        ERROR_ILLEGAL_BIT_SPECIFICATION,                /* 15 */
-        ERROR_NOT_ENOUGH_ARGS,                          /* 16 */
-        ERROR_LABEL_MISMATCH,                           /* 17 */
-        ERROR_VALUE_UNDEFINED,                          /* 18 */
+	ERROR_ADDRESS_MUST_BE_LT_10000,                 /* 15 */
+        ERROR_ILLEGAL_BIT_SPECIFICATION,                /* 16 */
+        ERROR_NOT_ENOUGH_ARGS,                          /* 17 */
+        ERROR_LABEL_MISMATCH,                           /* 18 */
+        ERROR_VALUE_UNDEFINED,                          /* 19 */
         ERROR_PROCESSOR_NOT_SUPPORTED,                  /* 20 */
         ERROR_REPEAT_NEGATIVE,                          /* 21 */
         ERROR_BADERROR,                                 /* 22 */

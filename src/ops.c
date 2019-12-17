@@ -560,7 +560,7 @@ v_dc(char *str, MNEMONIC *mne)
 {
     SYMBOL *sym;
     SYMBOL *tmp;
-    unsigned long  value;
+    long  value;
     char *macstr = 0;		/* "might be used uninitialised" */
     char vmode = 0;
     
@@ -683,9 +683,24 @@ v_dc(char *str, MNEMONIC *mne)
             switch(Mnext) {
             default:
             case AM_BYTE:
+                //any value outside two's complement +ve and +ve byte representation is invalid...
+                if ((value < -0x80)||(value > 0xFF)) 
+		{
+                    char sBuffer[128];
+                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+		}
                 Gen[Glen++] = value & 0xFF;
                 break;
             case AM_WORD:
+		//any value outside two's complement +ve and +ve word representation is invalid...
+                if ((value < -0x8000)||(value > 0xFFFF)) 
+		{
+                    char sBuffer[128];
+                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
+		}
+
                 if (MsbOrder) {
                     Gen[Glen++] = (value >> 8) & 0xFF;
                     Gen[Glen++] = value & 0xFF;
