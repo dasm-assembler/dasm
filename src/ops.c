@@ -684,7 +684,7 @@ v_dc(char *str, MNEMONIC *mne)
             default:
             case AM_BYTE:
                 //any value outside two's complement +ve and +ve byte representation is invalid...
-                if ((value < -0x80)||(value > 0xFF)) 
+                if ((value < -0xFF)||(value > 0xFF)) 
 		{
                     char sBuffer[128];
                     sprintf( sBuffer, "%s %ld", mne->name, value);
@@ -694,7 +694,7 @@ v_dc(char *str, MNEMONIC *mne)
                 break;
             case AM_WORD:
 		//any value outside two's complement +ve and +ve word representation is invalid...
-                if ((value < -0x8000)||(value > 0xFFFF)) 
+                if ((value < -0xFFFF)||(value > 0xFFFF)) 
 		{
                     char sBuffer[128];
                     sprintf( sBuffer, "%s %ld", mne->name, value);
