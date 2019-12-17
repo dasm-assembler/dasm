@@ -690,14 +690,7 @@ nextpass:
             ++pass;
 
             
-            if ( bStopAtEnd )
-            {
-                // Only print errors if assembly is unsuccessful!!!!!
-                // by FXQ
-                printf("%s\n",errorbuffer);
-                printf("Unrecoverable error(s) in pass, aborting assembly!\n");
-            }
-            else if ( pass > nMaxPasses )
+            if ( pass > nMaxPasses )
             {
                 char sBuffer[64];
                 sprintf( sBuffer, "%d", pass );
@@ -722,6 +715,14 @@ nextpass:
         msgbuffer[0]=' ';
         printf("%s\n",msgbuffer);
     }
+    else
+    {
+        // Only print errors if assembly is unsuccessful!!!!!
+        // by FXQ
+        printf("%s\n",errorbuffer);
+        printf("Unrecoverable error(s) in pass, aborting assembly!\n");
+    }
+
     printf( "Complete.\n" );
     return nError;
 }
