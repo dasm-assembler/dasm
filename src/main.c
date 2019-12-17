@@ -91,6 +91,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ORIGIN_REVERSE_INDEXED,                 false,  "Origin Reverse-indexed."   },
     { ERROR_EQU_VALUE_MISMATCH,                     false,  "EQU: Value mismatch."   },
     { ERROR_ADDRESS_MUST_BE_LT_100,                 true,   "Value in '%s' must be <$100."  },
+    { ERROR_ADDRESS_MUST_BE_LT_10000,               true,   "Value in '%s' must be <$10000."  },
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },
     { ERROR_NOT_ENOUGH_ARGS,                        true,   "Not enough arguments."   },
     { ERROR_LABEL_MISMATCH,                         false,   "Label mismatch...\n --> %s"  },
