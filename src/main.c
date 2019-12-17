@@ -76,6 +76,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_FILE_ERROR,                             true,   "Unable to open file."   },
     { ERROR_NOT_RESOLVABLE,                         true,   "Source is not resolvable."   },
     { ERROR_TOO_MANY_PASSES,                        true,   "Too many passes (%s)."   },
+    { ERROR_NON_ABORT,                              true,   "See previous output"   },
     { ERROR_SYNTAX_ERROR,                           true,   "Syntax Error '%s'."   },
     { ERROR_EXPRESSION_TABLE_OVERFLOW,              true,   "Expression table overflow."   },
     { ERROR_UNBALANCED_BRACES,                      true,   "Unbalanced Braces []."   },
@@ -722,6 +723,7 @@ nextpass:
         // by FXQ
         printf("%s\n",errorbuffer);
         printf("Unrecoverable error(s) in pass, aborting assembly!\n");
+	nError = ERROR_NON_ABORT;
     }
 
     printf( "Complete.\n" );
@@ -1521,7 +1523,7 @@ int main(int ac, char **av)
     bool bTableSort = false;
     int nError = MainShadow( ac, av, &bTableSort );
 
-    if ( nError )
+    if ( nError && (nError != ERROR_NON_ABORT) ) 
     {
 	// dump messages when aborting due to errors
         msgbuffer[0]=' ';
