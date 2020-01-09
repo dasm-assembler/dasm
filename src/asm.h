@@ -94,21 +94,22 @@ enum FORMAT
         ERROR_ILLEGAL_BIT_SPECIFICATION,                /* 16 */
         ERROR_NOT_ENOUGH_ARGS,                          /* 17 */
         ERROR_LABEL_MISMATCH,                           /* 18 */
-        ERROR_VALUE_UNDEFINED,                          /* 19 */
-        ERROR_PROCESSOR_NOT_SUPPORTED,                  /* 20 */
-        ERROR_REPEAT_NEGATIVE,                          /* 21 */
-        ERROR_BADERROR,                                 /* 22 */
+        ERROR_MACRO_REPEATED,                           /* 19 */
+        ERROR_VALUE_UNDEFINED,                          /* 20 */
+        ERROR_PROCESSOR_NOT_SUPPORTED,                  /* 21 */
+        ERROR_REPEAT_NEGATIVE,                          /* 22 */
+        ERROR_BADERROR,                                 /* 23 */
         ERROR_ONLY_ONE_PROCESSOR_SUPPORTED,             /* Only allow one type of processor */
         ERROR_BAD_FORMAT,                               /* Bad format specifier */
 
 		/* F8 support... */
 
-        ERROR_VALUE_MUST_BE_1_OR_4,                     /* 25 */
-        ERROR_VALUE_MUST_BE_LT_10,                      /* 26 */
-        ERROR_VALUE_MUST_BE_LT_8,                       /* 27 */
-        ERROR_VALUE_MUST_BE_LT_F,                       /* 28 */
-        ERROR_VALUE_MUST_BE_LT_10000,                   /* 29 */
-        ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 30 */
+        ERROR_VALUE_MUST_BE_1_OR_4,                     /* 26 */
+        ERROR_VALUE_MUST_BE_LT_10,                      /* 27 */
+        ERROR_VALUE_MUST_BE_LT_8,                       /* 28 */
+        ERROR_VALUE_MUST_BE_LT_F,                       /* 29 */
+        ERROR_VALUE_MUST_BE_LT_10000,                   /* 30 */
+        ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 31 */
 	
 	
 	};
