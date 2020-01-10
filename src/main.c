@@ -95,8 +95,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ADDRESS_MUST_BE_LT_10000,               true,   "Value in '%s' must be <$10000."  },
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },
     { ERROR_NOT_ENOUGH_ARGS,                        true,   "Not enough arguments."   },
-    { ERROR_LABEL_MISMATCH,                         false,  "Label mismatch...\n --> %s"  },
-    { ERROR_MACRO_REPEATED,                         true,   "Macro \"%s\" defintion is repeated."  },
+    { ERROR_LABEL_MISMATCH,                         false,   "Label mismatch...\n --> %s"  },
     { ERROR_VALUE_UNDEFINED,                        true,   "Value Undefined."   },
     { ERROR_PROCESSOR_NOT_SUPPORTED,                true,   "Processor '%s' not supported."  },
     { ERROR_REPEAT_NEGATIVE,                        false,  "REPEAT parameter < 0 (ignored)."   },
@@ -1264,8 +1263,6 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->flags = MF_MACRO;
         MHash[i] = (MNEMONIC *)mac;
     }
-    else
-        asmerr( ERROR_MACRO_REPEATED, false, str );
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
         const char *comment;
         
