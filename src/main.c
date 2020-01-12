@@ -96,6 +96,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },
     { ERROR_NOT_ENOUGH_ARGS,                        true,   "Not enough arguments."   },
     { ERROR_LABEL_MISMATCH,                         false,   "Label mismatch...\n --> %s"  },
+    { ERROR_MACRO_REPEATED,                         true,   "Macro \"%s\" defintion is repeated."  },
     { ERROR_VALUE_UNDEFINED,                        true,   "Value Undefined."   },
     { ERROR_PROCESSOR_NOT_SUPPORTED,                true,   "Processor '%s' not supported."  },
     { ERROR_REPEAT_NEGATIVE,                        false,  "REPEAT parameter < 0 (ignored)."   },
@@ -1243,12 +1244,14 @@ void v_macro(char *str, MNEMONIC *dummy)
     unsigned int i;
     char buf[MAXLINE];
     int skipit = !(Ifstack->xtrue && Ifstack->acctrue);
-    
+
     strlower(str);
+    mne = findmne(str);
+
     if (skipit) {
         defined = 1;
     } else {
-        defined = (findmne(str) != NULL);
+        defined = (mne != NULL);
         if (F_listfile && ListMode)
             outlistfile("");
     }
@@ -1261,8 +1264,11 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->vect = v_execmac;
         mac->name = strcpy(permalloc(strlen(str)+1), str);
         mac->flags = MF_MACRO;
+        mac->defpass = pass;
         MHash[i] = (MNEMONIC *)mac;
     }
+    else if(mac->defpass == pass)
+        asmerr( ERROR_MACRO_REPEATED, false, str );
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
         const char *comment;
         
