@@ -56,8 +56,6 @@ void clearrefs(void);
 static unsigned int hash1(const char *str);
 static void outlistfile(const char *);
 
-void addmsg(char *message); // add to message buffer (FXQ)
-
 // buffers to supress errors and messages until last pass - FXQ
 static char errorbuffer[1000000]; // per-pass error buffer
 static char erroradd1[500]; // temp error holders
@@ -142,7 +140,7 @@ static int CountUnresolvedSymbols(void)
             if ( sym->flags & SYM_UNKNOWN )
                 nUnresolved++;
             
-	return nUnresolved;
+    return nUnresolved;
 }
 
 
@@ -162,7 +160,7 @@ static int ShowUnresolvedSymbols(void)
                 if ( sym->flags & SYM_UNKNOWN )
                     printf( "%-24s %s\n", sym->name, sftos( sym->value, sym->flags ) );
                 
-                printf( "--- %d Unresolved Symbol%c\n\n", nUnresolved, ( nUnresolved == 1 ) ? ' ' : 's' );
+        printf( "--- %d Unresolved Symbol%c\n\n", nUnresolved, ( nUnresolved == 1 ) ? ' ' : 's' );
     }
     
     return nUnresolved;
@@ -219,55 +217,55 @@ static void ShowSymbols( FILE *file, bool bTableSort )
         for (sym = SHash[i]; sym; sym = sym->next)
             nSymbols++;
         
-        /* Malloc an array of pointers to data */
+    /* Malloc an array of pointers to data */
         
-        symArray = (SYMBOL **)ckmalloc( sizeof( SYMBOL * ) * nSymbols );
-        if ( !symArray )
-        {
-            fprintf( file, " (unsorted - not enough memory to sort!)\n" );
+    symArray = (SYMBOL **)ckmalloc( sizeof( SYMBOL * ) * nSymbols );
+    if ( !symArray )
+    {
+        fprintf( file, " (unsorted - not enough memory to sort!)\n" );
             
-            /* Display complete symbol table */
-            for (i = 0; i < SHASHSIZE; ++i)
-                for (sym = SHash[i]; sym; sym = sym->next)
-                    fprintf( file, "%-24s %s\n", sym->name, sftos( sym->value, sym->flags ) );
-        }
-        else
-        {
-            /* Copy the element pointers into the symbol array */
+        /* Display complete symbol table */
+        for (i = 0; i < SHASHSIZE; ++i)
+            for (sym = SHash[i]; sym; sym = sym->next)
+                fprintf( file, "%-24s %s\n", sym->name, sftos( sym->value, sym->flags ) );
+    }
+    else
+    {
+         /* Copy the element pointers into the symbol array */
             
-            int nPtr = 0;
+         int nPtr = 0;
             
-            for (i = 0; i < SHASHSIZE; ++i)
-                for (sym = SHash[i]; sym; sym = sym->next)
-                    symArray[ nPtr++ ] = sym;
+         for (i = 0; i < SHASHSIZE; ++i)
+             for (sym = SHash[i]; sym; sym = sym->next)
+                 symArray[ nPtr++ ] = sym;
                 
-                if ( bTableSort )
-                {
-                    fprintf( file, " (sorted by address)\n" );
-                    qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAddress );           /* Sort via address */
-                }
-                else
-                {
-                    fprintf( file, " (sorted by symbol)\n" );
-                    qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAlpha );              /* Sort via name */
-                }
+         if ( bTableSort )
+         {
+             fprintf( file, " (sorted by address)\n" );
+             qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAddress );           /* Sort via address */
+         }
+         else
+         {
+             fprintf( file, " (sorted by symbol)\n" );
+             qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAlpha );              /* Sort via name */
+         }
                 
                 
-                /* now display sorted list */
+         /* now display sorted list */
                 
-                for ( i = 0; i < nPtr; i++ )
-                {
-                    fprintf( file, "%-24s %-12s", symArray[ i ]->name,
-                        sftos( symArray[ i ]->value, symArray[ i ]->flags ) );
-                    if ( symArray[ i ]->flags & SYM_STRING )
-                        fprintf( file, " \"%s\"", symArray[ i ]->string );                  /* If a string, display actual string */
-                    fprintf( file, "\n" );
-                }
+         for ( i = 0; i < nPtr; i++ )
+         {
+             fprintf( file, "%-24s %-12s", symArray[ i ]->name,
+                 sftos( symArray[ i ]->value, symArray[ i ]->flags ) );
+             if ( symArray[ i ]->flags & SYM_STRING )
+                 fprintf( file, " \"%s\"", symArray[ i ]->string );                  /* If a string, display actual string */
+             fprintf( file, "\n" );
+         }
                 
-                free( symArray );
-        }
+         free( symArray );
+    }
         
-        fputs( "--- End of Symbol List.\n", file );
+    fputs( "--- End of Symbol List.\n", file );
         
 }
 
@@ -682,34 +680,34 @@ nextpass:
                 return ERROR_NOT_RESOLVABLE;
             }
             
-            oldredo = Redo;
-            oldwhy = Redo_why;
-            oldeval = Redo_eval;
-            Redo = 0;
-            Redo_why = 0;
-            Redo_eval = 0;
+        oldredo = Redo;
+        oldwhy = Redo_why;
+        oldeval = Redo_eval;
+        Redo = 0;
+        Redo_why = 0;
+        Redo_eval = 0;
 
-            Redo_if <<= 1;
-            ++pass;
+        Redo_if <<= 1;
+        ++pass;
 
             
-            if ( pass > nMaxPasses )
-            {
-                char sBuffer[64];
-                sprintf( sBuffer, "%d", pass );
-                return asmerr( ERROR_TOO_MANY_PASSES, false, sBuffer );
+        if ( pass > nMaxPasses )
+        {
+            char sBuffer[64];
+            sprintf( sBuffer, "%d", pass );
+            return asmerr( ERROR_TOO_MANY_PASSES, false, sBuffer );
                 
-            }
-            else
-            {
-                // flush error and message buffer after each pass. -FXQ
-                errorbuffer[0]='\0';
-                msgbuffer[0]='\0';
+        }
+        else
+        {
+            // flush error and message buffer after each pass. -FXQ
+            errorbuffer[0]='\0';
+            msgbuffer[0]='\0';
 
-                clearrefs();
-                clearsegs();
-                goto nextpass;
-            }
+            clearrefs();
+            clearsegs();
+            goto nextpass;
+        }
     }
     // Do not print any errors if assembly is successful!!!!! -FXQ
     // only print messages from last pass and if there's no errors

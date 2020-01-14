@@ -385,6 +385,7 @@ char   *permalloc(int bytes);
 char   *zmalloc(int bytes);
 char   *ckmalloc(int bytes);
 char   *strlower(char *str);
+void addmsg(char *message);
 
 /* symbols.c */
 void    setspecial(int value, int flags);
