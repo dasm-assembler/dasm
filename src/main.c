@@ -720,6 +720,7 @@ nextpass:
     {
         // Only print errors if assembly is unsuccessful!!!!!
         // by FXQ
+        printf("%s\n",msgbuffer);
         printf("%s\n",errorbuffer);
         printf("Unrecoverable error(s) in pass, aborting assembly!\n");
 	nError = ERROR_NON_ABORT;
@@ -1265,8 +1266,11 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->defpass = pass;
         MHash[i] = (MNEMONIC *)mac;
     }
-    else if(mac->defpass == pass)
-        asmerr( ERROR_MACRO_REPEATED, false, str );
+    else {
+        mac = (MACRO *)mne;
+        if( (mac != NULL) && (mac->defpass == pass) )
+            asmerr( ERROR_MACRO_REPEATED, false, str );
+    }
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
         const char *comment;
         
