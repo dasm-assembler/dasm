@@ -417,6 +417,7 @@ fail:
     puts("-P#      maximum number of passes, with fewer checks");
     puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value)");
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
+    puts("-S       strict syntax checking");
     puts("");
     puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
@@ -515,6 +516,10 @@ nofile:
                 
             case 'I':
                 v_incdir(str, NULL);
+                break;
+
+            case 'S':
+                bStrictMode = true;
                 break;
                 
             default:
@@ -720,7 +725,6 @@ nextpass:
     {
         // Only print errors if assembly is unsuccessful!!!!!
         // by FXQ
-        printf("%s\n",msgbuffer);
         printf("%s\n",errorbuffer);
         printf("Unrecoverable error(s) in pass, aborting assembly!\n");
 	nError = ERROR_NON_ABORT;
@@ -1268,8 +1272,8 @@ void v_macro(char *str, MNEMONIC *dummy)
     }
     else {
         mac = (MACRO *)mne;
-        if( (mac != NULL) && (mac->defpass == pass) )
-            asmerr( ERROR_MACRO_REPEATED, false, str );
+        if( (bStrictMode) && (mac != NULL) && (mac->defpass == pass) )
+            asmerr( ERROR_MACRO_REPEATED, true, str );
     }
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
         const char *comment;

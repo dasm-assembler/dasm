@@ -51,6 +51,7 @@ unsigned long	Lastlocaldollarindex;
 unsigned long Processor = 0;
 bool bTrace = false;
 bool Xdebug;
+bool bStrictMode = false;
 
 unsigned char	Outputformat;
 
