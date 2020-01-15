@@ -345,6 +345,7 @@ extern unsigned int    Mlevel;
 
 extern bool bTrace;
 extern bool     Xdebug;
+extern bool     bStrictMode;
 extern unsigned char    MsbOrder;
 extern unsigned char    Outputformat;
 extern unsigned long    Redo_why;
