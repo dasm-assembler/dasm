@@ -119,6 +119,7 @@ COMMAND LINE:
 		    -T#     symbol table sorting (default 0 = alphabetical,
 			    1 = address/value)
 		    -E#     error format (default 0 = MS, 1 = Dillon, 2 = GNU)
+		    -S      strict syntax checking
 
 	Example:    dasm master.asm -f2 -oout -llist -v3 -DVER=4
 
