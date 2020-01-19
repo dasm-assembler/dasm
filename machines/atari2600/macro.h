@@ -18,7 +18,7 @@ VERSION_MACRO         = 106
 ;
 ; Latest Revisions...
 ;
-; 1.06  03/SEP/2004     - nice revision of VERTICAL_BLANK (Edwin Blink)
+; 1.06  03/SEP/2004     - nice revision of VERTICAL_SYNC (Edwin Blink)
 ; 1.05  14/NOV/2003     - Added VERSION_MACRO equate (which will reflect 100x version #)
 ;                         This will allow conditional code to verify MACRO.H being
 ;                         used for code assembly.
