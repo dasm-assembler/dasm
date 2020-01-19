@@ -694,7 +694,7 @@ v_dc(char *str, MNEMONIC *mne)
                 break;
             case AM_WORD:
 		//any value outside two's complement +ve and +ve word representation is invalid...
-                if ((value < -0xFFFF)||(value > 0xFFFF)) 
+                if ( (bStrictMode) && ((value < -0xFFFF)||(value > 0xFFFF)) )
 		{
                     char sBuffer[128];
                     sprintf( sBuffer, "%s %ld", mne->name, value);
