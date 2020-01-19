@@ -1,7 +1,7 @@
 ; MACRO.H
-; Version 1.06, 3/SEPTEMBER/2004
+; Version 1.07, 19/January/2020
 
-VERSION_MACRO         = 106
+VERSION_MACRO         = 107
 
 ;
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
@@ -17,7 +17,7 @@ VERSION_MACRO         = 106
 ; (atari2600@taswegian.com) with your contribution.
 ;
 ; Latest Revisions...
-;
+; 1.07  19/JAN/2020     - correction to comment VERTICAL_SYNC
 ; 1.06  03/SEP/2004     - nice revision of VERTICAL_SYNC (Edwin Blink)
 ; 1.05  14/NOV/2003     - Added VERSION_MACRO equate (which will reflect 100x version #)
 ;                         This will allow conditional code to verify MACRO.H being
