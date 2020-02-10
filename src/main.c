@@ -52,16 +52,21 @@ MNEMONIC *findmne(char *str);
 void clearsegs(void);
 void clearrefs(void);
 
-
 static unsigned int hash1(const char *str);
 static void outlistfile(const char *);
 
-// buffers to supress errors and messages until last pass - FXQ
-static char errorbuffer[1000000]; // per-pass error buffer
+// buffers to supress errors and messages until last pass
+char *passbuffer [2] = { NULL, NULL};
+#define ERRORBUF 0
+#define MSGBUF 1
+void passbuffer_clear(int);
+void passbuffer_update(int,char *);
+void passbuffer_output(int);
+void passbuffer_cleanup(void);
+
 static char erroradd1[500]; // temp error holders
 static char erroradd2[500];
 static char erroradd3[500];
-static char msgbuffer[10000]; // user echo buffer
 
 /* Table encapsulates errors, descriptions, and fatality flags. */
 
@@ -122,11 +127,6 @@ char     *Extstr;
 int     pass;
 
 unsigned char     F_ListAllPasses = 0;
-
-
-
-
-
 
 static int CountUnresolvedSymbols(void)
 {
@@ -549,8 +549,9 @@ nofile:
     }
     
     // ready error and message buffer...
-    errorbuffer[0]='\0';
-    msgbuffer[0]='\0';
+    passbuffer_clear(ERRORBUF);
+    passbuffer_clear(MSGBUF);
+    
     
 nextpass:
     
@@ -705,9 +706,8 @@ nextpass:
         }
         else
         {
-            // flush error and message buffer after each pass. -FXQ
-            errorbuffer[0]='\0';
-            msgbuffer[0]='\0';
+            passbuffer_clear(ERRORBUF);
+            passbuffer_clear(MSGBUF);
 
             clearrefs();
             clearsegs();
@@ -718,14 +718,13 @@ nextpass:
     // only print messages from last pass and if there's no errors
     if (!bStopAtEnd)
     {
-        msgbuffer[0]=' ';
-        printf("%s\n",msgbuffer);
+        passbuffer_output(MSGBUF);
     }
     else
     {
         // Only print errors if assembly is unsuccessful!!!!!
         // by FXQ
-        printf("%s\n",errorbuffer);
+	passbuffer_output(ERRORBUF);
         printf("Unrecoverable error(s) in pass, aborting assembly!\n");
 	nError = ERROR_NON_ABORT;
     }
@@ -736,7 +735,7 @@ nextpass:
 
 void addmsg(char *message) // add to message buffer (FXQ)
 {
-  strcat(msgbuffer,message);
+  passbuffer_update(MSGBUF,message);
 }
 
 
@@ -1450,16 +1449,15 @@ int asmerr(int err, bool bAbort, const char *sText )
         sprintf(erroradd2, str, sText ? sText : "");
         sprintf(erroradd3, "\n");
 
-        strcat(errorbuffer,erroradd1);
-        strcat(errorbuffer,erroradd2);
-        strcat(errorbuffer,erroradd3);
+	passbuffer_update(ERRORBUF,erroradd1);
+	passbuffer_update(ERRORBUF,erroradd2);
+	passbuffer_update(ERRORBUF,erroradd3);
         
         if ( bAbort )
         {
-            msgbuffer[0]=' ';
-            printf("%s\n",msgbuffer); // dump messages from this pass
+            passbuffer_output(MSGBUF); // dump messages from this pass
             fprintf(error_file, "Aborting assembly\n");
-            printf("%s\n",errorbuffer); // time to dump the errors from this pass!
+            passbuffer_output(ERRORBUF); // time to dump the errors from this pass!
             exit(EXIT_FAILURE);
         }
     }
@@ -1538,17 +1536,80 @@ int main(int ac, char **av)
     if ( nError && (nError != ERROR_NON_ABORT) ) 
     {
 	// dump messages when aborting due to errors
-        msgbuffer[0]=' ';
-        printf("%s\n",msgbuffer); // dump messages from this pass
+        passbuffer_output(MSGBUF);
 
-        // Only print errors if assembly is unsuccessful!!!!! - FXQ
-        printf("%s\n",errorbuffer);
+        // Only print errors if assembly is unsuccessful
+        passbuffer_output(ERRORBUF);
 
         printf( "Fatal assembly error: %s\n", sErrorDef[nError].sDescription );
     }
     
     DumpSymbolTable( bTableSort );
+
+    passbuffer_cleanup();
     
     return nError;
 }
 
+void passbuffer_clear(int mbindex)
+{
+    // ensure the buffer is initialized before we attempt to clear it, 
+    // just in case no messages have been stored prior to this clear.
+    if(passbuffer[mbindex] == NULL)
+        passbuffer_update(mbindex,"");
+    // clear the requested guffer
+    passbuffer[mbindex][0] = 0;
+}
+
+void passbuffer_update(int mbindex,char *message)
+{
+    int newsizerequired;
+
+    // allocate 16k buffers to start...
+    static int passbuffersize[2] = {16384,16384}; 
+
+
+    // check if the buffer we're working with needs initialization
+    if(passbuffer[mbindex] == NULL)
+    {
+        passbuffer[mbindex] = malloc(passbuffersize[mbindex]);
+        if(passbuffer[mbindex] == NULL)
+            panic("couldn't allocate memory for message buffer.");
+        passbuffer[mbindex][0] = 0; // empty string
+    }
+
+    // check if we need to grow the buffer...
+    newsizerequired=strlen(passbuffer[mbindex])+strlen(message);
+    if( newsizerequired > passbuffersize[mbindex])
+    {
+        // double the current buffer size, if sufficient, so we don't continually reallocate memory...
+        newsizerequired = ( newsizerequired < (passbuffersize[mbindex]*2) ) ? passbuffersize[mbindex]*2 : newsizerequired;
+
+        //fprintf(stderr,"DEBUG: growing buffer %d to %d bytes\n", mbindex, newsizerequired);
+
+        passbuffer[mbindex] = realloc(passbuffer[mbindex], newsizerequired);
+        if(passbuffer[mbindex] == NULL)
+            panic("couldn't grow memory for message buffer.");
+        passbuffersize[mbindex]=newsizerequired;
+    }
+	
+    // update the buffer with the message...
+    strcat(passbuffer[mbindex],message);
+}
+
+void passbuffer_output(int mbindex)
+{
+    // ensure the buffer is initialized before we attempt to clear it, 
+    // just in case no messages have been stored yet.
+    if(passbuffer[mbindex] == NULL)
+        passbuffer_update(mbindex,"");
+    printf("%s\n",passbuffer[mbindex]); // ...do we really still need to put this through stdout, instead stderr?
+}
+
+void passbuffer_cleanup()
+{
+    int t;
+    for(t=0;t<2;t++)
+        if(passbuffer[t]!=NULL)
+            free(passbuffer[t]);
+}
