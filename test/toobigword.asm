@@ -1,4 +1,4 @@
-; Test case for strict mode checks for byte data size
+; Test case for strict mode check for word data size
 
 	processor 6502
 
