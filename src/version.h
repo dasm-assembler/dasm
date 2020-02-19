@@ -49,7 +49,7 @@
  * at 1987 even in his 2.16 release. We should settle this...
  */
 #define DASM_PRINT_COPYRIGHT \
-  (void) puts("Copyright (c) 1988-2019 by the DASM team.");
+  (void) puts("Copyright (c) 1988-2020 by the DASM team.");
 
 /**
  * @brief Macro to print standard DASM legalese, including
