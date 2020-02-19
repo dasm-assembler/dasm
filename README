@@ -1,5 +1,5 @@
 ============================
-DASM 2.20.13-SNAPSHOT readme
+DASM 2.20.13 readme
 ============================
 
     Welcome to DASM, a versatile macro assembler with support for several
@@ -9,8 +9,7 @@ DASM 2.20.13-SNAPSHOT readme
     This file describes the DASM distribution, how to compile and install
     DASM, and where to get more information about DASM.
 
-    DASM's homepage is https://dasm-assembler.github.io/ since release
-    2.20.12.
+    DASM's homepage is https://dasm-assembler.github.io/
 
 ----------------
 The Distribution

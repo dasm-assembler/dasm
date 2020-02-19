@@ -5,7 +5,20 @@ is *not* a complete record of every single change ever
 made. Check the GitHub commit history for that. :-)
 
 DASM version 2.20.13:
-	* ...
+
+	* longstring segfault fix
+    * fix for non-symbol-compliant unquoted filenames
+    * address expression fix
+    * makefile portability fixes
+    * added atari 7800 support
+    * allow labels to shift between multiple passes
+    * fix for silenced single pass non-abort errors
+    * adjust .byte and .word negative range check
+    * duplicate macro fix
+    * reduce gcc Wall option build warnings
+    * added 'strict' syntax check mode (+ added to docs)
+    * enable .word size check for strict-mode only
+    * dynamic buffers for pass-output update
 
 DASM version 2.20.12:
 
