@@ -395,7 +395,7 @@ static int MainShadow(int ac, char **av, bool *pbTableSort )
 
 fail:
     puts(dasm_id);
-    puts("Copyright (c) 1988-2019 by the DASM team.");
+    puts("Copyright (c) 1988-2020 by the DASM team.");
     puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE).");
     puts("DASM is free software: you are free to change and redistribute it.");
     puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law.");
