@@ -450,6 +450,12 @@ symbol	SET	    exp
 
 	    Same as EQU, but the symbol may be reassigned later.
 
+symbol	SETSTR	    exp
+
+	    The expression is converted to a string, and assigned to the
+	    symbol. Typical use case is within a macro, to allow the
+	    macro to echo or otherwise use the name of an argument.
+
 	MAC	    name
 
 	    Declare a macro.  lines between MAC and ENDM are the macro.

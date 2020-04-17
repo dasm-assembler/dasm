@@ -1019,6 +1019,13 @@ void v_set(char *str, MNEMONIC *dummy)
     FreeSymbolList(sym);
 }
 
+void v_setstr(char *symstr, MNEMONIC *dummy)
+{
+    char str[1024];
+    snprintf(str,1024,"\"%s\"",symstr);
+    v_set(str,dummy);
+}
+
 void
 v_execmac(char *str, MACRO *mac)
 {

@@ -108,6 +108,7 @@ MNEMONIC Ops[] = {
     { NULL, v_equ     , "=",              0,      0, {0,} },
     { NULL, v_eqm     , "eqm",            0,      0, {0,} },
     { NULL, v_set     , "set",            0,      0, {0,} },
+    { NULL, v_setstr  , "setstr",         0,      0, {0,} },
     { NULL, v_macro   , "mac",            MF_IF,  0, {0,} },
     { NULL, v_endm    , "endm",           MF_ENDM,0, {0,} },
     { NULL, v_mexit   , "mexit",          0,      0, {0,} },
