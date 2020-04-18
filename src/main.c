@@ -1205,13 +1205,8 @@ MNEMONIC *parse(char *buf)
                 symarg = eval(tempbuf,0);
                 if(symarg)
                 {
-                    if (symarg->flags & SYM_UNKNOWN)
-                    {
-                        // if one of the arguments doesn't resolve yet, push for another pass
-                        ++Redo;
-                        Redo_why |= REASON_LABELARG_NOT_RESOLVED;
-			labelundefined++; // ensure the label we're parsing doesn't get used
-                    }
+                    if (symarg->flags & SYM_UNKNOWN) // one of the arguments isn't defined yet
+			labelundefined++; // ensure the label we're creating doesn't get used
                     else
                     {
                         snprintf(tempval,256,"%d",(unsigned)symarg->value);
