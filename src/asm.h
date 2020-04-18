@@ -140,7 +140,8 @@ enum FORMAT
         REASON_REPEAT_NOT_RESOLVED = 1 << 12,
         REASON_FORWARD_REFERENCE = 1 << 13,
         REASON_PHASE_ERROR = 1 << 14,
-        REASON_BRANCH_OUT_OF_RANGE = 1 << 15
+        REASON_BRANCH_OUT_OF_RANGE = 1 << 15,
+        REASON_LABELARG_NOT_RESOLVED = 1 << 16
     };
 
 
@@ -400,6 +401,7 @@ void    programlabel(void);
 extern    unsigned char Gen[];
 extern    int Glen;
 void    v_set(char *str, MNEMONIC *);
+void    v_setstr(char *str, MNEMONIC *);
 void    v_mexit(char *str, MNEMONIC *);
 void    closegenerate(void);
 void    generate(void);
