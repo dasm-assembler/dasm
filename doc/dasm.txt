@@ -259,13 +259,9 @@ PSEUDOPS:
 
 	    Include another assembly file.
 
-#if OlafIncbin
-
 [label] INCBIN	    "name"
 
 	    Include another file literally in the output.
-#endif
-#if OlafIncdir
 
 	INCDIR	    "directory name"
 
@@ -284,7 +280,7 @@ PSEUDOPS:
 	    Currently the list is not cleared between passes, but each
 	    exact directory name is added to the list only once.
 	    This may change in subsequent releases.
-#endif
+
 [label] SEG[.U]     name
 
 	    This sets the current segment, creating it if neccessary.  If
@@ -300,9 +296,8 @@ PSEUDOPS:
 	    selected processor is used for each entry.
 
 	    The default size extension is a byte.
-#if OlafByte
+
 	    BYTE, WORD and LONG are synonyms for DC.B, DC.W and DC.L.
-#endif
 
 [label] DS[.BWL]    exp[,filler]
 
@@ -418,14 +413,12 @@ PSEUDOPS:
 
 
 symbol	EQU	    exp
-#if OlafAsgn
+
 symbol	=	    exp
-#endif
 
 	    The expression is evaluated and the result assigned to the
 	    symbol.
 
-#if OlafDotAssign
 	    If this option is enabled, you can use the common idiom of
 
 		. EQU . + 3	(or . = .+3)
@@ -437,7 +430,6 @@ symbol	=	    exp
 	    The RORG is used if a relocatable origin is already in effect,
 	    otherwise ORG is used. Note that the first example is NOT
 	    equivalent with "DS.B 3" when the rorg is in effect.
-#endif
 
 symbol	EQM	    exp
 
@@ -495,10 +487,9 @@ symbol	SETSTR	    exp
 	    Neither IF or ELSE will be executed if the expression result
 	    is undefined.  If the expression is undefined, another assembly
 	    pass is automatically taken.
-#if OlafPhase
+
 	    If this happens, phase errors in the next pass only will not
 	    be reported unless the verboseness is 1 or more.
-#endif
 
 [label] ELSE
 
@@ -552,18 +543,15 @@ symbol	SETSTR	    exp
 
 	    Globally turns listing on or off, starting with the current
 	    line.
-#if OlafList
+
 	    When you give LOCALON or LOCALOFF the effect is local to the
 	    current macro or included file. For a line to be listed both
 	    the global and local list switches must be on.
-#endif
 
-#if OlafDotop
 	All pseudo-ops (and incidentally also the mnemonics) can be
 	prefixed with a . for compatibility with other assemblers.
 	So .IF is the same as IF. This works only because lone .FORCE
 	extensions are meaningless.
-#endif
 
 GENERAL:
 
@@ -615,8 +603,6 @@ ASSEMBLER PASSES:
 
     Error reporting could be better....
 
-#if OlafPasses
-
     The check if another pass might resolve the source is pretty good, but
     not perfect. You can specify the maximum number of passes to do
     (default -p10), and with the -P option you can override the normal check.
@@ -628,20 +614,17 @@ ASSEMBLER PASSES:
 	repend
     x:
 
-#endif
-
 EXPRESSIONS:
 	[] may be used to group expressions.  The precedense of operators
 	is the same as for the C language in almost all respects.  Use
 	brackets [] when you are unsure.  The reason () cannot be used to
 	group expressions is due to a conflict with the 6502 and other
 	assembly languages.
-#if OlafBraKet
+
 	It is possible to use () instead of [] in expressions following
 	pseudo-ops, but not following mnemonics. So this works:
 	if target & (pet3001 | pet4001), but this doesn't:
 	lda #target & (pet3001 | pet4001).
-#endif
 
 	Some operators, such as ||, can return a resolved value even if
 	one of the expressions is not resolved.   Operators are as follows:
@@ -711,17 +694,13 @@ EXPRESSIONS:
 		 instruction).
 	name	-beginning with an alpha character and containing letters,
 		 numbers, or '_'.  Represents some global symbol name.
-#if OlafStar
 	*	-synonym for ., when not confused as an operator.
-#endif
-#if OlafDol
 	nnn$	-temporary label, much like .name, except that defining
 		 a non-temporary label has the effect that SUBROUTINE
 		 has on .name.	They are unique within macros, like
 		 .name.  Note that 0$ and 00$ are distinct, as are 8$
 		 and 010$.
 		 (mainly for compatibility with other assemblers.)
-#endif
 
 
 WHY codes:
@@ -753,7 +732,7 @@ WHY codes:
     pass to occur in the hopes the error will fix itself.
 
 
-VERSIONS:
+HISTORIC VERSIONS: (pre github)
 
     V2.12
 	-Fixed macro naming bug (macros wouldn't work if the name after
