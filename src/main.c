@@ -1174,17 +1174,18 @@ MNEMONIC *parse(char *buf)
             if(buf[i+1]=='"') // is it a string constant?
             {
                 i=i+2; // advance to string contents
-                while (buf[i] != '"' && buf[i] != ' ' && buf[i] != ',' && buf[i] != ':')
+                while (buf[i] && buf[i] != '"' && buf[i] != ' ' && buf[i] != ',' && buf[i] != ':')
                 {
                     Avbuf[j++] = buf[i++];
                 }
-                if (buf[i]=='"') 
+                if (buf[i] && buf[i]=='"') 
                 {
                     i++;
                     continue;
                 }
                 else 
                 {
+                    labelundefined++;
                     asmerr( ERROR_SYNTAX_ERROR, false, buf );
                     continue;
                 }
