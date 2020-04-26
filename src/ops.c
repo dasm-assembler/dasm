@@ -579,7 +579,7 @@ v_dc(char *str, MNEMONIC *mne)
 	/* F8... */
 
     /* db, dw, dd */
-    if ( (mne->name[0] == 'd') && (mne->name[1] != 'c') ) {
+    if ( (mne->name[0] == 'd') && (mne->name[1] != 'c') && (mne->name[1] != 'v')) {
         static char sTmp[4];
         strcpy(sTmp, "x.x");
         if ('d' == mne->name[1]) {
