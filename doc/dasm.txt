@@ -702,6 +702,20 @@ EXPRESSIONS:
 		 and 010$.
 		 (mainly for compatibility with other assemblers.)
 
+Dynamic Symbol/Labels
+
+	When used in a symbol name, the "," operator indicates one or more
+	arguments that follow should be evaluated, and the resulting values 
+	should concatenated to the label, to create a "dynamic" symbol name. 
+
+symbol,ARG1[,ARG2,...]
+
+	String literals can be specified with quotes around the string
+	text.  Expression operators can also be used, but due to label
+	parsing constraints, they should not contain spacing.
+
+	The concat-eval "," operator also works on the expression side
+	of EQU/SET pseudo-ops, so dynamic labels can be used with opcodes. 
 
 WHY codes:
     Each bit in the WHY word (verbose option 1) is a reason (why
