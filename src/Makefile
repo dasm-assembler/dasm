@@ -47,7 +47,7 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 #CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
 #LDFLAGS= -m32 -L/usr/lib32
 
-#CC= gcc
+CC= gcc
 
 OBJS= main.o ops.o globals.o exp.o symbols.o \
       mne6303.o mne6502.o mne68705.o mne6811.o mnef8.o
