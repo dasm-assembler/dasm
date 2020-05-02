@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Make
-      run: make
+      run: make test # build + test
       env:
         CC: gcc
     - run: |
@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Make
-      run: make
+      run: make test # build + test
       env:
         CC: gcc
     - run: |
@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Make
-      run: make
+      run: make test # build + test
       env:
         CC: gcc
     - run: |
