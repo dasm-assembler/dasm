@@ -18,4 +18,32 @@ jobs:
       with :
         name: dasm snapshot builds
         path: artifacts
+  build_for_mac:
+    runs-on: macos-10.15
+    name: Build for Mac
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make
+    - run: |
+        mkdir -p artifacts/macos
+        cp bin/dasm artifacts/macos/dasm
+    - uses: actions/upload-artifact@v2
+      with :
+        name: dasm snapshot builds
+        path: artifacts
+  build_for_linux:
+    runs-on: ubuntu-18.04
+    name: Build for Linux
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make
+    - run: |
+        mkdir -p artifacts/linux
+        cp bin/dasm artifacts/linux/dasm
+    - uses: actions/upload-artifact@v2
+      with :
+        name: dasm snapshot builds
+        path: artifacts
 
