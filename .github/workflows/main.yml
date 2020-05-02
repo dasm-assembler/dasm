@@ -70,6 +70,3 @@ jobs:
       with :
         name: dasm snapshot builds
         path: artifacts
-
-
-        export LDFLAGS=' -m32 -L/usr/lib32'
