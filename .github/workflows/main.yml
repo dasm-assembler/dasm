@@ -19,8 +19,8 @@ jobs:
     - name: Make32
       run: make
       env:
-        CC: mingw32-gcc
-        LDFLAGS: -m32 -L/usr/lib32
+        CC: gcc
+        LDFLAGS: -m32
     - run: |
         mkdir -p artifacts/windows/32bit
         cp bin/dasm.exe artifacts/windows/32bit/dasm.exe
