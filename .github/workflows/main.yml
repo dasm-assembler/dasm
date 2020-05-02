@@ -19,7 +19,7 @@ jobs:
     - name: Make32
       run: make
       env:
-        CC: gcc
+        CC: i686-w64-mingw32-gcc
         LDFLAGS: -m32 -L/usr/lib32
     - run: |
         mkdir -p artifacts/windows/32bit
