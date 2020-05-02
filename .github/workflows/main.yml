@@ -4,21 +4,10 @@ on:
     paths-ignore:
     - 'snapshot-builds/**'
 jobs:
-  build_test_package_job:
-    runs-on: ubuntu-latest
-    name: Job
+  build_for_windows:
+    runs-on: windows-2019
+    name: Build for Windows
     steps:
-    - uses: actions/checkout@v1
-    - name: Build and Test
-      run: make test
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
-    - name: Package Snapshots
-      id: snapshotbuild
-      uses: dasm-assembler/dasm-snapshot-builder@v1
-      with:
-        branch: ${{ steps.extract_branch.outputs.branch }}
-        username: ${{ secrets.GITHUB_USERNAME }}
-        password: ${{ secrets.GITHUB_PASSWORD }}
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make
