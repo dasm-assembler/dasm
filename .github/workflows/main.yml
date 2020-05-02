@@ -1,24 +1,61 @@
 name: Build, Test and Package Snapshots
+
 on:
   push:
-    paths-ignore:
-    - 'snapshot-builds/**'
+    paths:
+    - 'src/**'
+    - 'test/**'
+    - '.github/workflows/main.yml'
+
 jobs:
-  build_test_package_job:
-    runs-on: ubuntu-latest
-    name: Job
+  build_for_windows:
+    runs-on: windows-2019
+    name: Build for Windows
     steps:
-    - uses: actions/checkout@v1
-    - name: Build and Test
-      run: make test
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
-    - name: Package Snapshots
-      id: snapshotbuild
-      uses: dasm-assembler/dasm-snapshot-builder@v1
-      with:
-        branch: ${{ steps.extract_branch.outputs.branch }}
-        username: ${{ secrets.GITHUB_USERNAME }}
-        password: ${{ secrets.GITHUB_PASSWORD }}
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make test # build + test
+      env:
+        CC: gcc
+    - run: |
+        mkdir -p artifacts/windows
+        cp bin/dasm.exe artifacts/windows/dasm.exe
+    - uses: actions/upload-artifact@v2
+      with :
+        name: dasm snapshot builds
+        path: artifacts
+
+  build_for_mac:
+    runs-on: macos-10.15
+    name: Build for Mac
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make test # build + test
+      env:
+        CC: gcc
+    - run: |
+        mkdir -p artifacts/macos
+        cp bin/dasm artifacts/macos/dasm
+    - uses: actions/upload-artifact@v2
+      with :
+        name: dasm snapshot builds
+        path: artifacts
+
+  build_for_linux:
+    runs-on: ubuntu-18.04
+    name: Build for Linux
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make
+      run: make test # build + test
+      env:
+        CC: gcc
+    - run: |
+        mkdir -p artifacts/linux
+        cp bin/dasm artifacts/linux/dasm
+    - uses: actions/upload-artifact@v2
+      with :
+        name: dasm snapshot builds
+        path: artifacts
+        
