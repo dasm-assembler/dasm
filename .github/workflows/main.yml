@@ -9,22 +9,13 @@ jobs:
     name: Build for Windows
     steps:
     - uses: actions/checkout@v2
-    - name: Make64
+    - name: Make
       run: make
       env:
         CC: gcc
     - run: |
-        mkdir -p artifacts/windows/64bit
-        cp bin/dasm.exe artifacts/windows/64bit/dasm.exe
-        make clean
-    # - name: Make32
-    #   run: make
-    #   env:
-    #     CC: gcc
-    #     LDFLAGS: -m32 -L/usr/lib32
-    # - run: |
-    #     mkdir -p artifacts/windows/32bit
-    #     cp bin/dasm.exe artifacts/windows/32bit/dasm.exe
+        mkdir -p artifacts/windows
+        cp bin/dasm.exe artifacts/windows/dasm.exe
     - uses: actions/upload-artifact@v2
       with :
         name: dasm snapshot builds
@@ -52,22 +43,13 @@ jobs:
     name: Build for Linux
     steps:
     - uses: actions/checkout@v2
-    - name: Make64
+    - name: Make
       run: make
       env:
         CC: gcc
     - run: |
-        mkdir -p artifacts/linux/64bit
-        cp bin/dasm artifacts/linux/64bit/dasm
-        make clean
-    - name: Make32
-      run: make
-      env:
-        CC: gcc
-        LDFLAGS: -m32 -L/usr/lib32
-    - run: |
-        mkdir -p artifacts/linux/32bit
-        cp bin/dasm artifacts/linux/32bit/dasm
+        mkdir -p artifacts/linux
+        cp bin/dasm artifacts/linux/dasm
     - uses: actions/upload-artifact@v2
       with :
         name: dasm snapshot builds
