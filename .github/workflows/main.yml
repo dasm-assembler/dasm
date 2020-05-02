@@ -11,13 +11,16 @@ jobs:
     - uses: actions/checkout@v2
     - name: Make64
       run: make
+      env:
+        CC: gcc
     - run: |
         mkdir -p artifacts/windows/64bit
         cp bin/dasm.exe artifacts/windows/64bit/dasm.exe
     - name: Make32
       run: make
       env:
-        LDFLAGS: -m32
+        CC: gcc
+        LDFLAGS: -m32 -L/usr/lib32
     - run: |
         mkdir -p artifacts/windows/32bit
         cp bin/dasm.exe artifacts/windows/32bit/dasm.exe
