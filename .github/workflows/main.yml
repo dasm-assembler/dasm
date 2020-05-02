@@ -16,11 +16,12 @@ jobs:
     - run: |
         mkdir -p artifacts/windows/64bit
         cp bin/dasm.exe artifacts/windows/64bit/dasm.exe
+        make clean
     # - name: Make32
     #   run: make
     #   env:
     #     CC: gcc
-    #     LDFLAGS: -m32
+    #     LDFLAGS: -m32 -L/usr/lib32
     # - run: |
     #     mkdir -p artifacts/windows/32bit
     #     cp bin/dasm.exe artifacts/windows/32bit/dasm.exe
@@ -63,7 +64,7 @@ jobs:
       run: make
       env:
         CC: gcc
-        LDFLAGS: -m32
+        LDFLAGS: -m32 -L/usr/lib32
     - run: |
         mkdir -p artifacts/linux/32bit
         cp bin/dasm artifacts/linux/32bit/dasm
