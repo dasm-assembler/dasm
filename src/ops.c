@@ -928,8 +928,8 @@ v_equ(char *str, MNEMONIC *dummy)
             if (lab->value != sym->value)
             {
                 asmerr( ERROR_EQU_VALUE_MISMATCH, false, NULL );
-                printf("old value: $%04lx  new value: $%04lx\n",
-                    lab->value, sym->value);
+                printf("INFO: Label '%s' changed from $%04lx to $%04lx\n",
+                    Av[0], lab->value, sym->value);
                 ++Redo;
                 Redo_why |= REASON_EQU_VALUE_MISMATCH;
             }
