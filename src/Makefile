@@ -28,6 +28,9 @@
 
 #GOPTI= -O -m32 # -O for more warnings; use -O0 for debugging, use -O3 for speed
 
+# GOPTI = -O3 -mcpu=686
+GOPTI = -ggdb3
+
 GWARN= -ansi -std=c99 -pedantic -Wall \
        -Wstrict-prototypes -Wdeclaration-after-statement \
        -Wold-style-definition -Wmissing-declarations -Wmissing-prototypes \
@@ -35,6 +38,7 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
        -Wcast-align -Wpointer-arith -Wbad-function-cast \
        -Wformat-y2k -Wformat-nonliteral -Wformat-security \
        -Wfloat-equal -Wundef -Winline \
+
        # -Wfour-char-constants # Apple OS X only option, not needed anyway?
        # -Wunused # definition is weird in man gcc, effect is weird too
        # -Wextra -Wno-unused-parameter # no-unused tames extra a little
@@ -44,15 +48,16 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 
 #GDEBG= -g # -fprofile-arcs -ftest-coverage -pg # -D_FORTIFY_SOURCE=2
 
-#CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
+CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
 #LDFLAGS= -m32 -L/usr/lib32
 
 #CC= gcc
 
 OBJS= main.o ops.o globals.o exp.o symbols.o \
-      mne6303.o mne6502.o mne68705.o mne6811.o mnef8.o
+      mne6303.o mne6502.o mne68705.o mne6811.o mnef8.o mne68908.o
+
 SRCS= main.c ops.c globals.c exp.c symbols.c \
-      mne6303.c mne6502.c mne68705.c mne6811.c mnef8.c
+      mne6303.c mne6502.c mne68705.c mne6811.c mnef8.c mne68908.c
 
 ALL= dasm ftohex
 
