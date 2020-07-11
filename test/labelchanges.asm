@@ -6,15 +6,15 @@
 ;===============================================================================
 
   ; automatically decide whether to use a branch or a jump
-  MAC BNEJ
-    IF ({1} - .) >= -126 && ({1} - .) <= 129
+  .macro bnej
+    #if ({1} - .) >= -126 && ({1} - .) <= 129
       bne    {1}
-    ELSE
+    #else
       beq    skip$
       jmp    {1}
 skip$
-    ENDIF
-  ENDM
+    #endif
+  .endm
 
 ;===============================================================================
 
@@ -22,27 +22,27 @@ skip$
 
 BackOk
     ds      126, $ea
-    BNEJ    BackOk
+    bnej    BackOk
 
 BackJmp
     ; this has to use "jmp"
     ; and is detected as such
     ds      126+1, $ea
-    BNEJ    BackJmp
+    bnej    BackJmp
 
     ; this can use "bne"
-    BNEJ    ForwardOk
+    bnej    ForwardOk
     ds      127, $ea
 ForwardOk
 
     ; this has to use "jmp"
     ; and is detected as such
-    BNEJ    ForwardJmp
+    bnej    ForwardJmp
     ds      127+3, $ea
 ForwardJmp
 
     ; this has to use "jmp"
     ; and is detected as such
-    BNEJ    ForwardJmp2
+    bnej    ForwardJmp2
     ds      127+2, $ea
 ForwardJmp2

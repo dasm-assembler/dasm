@@ -2,12 +2,12 @@
 
 	processor 6502
 
- MAC testmac
+ .macro testmac
 	lda #1
- ENDM
- MAC testmac
+ .endm
+ .macro testmac
 	lda #1
- ENDM
+ .endm
 
 	ORG $f800
 
