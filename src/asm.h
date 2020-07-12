@@ -32,10 +32,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
-#define		WITH_STRICT_CAMELCASE_CHECKING		1
-#define		WITH_EXTENDED_HASH_SIZE			1
-
 /* for -T option [phf] */
 typedef enum
 {
@@ -160,19 +156,10 @@ enum FORMAT
 #define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
-
-#ifdef WITH_EXTENDED_HASH_SIZE
-    #define	HASH_LEN_BITS	12	// hashtable size increased by factor 4, 2020-07-10
-#else
-    #define	HASH_LEN_BITS	10	// original implementation
-#endif
-
-#define SHASHSIZE   (1 << HASH_LEN_BITS)
-#define MHASHSIZE   (1 << HASH_LEN_BITS)
-
-#define SHASHAND    (SHASHSIZE-1)
-#define MHASHAND    (MHASHSIZE-1)
-
+#define SHASHSIZE   1024
+#define MHASHSIZE   1024
+#define SHASHAND    0x03FF
+#define MHASHAND    0x03FF
 #define ALLOCSIZE   16384
 #define MAXMACLEVEL 32
 #define TAB        9
@@ -183,25 +170,19 @@ enum FORMAT
 		AM_IMM8,				/*    immediate 8  bits   */
 		AM_IMM16,		        /*    immediate 16 bits   */
 		AM_BYTEADR,				/*    address 8 bits        */
-
-		AM_BYTEADRX,			/*    address 16 bits     */		// !misleading comment
-		AM_BYTEADRY,			/*    relative 8 bits     */		// !misleading comment
-		AM_WORDADR,				/*    index x 0 bits        */	// !misleading comment
-		AM_WORDADRX,			/*    index x 8 bits        */		// !misleading comment
-		AM_WORDADRY,			/*    index x 16 bits     */		// !misleading comment
-		AM_REL,					/*    bit inst. special   */	// !misleading comment
-		AM_INDBYTEX,			/*    bit-bra inst. spec. */		// !misleading comment
-		AM_INDBYTEY,			/*    index y 0 bits        */		// !misleading comment
-		AM_INDWORD,				/*    index y 8 bits        */	// !misleading comment
-
+		AM_BYTEADRX,			/*    address 16 bits     */
+		AM_BYTEADRY,			/*    relative 8 bits     */
+		AM_WORDADR,				/*    index x 0 bits        */
+		AM_WORDADRX,			/*    index x 8 bits        */
+		AM_WORDADRY,			/*    index x 16 bits     */
+		AM_REL,					/*    bit inst. special   */
+		AM_INDBYTEX,			/*    bit-bra inst. spec. */
+		AM_INDBYTEY,			/*    index y 0 bits        */
+		AM_INDWORD,				/*    index y 8 bits        */
 		AM_0X,					/*    index x 0 bits        */
 		AM_0Y,					/*    index y 0 bits        */
-
-		AM_BITMOD,				/*    ind addr 8 bits     */	// !misleading comment
-		AM_BITBRAMOD,			/*    ind addr 16 bits    */		// !misleading comment
-
-		AM_BYTEADR_SP,				/*    index SP +8 bits     */
-		AM_WORDADR_SP,				/*    index SP +16 bits   */
+		AM_BITMOD,				/*    ind addr 8 bits     */
+		AM_BITBRAMOD,			/*    ind addr 16 bits    */
 
 		AM_SYMBOL,
 		AM_EXPLIST,
@@ -228,9 +209,6 @@ enum FORMAT
 #define AF_0Y					( 1L << AM_0Y )
 #define AF_BITMOD				( 1L << AM_BITMOD )
 #define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
-#define AF_BYTEADR_SP				( 1L << AM_BYTEADR_SP)
-#define AF_WORDADR_SP				( 1L << AM_WORDADR_SP)
-
 
 #define AM_BYTE					AM_BYTEADR
 #define AM_WORD					AM_WORDADR

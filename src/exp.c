@@ -104,7 +104,6 @@ int IsAlphaNum( int c );
 *    val	zero page or absolute
 *    val,x	zero,x or absolute,x
 *    val,y	zero,y or absolute,y
-*    val,sp	zero,sp
 *    (val)	indirect
 *    (val,x)	zero indirect x
 *    (val),y	zero indirect y
@@ -459,15 +458,6 @@ SYMBOL *eval(const char *str, int wantmode)
                 if(Mnext==AM_INDWORD)
                      Mnext=AM_0Y;
             }
-            else if (scr == 's' && ((str[2]|0x20) == 'p') && !IsAlphaNum(str[3]))	// stack pointer indexed address mode
-            {
-                cur->addrmode = AM_BYTEADR_SP;
-                ++str;
-                ++str;
-
-                if (Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADR_SP;
-            }
             else
             {
                 SYMBOL *pNewSymbol = allocsymbol();
@@ -515,15 +505,8 @@ SYMBOL *eval(const char *str, int wantmode)
                 }
             }
 
-            if (*str == '0') 
-            {
-                if (str[1] == 'x') {			// allow also '0xAA' notation for '$AA'
-                    ++str;
-                    str = (char *)pushhex(str+1);
-                } else {
+            if (*str == '0')
                 str = pushoct(str);
-                }
-            }
             else
             {
                 if (*str > '0' && *str <= '9')
@@ -925,7 +908,6 @@ const char *pushsymbol(const char *str)
     for (ptr = str;
     *ptr == '_' ||
         *ptr == '.' ||
-        *ptr == '@' ||				// allow at-sign to apear in label names
         (*ptr >= 'a' && *ptr <= 'z') ||
         (*ptr >= 'A' && *ptr <= 'Z') ||
         (*ptr >= '0' && *ptr <= '9');
