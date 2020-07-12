@@ -183,6 +183,9 @@ enum FORMAT
 		AM_0Y,					/*    index y 0 bits        */
 		AM_BITMOD,				/*    ind addr 8 bits     */
 		AM_BITBRAMOD,			/*    ind addr 16 bits    */
+		AM_BYTEADR_SP,				/*    index SP +8 bits     */
+		AM_WORDADR_SP,				/*    index SP +16 bits   */
+
 
 		AM_SYMBOL,
 		AM_EXPLIST,
@@ -209,6 +212,8 @@ enum FORMAT
 #define AF_0Y					( 1L << AM_0Y )
 #define AF_BITMOD				( 1L << AM_BITMOD )
 #define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
+#define AF_BYTEADR_SP                          ( 1L << AM_BYTEADR_SP)
+#define AF_WORDADR_SP                          ( 1L << AM_WORDADR_SP)
 
 #define AM_BYTE					AM_BYTEADR
 #define AM_WORD					AM_WORDADR
