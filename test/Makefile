@@ -7,6 +7,7 @@ FTOHEX=../bin/ftohex
 test:
 	(cd atari2600; $(MAKE) test; cd ..)
 	(cd atari7800; $(MAKE) test; cd ..)
+	(cd cmdline_defs; $(MAKE) test; cd ..)
 	./run_tests.sh
 
 %.bin: %.asm
