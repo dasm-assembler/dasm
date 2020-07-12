@@ -1379,7 +1379,20 @@ int asmerr(int err, bool bAbort, const char *sText )
         if (sErrorDef[err].bFatal)
             bStopAtEnd = true;
         
-        for ( pincfile = pIncfile; pincfile->flags & INF_MACRO; pincfile=pincfile->next);
+	pincfile = pIncfile;
+	while(1) {
+		if (pincfile == NULL) {
+			fprintf(stderr, "%s:%d, pincfile is NULL, err:%d, abort:%d, [%s]: %s\n", __FILE__, __LINE__
+						, err, bAbort, sText, sErrorDef[err].sDescription);	
+			break;
+		}
+		if (pincfile->flags & INF_MACRO) {
+			continue;
+		} else {
+			break;
+		}
+		pincfile = pincfile->next;	
+	}
         str = sErrorDef[err].sDescription;
 
         /*
@@ -1394,6 +1407,7 @@ int asmerr(int err, bool bAbort, const char *sText )
         error_file = (F_listfile != NULL) ? FI_listfile : stdout;
 
         /* print first part of message, different formats offered */
+	if (pincfile != NULL)
         switch (F_errorformat)
         {
             case ERRORFORMAT_WOE:
