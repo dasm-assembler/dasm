@@ -39,6 +39,7 @@ extern MNEMONIC    MneHD6303[];
 extern MNEMONIC    Mne68705[];
 extern MNEMONIC    Mne68HC11[];
 extern MNEMONIC    MneF8[];
+extern MNEMONIC    Mne68908[];
 
 void generate(void);
 void genfill(long fill, long bytes, int size);
@@ -111,6 +112,13 @@ void v_processor(char *str, MNEMONIC *dummy)
 
 		MsbOrder = 1;
         Processor = 0xf8;
+    }
+    if ((strcmp(str,"68908") == 0) || (strcmp(str,"68hc908") == 0)) {
+       if ( !bCalled ) {
+           addhashtable(Mne68908);
+       }
+       MsbOrder = 1;           /*  msb,lsb */
+       Processor = 68908;
     }
 
     bCalled = true;
