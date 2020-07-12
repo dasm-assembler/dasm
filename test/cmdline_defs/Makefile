@@ -5,7 +5,8 @@
 DASM=../../bin/dasm
 FTOHEX=../../bin/ftohex
 
-test: ramstart.bin
+test: 
+	@./run_tests.sh
 
 %.bin: %.asm
 	$(DASM) $< -o$@ -f1 -DRAM_START=0x60

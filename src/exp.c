@@ -506,7 +506,14 @@ SYMBOL *eval(const char *str, int wantmode)
             }
 
             if (*str == '0')
+            {
+                if (str[1] == 'x') {                   // allow also '0xAA' notation for '$AA'
+                    ++str;
+                    str = (char *)pushhex(str+1);
+                } else {
                 str = pushoct(str);
+                }
+            }
             else
             {
                 if (*str > '0' && *str <= '9')
