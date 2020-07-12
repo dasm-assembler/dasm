@@ -104,6 +104,7 @@ int IsAlphaNum( int c );
 *    val	zero page or absolute
 *    val,x	zero,x or absolute,x
 *    val,y	zero,y or absolute,y
+*    val,sp	stack pointer indexed + offset
 *    (val)	indirect
 *    (val,x)	zero indirect x
 *    (val),y	zero indirect y
@@ -457,6 +458,15 @@ SYMBOL *eval(const char *str, int wantmode)
                      Mnext=AM_BYTEADRY;
                 if(Mnext==AM_INDWORD)
                      Mnext=AM_0Y;
+            }
+            else if (scr == 's' && ((str[2]|0x20) == 'p') && !IsAlphaNum(str[3]))      // stack pointer indexed address mode
+            {
+                cur->addrmode = AM_BYTEADR_SP;
+                ++str;
+                ++str;
+
+                if (Mnext==AM_WORDADR)
+                     Mnext=AM_WORDADR_SP;
             }
             else
             {
