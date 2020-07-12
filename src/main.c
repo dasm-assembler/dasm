@@ -1387,11 +1387,11 @@ int asmerr(int err, bool bAbort, const char *sText )
 			break;
 		}
 		if (pincfile->flags & INF_MACRO) {
+			pincfile = pincfile->next;
 			continue;
 		} else {
 			break;
 		}
-		pincfile = pincfile->next;	
 	}
         str = sErrorDef[err].sDescription;
 
