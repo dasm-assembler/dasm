@@ -906,12 +906,30 @@ const char *pushstr(const char *str)
     return str;
 }
 
+static char *lastSymbolStr = NULL;
+static int symbolRecursionCount = 0;
+
 const char *pushsymbol(const char *str)
 {
     SYMBOL *sym;
     const char *ptr;
     unsigned char macro = 0;
-    
+
+    if (lastSymbolStr != NULL) {
+	if (str != NULL) {
+	    if (str == lastSymbolStr) {
+		symbolRecursionCount++;
+		if (symbolRecursionCount > 1000) {
+			fprintf(stderr,"%s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
+			exit(1);
+		}
+	    } else {
+		symbolRecursionCount = 0;
+	    }
+	}
+    }
+    lastSymbolStr = str;
+
     for (ptr = str;
     *ptr == '_' ||
         *ptr == '.' ||
