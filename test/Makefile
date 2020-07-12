@@ -19,4 +19,5 @@ test:
 clean:
 	(cd atari2600; $(MAKE) clean; cd ..)
 	(cd atari7800; $(MAKE) clean; cd ..)
+	(cd cmdline_defs; $(MAKE) clean; cd ..)
 	rm -rf *.bin *.hex *.list.txt
