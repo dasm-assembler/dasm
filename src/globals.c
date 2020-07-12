@@ -82,8 +82,8 @@ unsigned char	 Fisclear;
 unsigned long	 Plab, Pflags;
 
 /*unsigned int	Adrbytes[]  = { 1, 2, 3, 2, 2, 2, 3, 3, 3, 2, 2, 2, 3, 1, 1, 2, 3 };*/
-unsigned int	Cvt[]	    = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0 };	// new stack pointer indexed address mode added 2020-07-11
-unsigned int	Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 0, 0, 1, 1, 1, 2 };
+unsigned int	Cvt[]	    = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0 };
+unsigned int	Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 0, 0, 1, 1 };
 
 MNEMONIC Ops[] = {
     { NULL, v_list    , "list",           0,      0, {0,} },
@@ -94,7 +94,6 @@ MNEMONIC Ops[] = {
     { NULL, v_dc      , "dc",             0,      0, {0,} },
     { NULL, v_dc      , "byte",           0,      0, {0,} },
     { NULL, v_dc      , "word",           0,      0, {0,} },
-    { NULL, v_dc      , "short",          0,      0, {0,} },
     { NULL, v_dc      , "long",           0,      0, {0,} },
     { NULL, v_ds      , "ds",             0,      0, {0,} },
     { NULL, v_dc      , "dv",             0,      0, {0,} },
@@ -111,12 +110,10 @@ MNEMONIC Ops[] = {
     { NULL, v_set     , "set",            0,      0, {0,} },
     { NULL, v_setstr  , "setstr",         0,      0, {0,} },
     { NULL, v_macro   , "mac",            MF_IF,  0, {0,} },
-    { NULL, v_macro   , "macro",          MF_IF,  0, {0,} },
     { NULL, v_endm    , "endm",           MF_ENDM,0, {0,} },
     { NULL, v_mexit   , "mexit",          0,      0, {0,} },
     { NULL, v_ifconst , "ifconst",        MF_IF,  0, {0,} },
     { NULL, v_ifnconst, "ifnconst",       MF_IF,  0, {0,} },
-    { NULL, v_ifnconst, "ifndef",         MF_IF,  0, {0,} },
     { NULL, v_if      , "if",             MF_IF,  0, {0,} },
     { NULL, v_else    , "else",           MF_IF,  0, {0,} },
     { NULL, v_endif   , "endif",          MF_IF,  0, {0,} },
@@ -127,16 +124,6 @@ MNEMONIC Ops[] = {
     { NULL, v_processor,"processor",      0,      0, {0,} },
     { NULL, v_incbin  , "incbin",         0,      0, {0,} },
     { NULL, v_incdir  , "incdir",         0,      0, {0,} },
-
-#ifdef WITH_STRICT_CAMELCASE_CHECKING		// enforce uppercase/lowercase to be strictly checked
-    // allow both uppercase and lowercase spelling for the following reserved words
-    { NULL, v_dc      , "DC",             0,      0, {0,} },
-    { NULL, v_ds      , "DS",             0,      0, {0,} },
-    { NULL, v_org     , "ORG",            0,      0, {0,} },
-    { NULL, v_equ     , "EQU",            0,      0, {0,} },
-    { NULL, v_echo    , "ECHO",           0,      0, {0,} },
-    { NULL, v_processor,"PROCESSOR",      0,      0, {0,} },
-#endif
     MNEMONIC_NULL
 };
 

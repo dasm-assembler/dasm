@@ -1215,8 +1215,6 @@ MNEMONIC *findmne(char *str)
 {
     int i;
     char c;
-    int k;
-    unsigned int h;
     MNEMONIC *mne;
     char buf[64];
     
@@ -1226,34 +1224,14 @@ MNEMONIC *findmne(char *str)
     }
 
     for (i = 0; (c = str[i]); ++i) {
-#ifndef WITH_STRICT_CAMELCASE_CHECKING
         if (c >= 'A' && c <= 'Z')
             c += 'a' - 'A';
-#endif
         buf[i] = c;
     }
     buf[i] = 0;
-
-    h = hash1(buf);
-    mne = MHash[h];
-
-    k = 0;
-    while (mne != NULL) {
-	if (Xdebug > 3)
-		fprintf(stderr,"%d\t[%s] [%s] %08lx %08lx\n", k, buf, mne->name, (long)mne, (long)mne->next);
-
+    for (mne = MHash[hash1(buf)]; mne; mne = mne->next) {
         if (strcmp(buf, mne->name) == 0)
             break;
-
-	k++;
-	mne = mne->next;
-	if (mne != NULL) {
-		if ((mne == mne->next) && (k > 5)) {
-			fprintf(stderr,"BUG: %s:%d: chained list looped to itself without match, would lock up endlessly, who called us ?\n\tstr[%s] buf[%s] hash:%d", __FILE__, __LINE__, str, buf, h);
-			return NULL; // we need to return NULL here or the program will get stuck in an endless loop 
-			// the BUG vanished with  WITH_EXTENDED_HASH_SIZE  defined
-		}
-	}
     }
     return mne;
 }
@@ -1309,12 +1287,10 @@ void v_macro(char *str, MNEMONIC *dummy)
         
         mne = parse(buf);
         if (Av[1][0]) {
-            if (mne != NULL) {
-            if (mne->flags & MF_ENDM) {
+            if (mne && mne->flags & MF_ENDM) {
                 if (!defined)
                     mac->strlist = base;
                 return;
-            }
             }
         }
         if (!skipit && F_listfile && ListMode)
@@ -1351,15 +1327,10 @@ void addhashtable(MNEMONIC *mne)
 
 static unsigned int hash1(const char *str)
 {
-    int n= 0;
     unsigned int result = 0;
     
     while (*str)
-    {
-	n++;
-	result += n;
         result = (result << 2) ^ *str++;
-    }
     return result & MHASHAND;
 }
 
