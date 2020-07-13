@@ -13,11 +13,14 @@
 
 	.PROCESSOR	68hc908
 
-	.trace		1
+	.TRACE		on		; must be either on or off (lowercase), test for str[1]
+	
 
 PTB	.EQU		1
 DDRB	.EQU		5
 
+FIVE		.EQU	5
+FIVE_HUNDRED	.EQU	500
 
 RAM_START	.EQU	0x40
 
@@ -27,12 +30,14 @@ RAM_START	.EQU	0x40
 
 	adc	#6
 	adc.b	RAM_START
-	adc	7,X
+	adc	[X+7]
 	adc	constant0
-	adc	0x300,X
+	adc	[X+0x300]
 	adc	,X
-	adc	5,SP
-	adc.w	500,SP
+	adc	[SP+5]
+	adc	[SP+500]
+;	adc.w	[SP+500]	; doesnt work
+;	adc.w	500,SP
 
 	add	#6
 	add.b	RAM_START
@@ -40,8 +45,8 @@ RAM_START	.EQU	0x40
 	add	constant0
 	add	0x300,X
 	add	,X
-	add	5,SP
-	add.w	500,SP
+	add	FIVE,SP
+	add.w	[SP+FIVE_HUNDRED]
 
 	aiS		#5
 	aiX		#6
@@ -50,10 +55,12 @@ RAM_START	.EQU	0x40
 	and.b	RAM_START
 	and	7,X
 	and	constant0
-	and	0x300,X
+;	and.w	[X+0x300]		; doesnt work
+	and	[X+0x300]
 	and	,X
 	and	5,SP
-	and.w	500,SP
+	and	FIVE_HUNDRED,SP		; doesnt work
+;	and.w	FIVE_HUNDRED,SP		; must force addressing mode	
 
 	asl	RAM_START
 	asl	3,X
@@ -123,8 +130,8 @@ subRoutine:
 
 	cbeqA		$20,frontLoop	
 	cbeq		9,frontLoop
-	cbeq		(0xA,X),frontLoop
-	cbeq		0xB,SP,frontLoop
+	cbeq		(0xA,X),	frontLoop
+	cbeq		[SP+0x0B],frontLoop
 	cbeqX		0x40,frontLoop	
 
 	clc
@@ -165,13 +172,13 @@ frontLoop:
 	cpX	0x300,X
 	cpX	,X
 	cpX	5,SP
-	cpX.w	500,SP
+	cpX.w	FIVE_HUNDRED,SP
 	
 backLoop:
 	dbnzA   backLoop
 	dbnz	4,backLoop
-	dbnz	5,X,backLoop
-	dbnz	6,SP,backLoop
+	dbnz	[X+5],backLoop
+	dbnz	[SP+6],backLoop
 	dbnzX	backLoop	
 
 	dec	RAM_START
