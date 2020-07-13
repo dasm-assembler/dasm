@@ -94,7 +94,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "cpx", 0, AF_HMASK, { 0xA3, 0xB3, 0xE3, 0xC3, 0xD3, 0xF3, 0x9EE3, 0x9ED3 } },
 
 //   [offs+X]  [X]  [SP]
-    { NULL, v_mnemonic, "dbnz",  MF_REL, (AF_BYTEADR | AF_BYTEADRX | AF_0X | AF_BYTEADR_SP), { 0x3B, 0x6B, 0x7B, 0x9E6B } }, 
+    { NULL, v_mnemonic, "dbnz",  MF_REL, (AF_BYTEADR | AF_BYTEADRX /*| AF_0X*/ | AF_BYTEADR_SP), { 0x3B, 0x6B/*, 0x7B*/, 0x9E6B } }, 
     { NULL, v_mnemonic, "dbnza",      0, AF_REL, { 0x4b } },
 //    { NULL, v_mnemonic, "dbnz",  MF_MASK, AF_REL, { 0x3b } },
     { NULL, v_mnemonic, "dbnzx",      0, AF_REL, { 0x5b } },
