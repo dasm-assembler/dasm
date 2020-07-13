@@ -82,7 +82,7 @@ MNEMONIC Mne68908[] = {
 
     { NULL, v_mnemonic, "clc", 0, AF_IMP, { 0x98 } },
     { NULL, v_mnemonic, "cli", 0, AF_IMP, { 0x9A } },
-    { NULL, v_mnemonic, "clr", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x3F, 0x6F, 0x7F, 0x9E6F } },
+    { NULL, v_mnemonic, "clr", 0, AF_IMASK, { 0x3F, 0x6F, 0x7F, 0x9E6F } },
     { NULL, v_mnemonic, "clra", 0,AF_IMP, { 0x4F } },
     { NULL, v_mnemonic, "clrh", 0,AF_IMP, { 0x8C } },
     { NULL, v_mnemonic, "clrx", 0,AF_IMP, { 0x5F } },
@@ -93,10 +93,8 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "cphx", 0, AF_IMM16|AF_BYTEADR, { 0x65 , 0x75} },
     { NULL, v_mnemonic, "cpx", 0, AF_HMASK, { 0xA3, 0xB3, 0xE3, 0xC3, 0xD3, 0xF3, 0x9EE3, 0x9ED3 } },
 
-//   [offs+X]  [X]  [SP]
     { NULL, v_mnemonic, "dbnz",  MF_REL, (AF_BYTEADR | AF_BYTEADRX /*| AF_0X*/ | AF_BYTEADR_SP), { 0x3B, 0x6B/*, 0x7B*/, 0x9E6B } }, 
     { NULL, v_mnemonic, "dbnza",      0, AF_REL, { 0x4b } },
-//    { NULL, v_mnemonic, "dbnz",  MF_MASK, AF_REL, { 0x3b } },
     { NULL, v_mnemonic, "dbnzx",      0, AF_REL, { 0x5b } },
 
     { NULL, v_mnemonic, "dec", 0, AF_IMASK, { 0x3A, 0x6A, 0x7A, 0x9E6A } },
@@ -116,10 +114,10 @@ MNEMONIC Mne68908[] = {
 
     { NULL, v_mnemonic, "ldhx", 0, AF_IMM16|AF_BYTEADR, { 0x45, 0x55 } },
     { NULL, v_mnemonic, "ldx", 0, AF_HMASK, { 0xAE, 0xBE, 0xEE, 0xCE, 0xDE, 0xFE, 0x9EEE, 0x9EDE } },
-    { NULL, v_mnemonic, "lsl", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x38, 0x68, 0x78, 0x9E68 } },
+    { NULL, v_mnemonic, "lsl", 0, AF_IMASK, { 0x38, 0x68, 0x78, 0x9E68 } },
     { NULL, v_mnemonic, "lsla", 0,AF_IMP, { 0x48 } },
     { NULL, v_mnemonic, "lslx", 0,AF_IMP, { 0x58 } },
-    { NULL, v_mnemonic, "lsr", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x34, 0x64, 0x74, 0x9E64 } },
+    { NULL, v_mnemonic, "lsr", 0, AF_IMASK, { 0x34, 0x64, 0x74, 0x9E64 } },
     { NULL, v_mnemonic, "lsra", 0,AF_IMP, { 0x44 } },
     { NULL, v_mnemonic, "lsrx", 0,AF_IMP, { 0x54 } },
 
@@ -127,7 +125,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "x+mov", 0, AF_BYTEADR, {0x5e} },
     { NULL, v_mnemonic, "movx+", 0, AF_BYTEADR, {0x7e} },
 
-    { NULL, v_mnemonic, "neg",  0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x30, 0x60, 0x70, 0x9E60 } },
+    { NULL, v_mnemonic, "neg",  0, AF_IMASK, { 0x30, 0x60, 0x70, 0x9E60 } },
     { NULL, v_mnemonic, "nega", 0,AF_IMP, { 0x40 } },
     { NULL, v_mnemonic, "negx", 0,AF_IMP, { 0x50 } },
     { NULL, v_mnemonic, "nop", 0, AF_IMP, { 0x9D } },
@@ -138,10 +136,10 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "pula", 0, AF_IMP, { 0x86 } },
     { NULL, v_mnemonic, "pulh", 0, AF_IMP, { 0x8a } },
     { NULL, v_mnemonic, "pulx", 0, AF_IMP, { 0x88 } },
-    { NULL, v_mnemonic, "rol", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x39, 0x69, 0x79, 0x9E69 } },
+    { NULL, v_mnemonic, "rol", 0, AF_IMASK, { 0x39, 0x69, 0x79, 0x9E69 } },
     { NULL, v_mnemonic, "rola", 0,AF_IMP, { 0x49 } },
     { NULL, v_mnemonic, "rolx", 0,AF_IMP, { 0x59 } },
-    { NULL, v_mnemonic, "ror", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, { 0x36, 0x66, 0x76, 0x9E66 } },
+    { NULL, v_mnemonic, "ror", 0, AF_IMASK, { 0x36, 0x66, 0x76, 0x9E66 } },
     { NULL, v_mnemonic, "rora", 0,AF_IMP, { 0x46 } },
     { NULL, v_mnemonic, "rorx", 0,AF_IMP, { 0x56 } },
     { NULL, v_mnemonic, "rsp", 0, AF_IMP, { 0x9C } },
@@ -160,7 +158,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "thxs", 0, AF_IMP, { 0x94 } },
     { NULL, v_mnemonic, "tpa", 0, AF_IMP, { 0x85 } },
     { NULL, v_mnemonic, "tshx", 0, AF_IMP, { 0x95 } },
-    { NULL, v_mnemonic, "tst", 0, AF_BYTEADR|AF_BYTEADRX|AF_0X|AF_BYTEADR_SP, {0x3D, 0x6D, 0x7D, 0x9e6D } },
+    { NULL, v_mnemonic, "tst", 0, AF_IMASK, {0x3D, 0x6D, 0x7D, 0x9e6D } },
     { NULL, v_mnemonic, "tsta", 0,AF_IMP, { 0x4D } },
     { NULL, v_mnemonic, "tstx", 0,AF_IMP, { 0x5D } },
     { NULL, v_mnemonic, "txa", 0, AF_IMP, { 0x9F } },
