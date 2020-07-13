@@ -170,19 +170,19 @@ enum FORMAT
 		AM_IMM8,				/*    immediate 8  bits   */
 		AM_IMM16,		        /*    immediate 16 bits   */
 		AM_BYTEADR,				/*    address 8 bits        */
-		AM_BYTEADRX,			/*    address 16 bits     */
-		AM_BYTEADRY,			/*    relative 8 bits     */
-		AM_WORDADR,				/*    index x 0 bits        */
-		AM_WORDADRX,			/*    index x 8 bits        */
-		AM_WORDADRY,			/*    index x 16 bits     */
-		AM_REL,					/*    bit inst. special   */
-		AM_INDBYTEX,			/*    bit-bra inst. spec. */
-		AM_INDBYTEY,			/*    index y 0 bits        */
-		AM_INDWORD,				/*    index y 8 bits        */
+		AM_BYTEADRX,			/*    index x + 8 bit offset     */
+		AM_BYTEADRY,			/*    index y + 8 bit offset     */
+		AM_WORDADR,				/*    extended addr        */
+		AM_WORDADRX,			/*    index x + 16 bit offset       */
+		AM_WORDADRY,			/*    index y + 16 bit offset      */
+		AM_REL,					/*    relative 8 bits   */
+		AM_INDBYTEX,			/*    indirect x     */
+		AM_INDBYTEY,			/*    indirect y     */
+		AM_INDWORD,				/*    indirect immediate    */
 		AM_0X,					/*    index x 0 bits        */
 		AM_0Y,					/*    index y 0 bits        */
-		AM_BITMOD,				/*    ind addr 8 bits     */
-		AM_BITBRAMOD,			/*    ind addr 16 bits    */
+		AM_BITMOD,				/*    spec. bit modifcation     */
+		AM_BITBRAMOD,			/*    spec. bit-test rel. branch    */
 		AM_BYTEADR_SP,				/*    index SP +8 bits     */
 		AM_WORDADR_SP,				/*    index SP +16 bits   */
 
