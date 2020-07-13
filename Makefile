@@ -37,10 +37,10 @@ install: build
 
 # just run all the tests
 test: build
-	echo "Running tests..."
+	@echo "Running tests..."
 	(cd test; $(MAKE); cd ..)
-	echo "Tests were run, but testing is not fully automated yet."
-	echo "In other words, don't rely on what you saw too much."
+	@echo "Tests were run, but testing is not fully automated yet."
+	@echo "In other words, don't rely on what you saw too much."
 
 # just build everything and copy binaries to trunk/bin/
 build:
