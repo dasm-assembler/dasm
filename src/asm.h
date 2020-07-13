@@ -111,7 +111,8 @@ enum FORMAT
         ERROR_VALUE_MUST_BE_LT_10000,                   /* 30 */
         ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 31 */
 	
-	
+	ERROR_RECURSION_TOO_DEEP,			/* 32 */
+	ERROR_AVOID_SEGFAULT,				/* 33 */
 	};
 
     typedef struct ERRORSTRUCT

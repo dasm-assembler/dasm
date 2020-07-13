@@ -112,6 +112,8 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_VALUE_MUST_BE_LT_F,						true,	"Value in '%s' must be <$f." },
 	{ ERROR_VALUE_MUST_BE_LT_10000,					true,	"Value in '%s' must be <$10000." },
 	{ ERROR_ILLEGAL_OPERAND_COMBINATION,			true,	"Illegal combination of operands '%s'" },
+	{ ERROR_RECURSION_TOO_DEEP,                     true, "Recursion too deep in %s" },
+	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -1382,8 +1384,9 @@ int asmerr(int err, bool bAbort, const char *sText )
 	pincfile = pIncfile;
 	while(1) {
 		if (pincfile == NULL) {
-			fprintf(stderr, "%s:%d, pincfile is NULL, err:%d, abort:%d, [%s]: %s\n", __FILE__, __LINE__
-						, err, bAbort, sText, sErrorDef[err].sDescription);	
+			fprintf(stderr, "%s:%d: error: pincfile is NULL, err:%d, [%s]: %s\n", __FILE__, __LINE__
+						, err, sText, sErrorDef[err].sDescription);
+			bAbort = true;
 			break;
 		}
 		if (pincfile->flags & INF_MACRO) {
