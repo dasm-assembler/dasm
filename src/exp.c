@@ -661,9 +661,8 @@ void doop(opfunc_t func, int pri)
             printf("doop @ %d unary\n", Opi);
 
 	if (Opi > MAXOPS) {
-		char errMsg[128];
-		sprintf(errMsg,"doop: operator index(%d) > MAXOPS(%d), probably too deep recursion", Opi, MAXOPS);		
-		puts(errMsg);
+		fprintf(stderr,"doop: error: operator index(%d) > MAXOPS(%d), probably too deep recursion", Opi, MAXOPS);
+		asmerr(ERROR_RECURSION_TOO_DEEP, true, "doop()");
 		return;
 	}
         Opdis[Opi] = func;
@@ -937,8 +936,8 @@ const char *pushsymbol(const char *str)
 	    if (str == lastSymbolStr) {
 		symbolRecursionCount++;
 		if (symbolRecursionCount > 1000) {
-			fprintf(stderr,"%s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
-			exit(1);
+			fprintf(stderr, "error: %s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
+			asmerr(ERROR_RECURSION_TOO_DEEP, true, "pushsymbol()");
 		}
 	    } else {
 		symbolRecursionCount = 0;
