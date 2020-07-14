@@ -1511,8 +1511,14 @@ genfill(long fill, long entries, int size)
     int i;
     unsigned char c3,c2,c1,c0;
     
-    if (!bytes)
+    if (bytes == 0) {
+    	// nothing to do
         return;
+    }
+    if (bytes < 0) {
+    	asmerr( ERROR_ORIGIN_REVERSE_INDEXED, true, NULL );
+    	return;
+    }
     
     c3 = fill >> 24;
     c2 = fill >> 16;
