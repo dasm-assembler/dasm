@@ -28,6 +28,7 @@
  */
 
 #include <strings.h>
+#include <unistd.h>
 
 #include "version.h"
 #include "asm.h"
@@ -120,6 +121,7 @@ ERROR_DEFINITION sErrorDef[] = {
 #define MAX_ERROR (( sizeof( sErrorDef ) / sizeof( ERROR_DEFINITION )))
 
 bool bStopAtEnd = false;
+bool bRemoveOutBin  = false;
 
 int nMaxPasses = 10;
 
@@ -420,6 +422,7 @@ fail:
     puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value)");
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
     puts("-S       strict syntax checking");
+    puts("-R       remove binary output-file in case of errors");
     puts("");
     puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
@@ -522,6 +525,10 @@ nofile:
 
             case 'S':
                 bStrictMode = true;
+                break;
+
+            case 'R':
+            	bRemoveOutBin = true;
                 break;
                 
             default:
@@ -731,7 +738,7 @@ nextpass:
 	nError = ERROR_NON_ABORT;
     }
 
-    printf( "Complete.\n" );
+    printf( "Complete. (%d)\n", nError);
     return nError;
 }
 
@@ -1565,6 +1572,11 @@ int main(int ac, char **av)
 
     passbuffer_cleanup();
     
+    if (nError != 0) {
+    	if (bRemoveOutBin) {
+    		unlink(F_outfile);
+    	}
+    }
     return nError;
 }
 
