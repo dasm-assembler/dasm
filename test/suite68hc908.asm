@@ -10,11 +10,7 @@
 ;	cbeq	(0,X), jumpLabel
 ;
 
-
 	.PROCESSOR	68hc908
-
-	.TRACE		on		; must be either on or off (lowercase), test for str[1]
-	
 
 PTB	.EQU		1
 DDRB	.EQU		5
@@ -189,6 +185,15 @@ backLoop:
 	decX
 
 	div
+	
+	mul
+	nsa
+	ble	backLoop
+	bgt	backLoop
+	blt	backLoop
+	bge	backLoop
+	wait
+	stop
 
 	eor	#6
 	eor.b	RAM_START
@@ -255,9 +260,9 @@ backLoop:
 	
 	
 	mov	#5, RAM_START
-	X+mov	RAM_START
+	movp	RAM_START,X
 	mov	10, RAM_START
-	movX+	RAM_START
+	xmov	RAM_START
 	
 	neg	RAM_START
 	neg	3,X
