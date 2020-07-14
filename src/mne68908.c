@@ -55,6 +55,8 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "bclr", MF_IMOD,AF_BITMOD, { 0x11 } },
     { NULL, v_mnemonic, "bcs", 0, AF_REL, { 0x25 } },
     { NULL, v_mnemonic, "beq", 0, AF_REL, { 0x27 } },
+    { NULL, v_mnemonic, "bge", 0, AF_REL, { 0x90 } },
+    { NULL, v_mnemonic, "bgt", 0, AF_REL, { 0x92 } },
     { NULL, v_mnemonic, "bhcc", 0,AF_REL, { 0x28 } },
     { NULL, v_mnemonic, "bhcs", 0,AF_REL, { 0x29 } },
     { NULL, v_mnemonic, "bhi", 0, AF_REL, { 0x22 } },
@@ -62,8 +64,10 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "bih", 0, AF_REL, { 0x2F } },
     { NULL, v_mnemonic, "bil", 0, AF_REL, { 0x2E } },
     { NULL, v_mnemonic, "bit", 0, AF_HMASK, { 0xA5, 0xB5, 0xE5, 0xC5, 0xD5, 0xF5, 0x9EE5, 0x9ED5 } },
+    { NULL, v_mnemonic, "ble", 0, AF_REL, { 0x93 } },
     { NULL, v_mnemonic, "blo", 0, AF_REL, { 0x25 } },
     { NULL, v_mnemonic, "bls", 0, AF_REL, { 0x23 } },
+    { NULL, v_mnemonic, "blt", 0, AF_REL, { 0x91 } },
     { NULL, v_mnemonic, "bmc", 0, AF_REL, { 0x2C } },
     { NULL, v_mnemonic, "bmi", 0, AF_REL, { 0x2B } },
     { NULL, v_mnemonic, "bms", 0, AF_REL, { 0x2D } },
@@ -125,9 +129,11 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "x+mov", 0, AF_BYTEADR, {0x5e} },
     { NULL, v_mnemonic, "movx+", 0, AF_BYTEADR, {0x7e} },
 
+    { NULL, v_mnemonic, "mul", 0, AF_IMP, { 0x42 } },
     { NULL, v_mnemonic, "neg",  0, AF_IMASK, { 0x30, 0x60, 0x70, 0x9E60 } },
     { NULL, v_mnemonic, "nega", 0,AF_IMP, { 0x40 } },
     { NULL, v_mnemonic, "negx", 0,AF_IMP, { 0x50 } },
+    { NULL, v_mnemonic, "nsa", 0, AF_IMP, { 0x62 } },
     { NULL, v_mnemonic, "nop", 0, AF_IMP, { 0x9D } },
     { NULL, v_mnemonic, "ora", 0, AF_HMASK, { 0xAA, 0xBA, 0xEA, 0xCA, 0xDA, 0xFA, 0x9EEA, 0x9EDA } },
     { NULL, v_mnemonic, "psha", 0, AF_IMP, { 0x87 } },
@@ -150,6 +156,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "sei", 0, AF_IMP, { 0x9B } },
     { NULL, v_mnemonic, "sta", 0, AFSTD|AF_BYTEADR_SP|AF_WORDADR_SP, { 0xB7, 0xE7, 0xC7, 0xD7, 0xF7, 0x9EE7, 0x9ED7 } },
     { NULL, v_mnemonic, "sthx", 0, AF_BYTEADR, { 0x35 } }, 
+    { NULL, v_mnemonic, "stop", 0, AF_IMP, { 0x8E } },
     { NULL, v_mnemonic, "stx", 0, AFSTD|AF_BYTEADR_SP|AF_WORDADR_SP, { 0xBF, 0xEF, 0xCF, 0xDF, 0xFF, 0x9EEF, 0x9EDF } },
     { NULL, v_mnemonic, "sub", 0, AF_HMASK, { 0xA0, 0xB0, 0xE0, 0xC0, 0xD0, 0xF0, 0x9EE0, 0x9ED0 } },
     { NULL, v_mnemonic, "swi", 0, AF_IMP, { 0x83 } },
@@ -162,6 +169,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "tsta", 0,AF_IMP, { 0x4D } },
     { NULL, v_mnemonic, "tstx", 0,AF_IMP, { 0x5D } },
     { NULL, v_mnemonic, "txa", 0, AF_IMP, { 0x9F } },
+    { NULL, v_mnemonic, "wait", 0, AF_IMP, { 0x8F } },
 
     MNEMONIC_NULL
 };
