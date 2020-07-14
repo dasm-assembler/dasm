@@ -237,6 +237,27 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                 break;
             }
 
+	    if (sym->value > 255) {
+		if (addrmode == AM_BYTEADRX) {
+		    if (! badcode(mne, AM_WORDADRX)) {
+			addrmode = AM_WORDADRX;
+			break;
+		    }
+		}
+		if (addrmode == AM_BYTEADRY) {
+		    if (! badcode(mne, AM_WORDADRY)) {
+			addrmode = AM_WORDADRY;
+			break;
+		    }
+		}
+		if (addrmode == AM_BYTEADR_SP) {
+		    if (! badcode(mne, AM_WORDADR_SP)) {
+			addrmode = AM_WORDADR_SP;
+			break;
+		    }
+		}
+	    }
+
             sprintf( sBuffer, "%s %s", mne->name, str );
             asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
             break;

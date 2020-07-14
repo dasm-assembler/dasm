@@ -27,8 +27,8 @@
 	addb	#1
 	addb	1
 	addb	1000
-	addb	1,x
-	addb	1,y
+	addb	[X+1]
+	addb	[Y+1]
 	addd	#1000
 	addd	1
 	addd	1000
