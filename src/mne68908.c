@@ -126,8 +126,8 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "lsrx", 0,AF_IMP, { 0x54 } },
 
     { NULL, v_mnemonic, "mov", MF_MASK, AF_IMM8|AF_BYTEADR, {0x6e, 0x4e} },
-    { NULL, v_mnemonic, "x+mov", 0, AF_BYTEADR, {0x5e} },
-    { NULL, v_mnemonic, "movx+", 0, AF_BYTEADR, {0x7e} },
+    { NULL, v_mnemonic, "movp", 0, AF_BYTEADRX, {0x5e} },
+    { NULL, v_mnemonic, "xmov", 0, AF_BYTEADR, {0x7e} },
 
     { NULL, v_mnemonic, "mul", 0, AF_IMP, { 0x42 } },
     { NULL, v_mnemonic, "neg",  0, AF_IMASK, { 0x30, 0x60, 0x70, 0x9E60 } },
