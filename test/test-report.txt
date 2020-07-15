@@ -1,0 +1,56 @@
+=== build test cases (strict=off)
+ *                addressexpression	binary is same,	pass
+ *                atari2600/boing26	binary is same,	pass
+ *           atari7800/spritesample	binary is same,	pass
+ *                   broken6303hack	binary is same,	pass
+ *                 channel-f/lights	binary is same,	pass
+ *                 channel-f/tetris	binary is same,	pass
+ *                      doublemacro	binary is same,	pass
+ *                          example	binary is same,	pass
+ *                             fill	binary is same,	pass
+ *                          include	binary is same,	pass
+ *                     labelchanges	binary is same,	pass
+ *                       longstring	binary is same,	pass
+ *                           sample	binary is same,	pass
+ *                        suite6303	binary is same,	pass
+ *                        suite6502	binary is same,	pass
+ *                       suite68705	binary is same,	pass
+ *                      suite68hc11	binary is same,	pass
+ *            cmdline_defs/ramstart	binary is same,	pass
+ *     cmdline_defs/declare_var_mac	binary is same,	pass
+ *                           locals	binary is same,	pass
+ *                          suitef8	binary is same,	pass
+ *                     suite68hc908	binary is same,	pass
+ *                  forced_addrmode	binary is same,	pass
+ *                         6502_16h	binary is same,	pass
+ *                         6502_16l	binary is same,	pass
+ *                string_conversion	binary is same,	pass
+ *                  declare_var_mac	binary is same,	pass
+ *           selftest/0_no_assembly *            selftest/4_finally_OK	binary is same,	pass
+ *             selftest/1_no_binary *        selftest/2_hexref_missing *      selftest/3_binary_different *                     ucasm_compat	binary is same,	pass
+ *                    align_mod_mac	binary is same,	pass
+
+=== error test cases (strict=on)
+ *                       badopcode1	error_code [5] pass
+ *                       badopcode2	error_code [3] pass
+ *                      doublemacro	error_code [1] pass
+ *                         segfault	error_code [1] pass
+ *                       toobigbyte	error_code [5] pass
+ *                       toobigword	error_code [5] pass
+ *                         6811_X16	error_code [5] pass
+ *                         6811_Y16	error_code [5] pass
+ *                  68908_cbeq_SP16	error_code [5] pass
+ *                  68908_dbnz_SP16	error_code [5] pass
+ *                        6502_X16b	error_code [5] pass
+ *                         6502_16b	error_code [5] pass
+ *                 reverse_segfault	error_code [1] pass
+ *             selftest/5_must_fail		no error	FAILED!
+ *                         supercat	error_code [1] pass
+ *                         6502_16w	error_code [5] pass
+ *                      68908_SP16b	error_code [5] pass
+ *                        jentzsch2	error_code [3] pass
+ *                      negative256	error_code [5] pass
+ *                   negative1024_2	error_code [5] pass
+ *                    negative256_2	error_code [5] pass
+ *                     negative1024	error_code [5] pass
+executed 56 tests, 51 OK, 5 failed, result: overall PASS
