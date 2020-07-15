@@ -7,7 +7,6 @@
 	ORG $f800
 
 Start
-	ldz #$00 ; illegal mnemonic
 	bpl .error ; undefined label
 
 	org $fffc
