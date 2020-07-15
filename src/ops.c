@@ -188,11 +188,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
 
     
     if ( bTrace )
-        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d   Mnext:%d   value: %d\n", mne->okmask, addrmode, Cvt[addrmode], Mnext,  sym->value);
+        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d   Mnext:%d   value: %ld\n", mne->okmask, addrmode, Cvt[addrmode], Mnext,  sym->value);
     
     if (badcode(mne,addrmode))
     {
-        char sBuffer[128];
         sprintf( sBuffer, "%s %s", mne->name, str );
         asmerr( ERROR_ILLEGAL_ADDRESSING_MODE, false, sBuffer );
         FreeSymbolList(symbase);
@@ -286,7 +285,7 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     	case AM_BYTEADRY:
     	case AM_BYTEADR_SP:
     		if (sym->value < -0xFF) {	// isn't this our space ?
-    			sprintf( sBuffer, "%s %s", mne->name, str );
+    			sprintf( sBuffer, "negative %s %s", mne->name, str );
     			asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
     		}
     		break;
@@ -352,8 +351,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
     case AM_BITMOD:
         sym = symbase->next;
-        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
+        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+            sprintf( sBuffer, "unknown %s %ld", mne->name, sym->value);
+            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+        }
         Gen[opidx++] = sym->value;
         
         if (!(symbase->flags & SYM_UNKNOWN))
@@ -377,9 +378,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         
         sym = symbase->next;
         
-        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
-        
+        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+            sprintf( sBuffer, "%s %ld", mne->name, sym->value);
+            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+        }
         Gen[opidx++] = sym->value;
         sym = sym->next;
         break;
@@ -410,9 +412,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
         if (sym)
         {
-            if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-                asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
-            
+            if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+                sprintf( sBuffer, "unknown && > 256 %s %ld", mne->name, sym->value);
+                asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+            }
             Gen[opidx] = sym->value;
             sym = sym->next;
         }
@@ -449,7 +452,6 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                     //     another pass. ERROR_BRANCH_OUT_OF_RANGE was made non-fatal, but we keep 
                     //     pushing for Redo so assembly won't actually be succesfull until the branch
                     //     actually works.
-                        char sBuffer[64];
                         sprintf( sBuffer, "%ld", dest );
                         asmerr( ERROR_BRANCH_OUT_OF_RANGE, false, sBuffer );
             		++Redo;
@@ -664,6 +666,7 @@ v_dc(char *str, MNEMONIC *mne)
     long  value;
     char *macstr = 0;		/* "might be used uninitialised" */
     char vmode = 0;
+    char sBuffer[128];		/* verbose error messages*/
     
     Glen = 0;
     programlabel();
@@ -787,8 +790,7 @@ v_dc(char *str, MNEMONIC *mne)
                 //any value outside two's complement +ve and +ve byte representation is invalid...
                 if ((value < -0xFF)||(value > 0xFF)) 
 		{
-                    char sBuffer[128];
-                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    sprintf( sBuffer, "byte %s %ld", mne->name, value);
                     asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
 		}
                 Gen[Glen++] = value & 0xFF;
@@ -797,8 +799,7 @@ v_dc(char *str, MNEMONIC *mne)
 		//any value outside two's complement +ve and +ve word representation is invalid...
                 if ( (bStrictMode) && ((value < -0xFFFF)||(value > 0xFFFF)) )
 		{
-                    char sBuffer[128];
-                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    sprintf( sBuffer, "word %s %ld", mne->name, value);
                     asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
 		}
 
