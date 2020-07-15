@@ -1045,6 +1045,7 @@ void panic(const char *str)
 *  .w                      x
 *  .l                      x
 *  .u                      x
+*  .s       swapped short, force other endian with DC
 */
 
 
@@ -1064,6 +1065,10 @@ void findext(char *str)
         ++str;
         Extstr = str;
         switch(str[0]|0x20) {
+	     case 's':
+                Mnext = AM_OTHER_ENDIAN;
+                return;
+
         case '0':
         case 'i':
             Mnext = AM_IMP;

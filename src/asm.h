@@ -193,6 +193,8 @@ enum FORMAT
 		AM_LONG,
 		AM_BSS,
 
+		AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
+
 		NUMOC
 	};
 

@@ -753,6 +753,17 @@ v_dc(char *str, MNEMONIC *mne)
                         Gen[Glen++] = (value >> 8) & 0xFF;
                     }
                     break;
+                case AM_OTHER_ENDIAN:
+                    if (MsbOrder == 0) {
+                        Gen[Glen++] = (value >> 8) & 0xFF;
+                        Gen[Glen++] = value & 0xFF;
+                    }
+                    else
+                    {
+                        Gen[Glen++] = value & 0xFF;
+                        Gen[Glen++] = (value >> 8) & 0xFF;
+                    }
+                	break;
                 case AM_LONG:
                     if (MsbOrder) {
                         Gen[Glen++] = (value >> 24)& 0xFF;
@@ -813,6 +824,21 @@ v_dc(char *str, MNEMONIC *mne)
                     Gen[Glen++] = (value >> 8) & 0xFF;
                 }
                 break;
+            case AM_OTHER_ENDIAN:
+                if ( (bStrictMode) && ((value < -0xFFFF)||(value > 0xFFFF)) ) {
+                    sprintf( sBuffer, "swapped %s %ld", mne->name, value);
+                    asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
+                }
+                if (MsbOrder == 0) {
+                    Gen[Glen++] = (value >> 8) & 0xFF;
+                    Gen[Glen++] = value & 0xFF;
+                }
+                else
+                {
+                    Gen[Glen++] = value & 0xFF;
+                    Gen[Glen++] = (value >> 8) & 0xFF;
+                }
+            	break;
             case AM_LONG:
                 if (MsbOrder) {
                     Gen[Glen++] = (value >> 24)& 0xFF;
