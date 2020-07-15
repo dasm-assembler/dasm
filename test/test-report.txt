@@ -33,6 +33,7 @@
  *      selftest/3_binary_different		binaries differ	FAILED!
  *                     ucasm_compat	binary is same,	pass
  *                    align_mod_mac	binary is same,	pass
+ *                     string_table	binary is same,	pass
 
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
@@ -40,6 +41,7 @@
  *                      doublemacro	error_code [1] pass
  *                         segfault	error_code [1] pass
  *                       toobigbyte	error_code [5] pass
+ *                     improper_equ	error_code [5] pass
  *                       toobigword	error_code [5] pass
  *                         6811_X16	error_code [5] pass
  *                         6811_Y16	error_code [5] pass
@@ -57,4 +59,4 @@
  *                   negative1024_2	error_code [5] pass
  *                    negative256_2	error_code [5] pass
  *                     negative1024	error_code [5] pass
-executed 56 tests, 51 OK, 5 failed, result: overall PASS
+executed 58 tests, 53 OK, 5 failed, result: overall PASS
