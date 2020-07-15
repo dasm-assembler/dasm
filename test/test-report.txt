@@ -26,8 +26,12 @@
  *                         6502_16l	binary is same,	pass
  *                string_conversion	binary is same,	pass
  *                  declare_var_mac	binary is same,	pass
- *           selftest/0_no_assembly *            selftest/4_finally_OK	binary is same,	pass
- *             selftest/1_no_binary *        selftest/2_hexref_missing *      selftest/3_binary_different *                     ucasm_compat	binary is same,	pass
+ *           selftest/0_no_assembly		assembly	FAILED! [1]
+ *            selftest/4_finally_OK	binary is same,	pass
+ *             selftest/1_no_binary		file doesn't exist or has zero size	FAILED!
+ *        selftest/2_hexref_missing		file [selftest/2_hexref_missing.hex.ref] missing	FAILED!
+ *      selftest/3_binary_different		binaries differ	FAILED!
+ *                     ucasm_compat	binary is same,	pass
  *                    align_mod_mac	binary is same,	pass
 
 === error test cases (strict=on)

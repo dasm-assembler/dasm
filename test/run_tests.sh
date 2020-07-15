@@ -69,19 +69,19 @@ do
 	    # second compare test is not needed, just help to find the diff
 	    if ! test -r $NAME.hex.ref
 	    then
-		echo "		file [$NAME.hex.ref] missing	FAILED!" >&2
+		echo "		file [$NAME.hex.ref] missing	FAILED!" 
 	    else
 		diff -bBduw $NAME.hex $NAME.hex.ref >$NAME.hex.diff
-		echo "		binaries differ	FAILED!" >&2
+		echo "		binaries differ	FAILED!" 
 	    fi
 	    fail="$[$fail+1]"
 	fi 
     else
-	echo "		file doesn't exist or has zero size	FAILED!" >&2
+	echo "		file doesn't exist or has zero size	FAILED!" 
 	fail="$[$fail+1]"
     fi
   else
-    echo "		assembly	FAILED! [$?]" >&2
+    echo "		assembly	FAILED! [$?]" 
     fail="$[$fail+1]"
   fi
     nTests="$[$nTests+1]"
