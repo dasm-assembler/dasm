@@ -148,6 +148,8 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     short opidx;
     SYMBOL *symbase;
     int     opsize;
+    bool	byteRequested;
+    char sBuffer[128];
     
     Csegment->flags |= SF_REF;
     programlabel();
@@ -186,7 +188,7 @@ void v_mnemonic(char *str, MNEMONIC *mne)
 
     
     if ( bTrace )
-        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d\n", mne->okmask, addrmode, Cvt[addrmode]);
+        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d   Mnext:%d   value: %d\n", mne->okmask, addrmode, Cvt[addrmode], Mnext,  sym->value);
     
     if (badcode(mne,addrmode))
     {
@@ -205,6 +207,36 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
         addrmode = Mnext;
         
+        //FIX: OPCODE.FORCE needs to be adjusted for x,y,sp indexing...
+        switch(sym->addrmode) {
+        	case AM_BYTEADR_SP:
+        		addrmode = AM_BYTEADR_SP;
+                if (Mnext == AM_WORDADR)
+                	addrmode = AM_WORDADR_SP;
+        		break;
+
+        	case AM_0Y:
+        		addrmode = AM_0Y;
+
+            	if(Mnext == AM_WORDADR)
+            		addrmode = AM_WORDADRY;
+
+            	if(Mnext == AM_BYTEADR)
+            		addrmode = AM_BYTEADRY;
+        		break;
+
+        	case AM_0X:
+        		addrmode = AM_0X;
+
+                if(Mnext == AM_WORDADR)
+                	addrmode = AM_WORDADRX;
+
+                if(Mnext == AM_BYTEADR)
+                	addrmode = AM_BYTEADRX;
+        		break;
+        }
+
+
         if (badcode(mne,addrmode))
         {
             asmerr( ERROR_ILLEGAL_FORCED_ADDRESSING_MODE, false, mne->name );
@@ -218,14 +250,52 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     }
     
     if ( bTrace )
-        printf("final addrmode = %d\n", addrmode);
+        printf("final addrmode = %d, opsize:%d Opsize[%d]:%d\n", addrmode, opsize, addrmode, Opsize[addrmode]);
+
+    byteRequested = false;
+    switch(Mnext) {
+    	case AM_IMM8:
+    	case AM_BYTEADR:
+    	case AM_BYTEADRX:
+    	case AM_BYTEADRY:
+    	case AM_BYTEADR_SP:
+    		byteRequested = true;
+    		if (opsize > 1) {
+    			sprintf( sBuffer, "%s %s, user requested byte mode", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+    		}
+    		break;
+    }
     
+    switch(addrmode) {
+    	case AM_IMM16:
+    	case AM_WORDADR:
+    	case AM_WORDADRX:
+    	case AM_WORDADRY:
+    	case AM_INDWORD:
+    	case AM_WORDADR_SP:
+    		if ((sym->value > 0xFFFF) || (sym->value < -0xFFFF)) {	// isn't this our space ?
+    			sprintf( sBuffer, "%s %s", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
+    		}
+    		break;
+
+    	case AM_IMM8:
+    	case AM_BYTEADR:
+    	case AM_BYTEADRX:
+    	case AM_BYTEADRY:
+    	case AM_BYTEADR_SP:
+    		if (sym->value < -0xFF) {	// isn't this our space ?
+    			sprintf( sBuffer, "%s %s", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+    		}
+    		break;
+    }
+
     while (opsize > Opsize[addrmode])
     {
         if (Cvt[addrmode] == 0 || badcode(mne,Cvt[addrmode]))
         {
-            char sBuffer[128];
-            
             if (sym->flags & SYM_UNKNOWN)
                 break;
             
@@ -237,7 +307,9 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                 break;
             }
 
-	    if (sym->value > 255) {
+
+	    if ((sym->value > 255) && !byteRequested) {
+	    	// automatically increasing address-mode only if user has not explicitly stated
 		if (addrmode == AM_BYTEADRX) {
 		    if (! badcode(mne, AM_WORDADRX)) {
 			addrmode = AM_WORDADRX;

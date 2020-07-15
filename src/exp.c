@@ -344,21 +344,16 @@ SYMBOL *eval(const char *str, int wantmode)
 		switch(str[1]|0x20) {
 		    case 'x': 
 			cur->addrmode = AM_BYTEADRX; 
-			if (Mnext == AM_WORDADR) {
-			    cur->addrmode = AM_WORDADRX; 
-			}
+			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
 			break;
 
 		    case 'y': cur->addrmode = AM_BYTEADRY; break;
 
 		    case 's': 
-			cur->addrmode = AM_BYTEADR_SP; 
-			if (Mnext == AM_WORDADR) {
-			    cur->addrmode = AM_WORDADR_SP; break;
-			}
+			cur->addrmode = AM_BYTEADR_SP;
+			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
 			break;
 		}
-		Mnext = cur->addrmode;
 		str += 3;	/* skip '[',{x,y,s},'+' */
 		if ((cur->addrmode == AM_BYTEADR_SP) || (cur->addrmode == AM_WORDADR_SP)) {
 		    ++str;	/* skip also 'p' */
@@ -476,36 +471,20 @@ SYMBOL *eval(const char *str, int wantmode)
             {
                 cur->addrmode = AM_0X;
                 ++str;
-
-                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
-                if(Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADRX;
-                if(Mnext==AM_BYTEADR)
-                     Mnext=AM_BYTEADRX;
-                if(Mnext==AM_INDWORD)
-                     Mnext=AM_0X;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
             }
             else if (scr == 'y' && !IsAlphaNum(str[2]))
             {
                 cur->addrmode = AM_0Y;
                 ++str;
-
-                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
-                if(Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADRY;
-                if(Mnext==AM_BYTEADR)
-                     Mnext=AM_BYTEADRY;
-                if(Mnext==AM_INDWORD)
-                     Mnext=AM_0Y;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
             }
             else if ((scr == 's') && ((str[2]|0x20) == 'p') && !IsAlphaNum(str[3]))      // stack pointer indexed address mode
             {
                 cur->addrmode = AM_BYTEADR_SP;
                 ++str;
                 ++str;
-
-                if (Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADR_SP;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
             }
             else
             {
