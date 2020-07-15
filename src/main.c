@@ -120,7 +120,7 @@ ERROR_DEFINITION sErrorDef[] = {
 
 #define MAX_ERROR (( sizeof( sErrorDef ) / sizeof( ERROR_DEFINITION )))
 
-bool bStopAtEnd = false;
+bool *bStopAtEnd;
 bool bRemoveOutBin  = false;
 
 int nMaxPasses = 10;
@@ -538,7 +538,10 @@ nofile:
         }
         goto fail;
     }
-    
+     
+    bStopAtEnd = malloc((nMaxPasses+1) * sizeof(bool));
+    memset(bStopAtEnd, 0, nMaxPasses+1);	// we dont count from zero ! (for fewer code changes)
+
     /*    INITIAL SEGMENT */
     
     {
@@ -725,7 +728,7 @@ nextpass:
     }
     // Do not print any errors if assembly is successful!!!!! -FXQ
     // only print messages from last pass and if there's no errors
-    if (!bStopAtEnd)
+    if (!bStopAtEnd[pass])
     {
         passbuffer_output(MSGBUF);
     }
@@ -1386,7 +1389,7 @@ int asmerr(int err, bool bAbort, const char *sText )
     {
         
         if (sErrorDef[err].bFatal)
-            bStopAtEnd = true;
+            bStopAtEnd[pass] = true;
         
 	pincfile = pIncfile;
 	while(1) {

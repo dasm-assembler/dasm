@@ -56,7 +56,7 @@ do
 	. ${NAME}.args
     fi
 
-  if ${REL_DIR}/dasm ${NAME}.asm ${ARGS} -o$NAME.bin -l$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
+  if ${REL_DIR}/dasm ${NAME}.asm ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
   then
     if test -s $NAME.bin
     then
@@ -105,7 +105,7 @@ do
 	echo "source file [${NAME}.asm] is missing"
 	fail="$[$fail+1]"
     else
-        if ${REL_DIR}/dasm ${NAME}.asm -S -f${format} -o$NAME.bin -l$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
+        if ${REL_DIR}/dasm ${NAME}.asm -S -f${format} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
 	then
 	    echo "		no error	FAILED!"
     	    fail="$[$fail+1]"
