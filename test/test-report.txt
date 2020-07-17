@@ -36,6 +36,8 @@
  *                     68908_DCswap	binary is same,	pass
  *                     string_table	binary is same,	pass
  *                      6502_DCswap	binary is same,	pass
+ *                       same_names	binary is same,	pass
+ *                 recursive_macro0	binary is same,	pass
 
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
@@ -61,4 +63,9 @@
  *                   negative1024_2	error_code [5] pass
  *                    negative256_2	error_code [5] pass
  *                     negative1024	error_code [5] pass
-executed 60 tests, 55 OK, 5 failed, result: overall PASS
+ *              delete_empty_binary	file was deleted, pass
+ *                     missing_endm		no error	FAILED!
+ *                    recursive_equ	error_code [3] pass
+ *                 recursive_macro1		no error	FAILED!
+ *                 recursive_macro2		no error	FAILED!
+executed 67 tests, 59 OK, 8 failed, result: need to investigate in 3 test-cases
