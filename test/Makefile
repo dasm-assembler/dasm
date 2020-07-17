@@ -19,4 +19,4 @@ clean:
 	$(MAKE) -C cmdline_defs clean
 	$(MAKE) -C selftest clean
 	$(MAKE) -C channel-f clean
-	rm -rf *.bin *.hex *.list.txt *.diff a.out
+	rm -rf *.bin *.hex *.list.txt *.diff *.out

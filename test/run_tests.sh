@@ -56,7 +56,7 @@ do
 	. ${NAME}.args
     fi
 
-  if ${REL_DIR}/dasm ${NAME}.asm ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
+  if ${REL_DIR}/dasm ${NAME}.asm ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >$NAME.out 2>&1
   then
     if test -s $NAME.bin
     then
@@ -97,21 +97,40 @@ echo "=== error test cases (strict=on)"
 # test for assembly sniplets that should fail
 for item in $LIST
 do
+    ARGS="-f${format}"
+
     NAME=$(echo $item | sed 's/\.fail$//g;s/^\.\///g')
     leadingSpace "$NAME"
+
+    if test -r ${NAME}.args
+    then
+	. ${NAME}.args
+    fi
     
     if ! test -r ${NAME}.asm
     then
 	echo "source file [${NAME}.asm] is missing"
 	fail="$[$fail+1]"
     else
-        if ${REL_DIR}/dasm ${NAME}.asm -S -f${format} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >/dev/null 2>&1
+        if ${REL_DIR}/dasm ${NAME}.asm -S ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >${NAME}.out 2>&1
 	then
 	    echo "		no error	FAILED!"
     	    fail="$[$fail+1]"
 	else 
-	    echo "	error_code [$?] pass"
-	    ok="$[$ok+1]"
+	    case "$ARGS" in
+		    *-R) if test -r $NAME.bin
+			 then
+			    echo "	file exists, FAILED!"
+			    fail="$[$fail+1]"
+			 else
+			    echo "	file was deleted, pass"
+			    ok="$[$ok+1]"
+			 fi
+			 ;;
+		    *)	 echo "	error_code [$?] pass"
+			 ok="$[$ok+1]"
+			 ;;
+	    esac
 	fi
     fi
     nTests="$[$nTests+1]"
