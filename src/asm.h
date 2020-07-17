@@ -113,6 +113,7 @@ enum FORMAT
 	
 	ERROR_RECURSION_TOO_DEEP,			/* 32 */
 	ERROR_AVOID_SEGFAULT,				/* 33 */
+	ERROR_MISSING_ENDM,				/* 34 */
 	};
 
     typedef struct ERRORSTRUCT
@@ -230,6 +231,7 @@ STRLIST {
 
 #define STRLISTSIZE    sizeof(STRLIST *)
 
+#define MF_BEGM					0x02
 #define MF_IF					0x04
 #define MF_MACRO				0x08
 #define MF_MASK					0x10    /*  has mask argument (byte)    */
@@ -381,6 +383,9 @@ extern unsigned long    Processor;
 
 /*extern unsigned int _fmode;*/
 extern unsigned long  CheckSum;
+
+extern int nMacroDeclarations;
+extern int nMacroClosings;
 
 /* main.c */
 /*extern unsigned char Listing;*/

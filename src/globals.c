@@ -59,6 +59,8 @@ unsigned long   Redo_why = 0;
 int	Redo_eval = 0;	   /*  infinite loop detection only    */
 int Redo = 0;
 
+int nMacroDeclarations = 0;
+int nMacroClosings = 0;
 
 unsigned long	Redo_if = 0;
 
@@ -109,8 +111,8 @@ MNEMONIC Ops[] = {
     { NULL, v_eqm     , "eqm",            0,      0, {0,} },
     { NULL, v_set     , "set",            0,      0, {0,} },
     { NULL, v_setstr  , "setstr",         0,      0, {0,} },
-    { NULL, v_macro   , "mac",            MF_IF,  0, {0,} },
-    { NULL, v_macro   , "macro",          MF_IF,  0, {0,} },
+    { NULL, v_macro   , "mac",            MF_IF|MF_BEGM,  0, {0,} },
+    { NULL, v_macro   , "macro",          MF_IF|MF_BEGM,  0, {0,} },
     { NULL, v_endm    , "endm",           MF_ENDM,0, {0,} },
     { NULL, v_mexit   , "mexit",          0,      0, {0,} },
     { NULL, v_ifconst , "ifconst",        MF_IF,  0, {0,} },
