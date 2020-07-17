@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /* for -T option [phf] */
 typedef enum
@@ -158,10 +159,11 @@ enum FORMAT
 #define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
-#define SHASHSIZE   1024
-#define MHASHSIZE   1024
-#define SHASHAND    0x03FF
-#define MHASHAND    0x03FF
+#define N_HASH_BITS	12			// 10 was in original implementation
+#define SHASHSIZE   (1 << N_HASH_BITS)
+#define MHASHSIZE   (1 << N_HASH_BITS)
+#define SHASHAND    (SHASHSIZE -1)
+#define MHASHAND    (MHASHSIZE -1)
 #define ALLOCSIZE   16384
 #define MAXMACLEVEL 32
 #define TAB        9
