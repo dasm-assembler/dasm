@@ -1165,7 +1165,9 @@ v_execmac(char *str, MACRO *mac)
     programlabel();
     
     if (Mlevel == MAXMACLEVEL) {
-        puts("infinite macro recursion");
+        char errMsg[256];
+        sprintf(errMsg, " macro [%s] recursion > %d", mac->name, MAXMACLEVEL);
+        asmerr( ERROR_RECURSION_TOO_DEEP, true, errMsg );
         return;
     }
     ++Mlevel;

@@ -115,6 +115,7 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_ILLEGAL_OPERAND_COMBINATION,			true,	"Illegal combination of operands '%s'" },
 	{ ERROR_RECURSION_TOO_DEEP,                     true, "Recursion too deep in %s" },
 	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
+	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -662,10 +663,9 @@ nextpass:
         
         if ( pIncfile )
         {
-        /*
-        if (F_verbose > 1)
-        printf("back to: %s\n", Incfile->name);
-            */
+        	if (F_verbose > 3)
+        		printf("back to: %s\n", pIncfile->name);
+
             if (F_listfile)
                 fprintf(FI_listfile, "------- FILE %s\n", pIncfile->name);
         }
@@ -741,6 +741,15 @@ nextpass:
 	nError = ERROR_NON_ABORT;
     }
 
+    if (nMacroClosings != nMacroDeclarations) {
+        /* determine the file pointer to use */
+        FILE *error_file = (F_listfile != NULL) ? FI_listfile : stdout;
+
+    	fprintf(error_file, "premature end of file, macros opened:%d  closed:%d", nMacroDeclarations, nMacroClosings);
+        fprintf(error_file, "Aborting assembly\n");
+
+        exit(ERROR_MISSING_ENDM);
+    }
     printf( "Complete. (%d)\n", nError);
     return nError;
 }
@@ -1223,6 +1232,14 @@ MNEMONIC *parse(char *buf)
     }
     Avbuf[j] = 0;
     
+    if (mne != NULL) {
+    	if (mne->flags & MF_BEGM) {
+    		nMacroDeclarations++;
+    	}
+    	if (mne->flags & MF_ENDM) {
+        	nMacroClosings++;
+    	}
+    }
     return mne;
 }
 
@@ -1490,7 +1507,7 @@ int asmerr(int err, bool bAbort, const char *sText )
             passbuffer_output(MSGBUF); // dump messages from this pass
             fprintf(error_file, "Aborting assembly\n");
             passbuffer_output(ERRORBUF); // time to dump the errors from this pass!
-            exit(EXIT_FAILURE);
+            exit(err);
         }
     }
     

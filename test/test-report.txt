@@ -26,7 +26,7 @@
  *                         6502_16l	binary is same,	pass
  *                string_conversion	binary is same,	pass
  *                  declare_var_mac	binary is same,	pass
- *           selftest/0_no_assembly		assembly	FAILED! [1]
+ *           selftest/0_no_assembly		assembly	FAILED! [27]
  *            selftest/4_finally_OK	binary is same,	pass
  *             selftest/1_no_binary		file doesn't exist or has zero size	FAILED!
  *        selftest/2_hexref_missing		file [selftest/2_hexref_missing.hex.ref] missing	FAILED!
@@ -42,8 +42,8 @@
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
  *                       badopcode2	error_code [3] pass
- *                      doublemacro	error_code [1] pass
- *                         segfault	error_code [1] pass
+ *                      doublemacro	error_code [25] pass
+ *                         segfault	error_code [38] pass
  *                       toobigbyte	error_code [5] pass
  *                     improper_equ	error_code [5] pass
  *                       toobigword	error_code [5] pass
@@ -53,9 +53,9 @@
  *                  68908_dbnz_SP16	error_code [5] pass
  *                        6502_X16b	error_code [5] pass
  *                         6502_16b	error_code [5] pass
- *                 reverse_segfault	error_code [1] pass
+ *                 reverse_segfault	error_code [38] pass
  *             selftest/5_must_fail		no error	FAILED!
- *                         supercat	error_code [1] pass
+ *                         supercat	error_code [18] pass
  *                         6502_16w	error_code [5] pass
  *                      68908_SP16b	error_code [5] pass
  *                        jentzsch2	error_code [3] pass
@@ -64,8 +64,8 @@
  *                    negative256_2	error_code [5] pass
  *                     negative1024	error_code [5] pass
  *              delete_empty_binary	file was deleted, pass
- *                     missing_endm		no error	FAILED!
+ *                     missing_endm	error_code [40] pass
  *                    recursive_equ	error_code [3] pass
- *                 recursive_macro1		no error	FAILED!
- *                 recursive_macro2		no error	FAILED!
-executed 67 tests, 59 OK, 8 failed, result: need to investigate in 3 test-cases
+ *                 recursive_macro1	error_code [38] pass
+ *                 recursive_macro2	error_code [38] pass
+executed 67 tests, 62 OK, 5 failed, result: overall PASS
