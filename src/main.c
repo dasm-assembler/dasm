@@ -1247,6 +1247,7 @@ MNEMONIC *parse(char *buf)
 
 MNEMONIC *findmne(char *str)
 {
+	int h,k;
     int i;
     char c;
     MNEMONIC *mne;
@@ -1263,9 +1264,24 @@ MNEMONIC *findmne(char *str)
         buf[i] = c;
     }
     buf[i] = 0;
-    for (mne = MHash[hash1(buf)]; mne; mne = mne->next) {
+    h = hash1(buf);
+    mne = MHash[h];
+    k = 0;
+    while (mne != NULL) {
         if (strcmp(buf, mne->name) == 0)
             break;
+
+        k++;
+        mne = mne->next;
+        if (mne != NULL) {
+        	if ((mne == mne->next) && (k > 5)) { // any number bigger than 1 would do
+        		// should not happen at all, I'm not paranoid, I've had this problem really
+        		fprintf(stderr,"[%s] [%s] %08lx %08lx\n", buf, mne->name, (long)mne, (long)mne->next);
+        		fprintf(stderr,"BUG: %s:%d: chained list looped to itself and no match, would lock up endlessly\n", __FILE__, __LINE__);
+        		return NULL; // we need to return NULL here or the program will get stuck in an endless loop
+        					 // the BUG vanished with increased hashtable
+        	}
+        }
     }
     return mne;
 }
@@ -1301,6 +1317,10 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->name = strcpy(permalloc(strlen(str)+1), str);
         mac->flags = MF_MACRO;
         mac->defpass = pass;
+        if (mac == mac->next) {
+        	// should not happen
+        	fprintf(stderr,"permalloc() returned the same value twice, expect severe problems\n", __FILE__, __LINE__);
+        }
         MHash[i] = (MNEMONIC *)mac;
     }
     else {
@@ -1321,10 +1341,12 @@ void v_macro(char *str, MNEMONIC *dummy)
         
         mne = parse(buf);
         if (Av[1][0]) {
-            if (mne && mne->flags & MF_ENDM) {
+            if (mne != NULL) {	// for some reason I got a segfault while accessing mne->flags, should not happen but gdb said it was here
+            	if (mne->flags & MF_ENDM) {
                 if (!defined)
                     mac->strlist = base;
                 return;
+            	}
             }
         }
         if (!skipit && F_listfile && ListMode)
