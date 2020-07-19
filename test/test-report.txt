@@ -38,11 +38,11 @@
  *                      6502_DCswap	binary is same,	pass
  *                       same_names	binary is same,	pass
  *                 recursive_macro0	binary is same,	pass
+ *                       toobigword	binary is same,	pass
 
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
  *                       badopcode2	error_code [3] pass
- *                      doublemacro	error_code [25] pass
  *                         segfault	error_code [38] pass
  *                       toobigbyte	error_code [5] pass
  *                     improper_equ	error_code [5] pass
@@ -68,4 +68,5 @@
  *                    recursive_equ	error_code [3] pass
  *                 recursive_macro1	error_code [38] pass
  *                 recursive_macro2	error_code [38] pass
-executed 67 tests, 62 OK, 5 failed, result: overall PASS
+ *                      doublemacro	error_code [25] pass
+executed 68 tests, 63 OK, 5 failed, result: overall PASS
