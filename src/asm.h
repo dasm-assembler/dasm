@@ -362,6 +362,8 @@ extern unsigned char    MsbOrder;
 extern unsigned char    Outputformat;
 extern unsigned long    Redo_why;
 
+extern unsigned long	maxFileSize;
+
 extern int Redo;
 extern int Redo_eval;
 

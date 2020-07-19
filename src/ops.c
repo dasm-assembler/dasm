@@ -1589,6 +1589,14 @@ generate(void)
     
     if (Csegment->flags & SF_RORG)
         Csegment->rorg += Glen;
+
+    if (Csegment->org > maxFileSize) {
+    	char errMsg[128];
+    	sprintf(errMsg, "code segment growing larger (%ld) than max. allowed file size (%ld)\n"
+    					,Csegment->org, maxFileSize);
+    	asmerr( ERROR_RECURSION_TOO_DEEP, true, errMsg );
+    	return;
+    }
 }
 
 void closegenerate(void)

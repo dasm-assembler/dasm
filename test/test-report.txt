@@ -70,4 +70,5 @@
  *                 recursive_macro2	error_code [38] pass
  *                      doublemacro	error_code [25] pass
  *                    recursive_eqm	error_code [38] pass
-executed 69 tests, 64 OK, 5 failed, result: overall PASS
+ *                    recursive_set	error_code [38] pass
+executed 70 tests, 65 OK, 5 failed, result: overall PASS
