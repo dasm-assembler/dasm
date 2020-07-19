@@ -2,11 +2,11 @@
 
 	processor 6502
 
- MAC testmac
+ MAC testmac		; the first declaration wins
 	lda #1
  ENDM
- MAC testmac
-	lda #1
+ MAC testmac		; the second is silently ignored without the -S flag, but an error with -S
+	ldx #1
  ENDM
 
 	ORG $f800
