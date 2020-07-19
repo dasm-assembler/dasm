@@ -940,7 +940,6 @@ const char *pushstr(const char *str)
     return str;
 }
 
-static char *lastSymbolStr = NULL;
 static int symbolRecursionCount = 0;
 
 const char *pushsymbol(const char *str)
@@ -949,20 +948,12 @@ const char *pushsymbol(const char *str)
     const char *ptr;
     unsigned char macro = 0;
 
-    if (lastSymbolStr != NULL) {
-	if (str != NULL) {
-	    if (str == lastSymbolStr) {
-		symbolRecursionCount++;
-		if (symbolRecursionCount > 1000) {
-			fprintf(stderr, "error: %s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
-			asmerr(ERROR_RECURSION_TOO_DEEP, true, "pushsymbol()");
-		}
-	    } else {
-		symbolRecursionCount = 0;
-	    }
-	}
+    symbolRecursionCount++;
+
+    if (symbolRecursionCount > 1000) {
+    	fprintf(stderr, "error: %s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
+    	asmerr(ERROR_RECURSION_TOO_DEEP, true, "pushsymbol()");
     }
-    lastSymbolStr = str;
 
     for (ptr = str;
     *ptr == '_' ||
@@ -1013,6 +1004,7 @@ const char *pushsymbol(const char *str)
         sym->flags = SYM_REF|SYM_MASREF|SYM_UNKNOWN;
         ++Redo_eval;
     }
+    symbolRecursionCount--;
     return ptr;
 }
 
