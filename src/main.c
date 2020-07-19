@@ -424,6 +424,7 @@ fail:
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
     puts("-S       strict syntax checking");
     puts("-R       remove binary output-file in case of errors");
+    puts("-m#      max. allowed file-size in kB");
     puts("");
     puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
@@ -532,6 +533,10 @@ nofile:
             	bRemoveOutBin = true;
                 break;
                 
+            case 'm':   /*  F_passes   */
+                maxFileSize = atol(str)*1024;
+                break;
+
             default:
                 goto fail;
             }

@@ -62,6 +62,9 @@ int Redo = 0;
 int nMacroDeclarations = 0;
 int nMacroClosings = 0;
 
+unsigned long maxFileSize = 640 * 1024;		// avoid recursive growing via set,eqm
+	// 640k are enough for everybody ... said Bill G. How many 64k pages have you ?
+
 unsigned long	Redo_if = 0;
 
 char	ListMode = 1;
