@@ -15,4 +15,4 @@ test:
 	$(FTOHEX) 1 $< $@
 
 clean:
-	rm -rf *.bin *.hex *.list.txt *.diff 
+	rm -rf *.bin *.hex *.list.txt *.diff *.out

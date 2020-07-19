@@ -8,4 +8,4 @@ tetris.bin: tetris.asm
 	../../bin/dasm tetris.asm -f3 -I../../machines/channel-f/ -otetris.bin
 
 clean:
-	rm -rf lights.bin tetris.bin *.diff *.hex *.list.txt
+	rm -rf lights.bin tetris.bin *.diff *.hex *.list.txt *.out
