@@ -17,6 +17,7 @@ VERSION_MACRO         = 107
 ; (atari2600@taswegian.com) with your contribution.
 ;
 ; Latest Revisions...
+; 1.08  13/JUL/2020     - added use of LXA to CLEAN_START
 ; 1.07  19/JAN/2020     - correction to comment VERTICAL_SYNC
 ; 1.06  03/SEP/2004     - nice revision of VERTICAL_SYNC (Edwin Blink)
 ; 1.05  14/NOV/2003     - Added VERSION_MACRO equate (which will reflect 100x version #)
@@ -104,8 +105,12 @@ VERSION_MACRO         = 107
                 sei
                 cld
             
-                ldx #0
-                txa
+                IFNCONST NO_ILLEGAL_OPCODES
+                    lxa #0
+                ELSE
+                    ldx #0
+                    txa
+                ENDIF
                 tay
 .CLEAR_STACK    dex
                 txs
