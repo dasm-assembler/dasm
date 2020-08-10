@@ -578,7 +578,7 @@ nextpass:
     if (F_listfile) {
 
         FI_listfile = fopen(F_listfile,
-            F_ListAllPasses && (pass > 1)? "a" : "w");
+            F_ListAllPasses && (pass > 1)? "ab" : "wb");
 
         if (FI_listfile == NULL) {
             printf("Warning: Unable to [re]open '%s'\n", F_listfile);
