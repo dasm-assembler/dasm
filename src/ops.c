@@ -928,8 +928,8 @@ v_equ(char *str, MNEMONIC *dummy)
             if (lab->value != sym->value)
             {
                 asmerr( ERROR_EQU_VALUE_MISMATCH, false, NULL );
-                printf("old value: $%04lx  new value: $%04lx\n",
-                    lab->value, sym->value);
+                printf("INFO: Label '%s' changed from $%04lx to $%04lx\n",
+                    Av[0], lab->value, sym->value);
                 ++Redo;
                 Redo_why |= REASON_EQU_VALUE_MISMATCH;
             }
@@ -1006,9 +1006,91 @@ v_echo(char *str, MNEMONIC *dummy)
 
 void v_set(char *str, MNEMONIC *dummy)
 {
-    SYMBOL *sym = eval(str, 0);
-    SYMBOL *lab;
-    
+
+    SYMBOL *sym, *lab;
+    char dynamicname[257];
+    int i = 0,j;
+    int setundefined = 0;
+
+    while (str[i] && str[i] != '"' && str[i] != ' ' && str[i] != ',' )
+        i++;
+
+    if(str[i] && str[i] == ',') // is this SET is using the "," eval-concat operator?
+    {
+        strncpy(dynamicname, str,256);
+        if(i<256)
+            dynamicname[i]=0;
+        dynamicname[256]=0;
+        j=strlen(dynamicname);
+
+        // eval-concat argument processing loop...
+        while (str[i] && str[i] != '"' && str[i] != ' ')
+        {
+            if( str[i] == 0 || str[i] == ' ' ) // leave if we've processed all arguments
+            {
+                break;
+            }
+            if(str[i+1]=='"') // is this a string constant? 
+            {
+                i=i+2; // advance to string contents
+                while (str[i] && str[i] != '"' && str[i] != ' ' && str[i] != ',')
+                {
+                    dynamicname[j++]=str[i++];
+                }
+                if (str[i] && str[i]=='"')
+                {
+                    dynamicname[j]=0;
+                    i++;
+                    continue;
+                }
+                else
+                {
+                    asmerr( ERROR_SYNTAX_ERROR, false, str);
+                    continue;
+                }
+            } // argument was string constant
+            else // this argument is a symbol to be evaluated
+            {
+                int t;
+                char tempbuf[257];
+                char tempval[257];
+                SYMBOL *symarg;
+                strncpy(tempbuf,str+i+1,256);
+                tempbuf[256]=0;
+                for(t=0;t<strlen(tempbuf);t++)
+                {
+                    if(tempbuf[t] == ',')
+                        tempbuf[t]=0;
+                }
+                symarg = eval(tempbuf,0);
+                if(symarg)
+                {
+                    if (symarg->flags & SYM_UNKNOWN) // one of the arguments isn't defined yet
+                        setundefined++; // ensure the set doesn't actually happen
+                    else
+                    {
+                        snprintf(tempval,256,"%d",(unsigned)symarg->value);
+                        strcpy(dynamicname+j,tempval);
+                        j=j+strlen(tempval);
+                    }
+                }
+                i++;
+                while (str[i] && str[i] != ' ' && str[i] != ',')
+                    i++;
+            } // argument was symbol
+
+            continue; // process any remaining arguments
+        }
+        dynamicname[i++] = 0;
+        if (setundefined) // not all of the arguments are defined yet, so skip this SET
+        {
+            return;
+        }
+        sym = eval(dynamicname,0);
+    }
+    else // traditional SET behavior
+        sym = eval(str, 0);
+
     lab = findsymbol(Av[0], strlen(Av[0]));
     if (!lab)
         lab = CreateSymbol( Av[0], strlen(Av[0]) );

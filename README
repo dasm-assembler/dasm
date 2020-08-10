@@ -36,8 +36,6 @@ The Distribution
         docker/          Contains files & instructions to create a docker
                          image to run a 'dasm build machine' container
         machines/        Support files for various 8-bit machines
-        snapshot-builds/ Contains the automatically compiled DASM executables
-                         for the current code (for Windows, macOS and Linux)
         LICENSE          GNU General Public License
         NEWS             Recent changes to DASM
         README           The file you are reading right now :-)

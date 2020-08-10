@@ -1140,6 +1140,7 @@ MNEMONIC *parse(char *buf)
 {
     int i, j;
     MNEMONIC *mne = NULL;
+    int labelundefined = 0;
     
     i = 0;
     j = 1;
@@ -1168,11 +1169,72 @@ MNEMONIC *parse(char *buf)
             break;
         }
 
+        if (buf[i] == ',')  // we have label arguments
+        {
+            if(buf[i+1]=='"') // is it a string constant?
+            {
+                i=i+2; // advance to string contents
+                while (buf[i] && buf[i] != '"' && buf[i] != ' ' && buf[i] != ',' && buf[i] != ':')
+                {
+                    Avbuf[j++] = buf[i++];
+                }
+                if (buf[i] && buf[i]=='"') 
+                {
+                    i++;
+                    continue;
+                }
+                else 
+                {
+                    labelundefined++;
+                    asmerr( ERROR_SYNTAX_ERROR, false, buf );
+                    continue;
+                }
+            }
+            else // or else it's a symbol to be evaluated, and added to the label
+            {
+                int t;
+                char tempbuf[257];
+                char tempval[257];
+                SYMBOL *symarg;
+                strncpy(tempbuf,buf+i+1,256);
+                tempbuf[256]=0;
+                for(t=0;t<strlen(tempbuf);t++)
+                {
+                    if(tempbuf[t] == ',')
+                        tempbuf[t]=0;
+                }
+                symarg = eval(tempbuf,0);
+                if(symarg)
+                {
+                    if (symarg->flags & SYM_UNKNOWN) // one of the arguments isn't defined yet
+			labelundefined++; // ensure the label we're creating doesn't get used
+                    else
+                    {
+                        snprintf(tempval,256,"%d",(unsigned)symarg->value);
+                        strcpy(Avbuf+j,tempval);
+			j=j+strlen(tempval);
+                    }
+                }
+                i++;
+                while (buf[i] && buf[i] != ' ' && buf[i] != '=' && buf[i] != ','&& buf[i] != ':') 
+                    i++;
+            }
+            continue;
+        }
+
         if ((unsigned char)buf[i] == 0x80)
             buf[i] = ' ';
         Avbuf[j++] = buf[i++];
     }
     Avbuf[j++] = 0;
+
+    // if the label has arguments that aren't defined, we need to scuttle it
+    // to avoid a partial label being used.
+    if(labelundefined)
+    {
+      j=1;
+      Avbuf[j++] = 0;
+    }
 
     /* Parse the second word of the line */
     while (buf[i] == ' ')
