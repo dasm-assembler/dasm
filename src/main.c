@@ -1324,7 +1324,7 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->defpass = pass;
         if (mac == mac->next) {
         	// should not happen
-        	fprintf(stderr,"permalloc() returned the same value twice, expect severe problems\n", __FILE__, __LINE__);
+        	fprintf(stderr,"BUG: %s:%d: permalloc() returned the same value twice, expect severe problems\n", __FILE__, __LINE__);
         }
         MHash[i] = (MNEMONIC *)mac;
     }
