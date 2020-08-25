@@ -131,11 +131,13 @@ SYMBOL *CreateSymbol( const char *str, int len )
 
 static unsigned int hash1(const char *str, int len)
 {
-    unsigned int result = 0;
-    
-    while (len--)
-        result = (result << 2) ^ *str++;
-    return result & SHASHAND;
+    uint8_t a = 0;
+    uint8_t b = 0;
+    while (len--) {	// this is Fletcher's checksum, better distribution, faster
+    	a += *str++;
+    	b += a;
+    }
+    return ((((a << 8) & 0xFF00) | (b & 0xFF))  ) & SHASHAND;
 }
 
 /*

@@ -28,6 +28,7 @@
  */
 
 #include <strings.h>
+#include <unistd.h>
 
 #include "version.h"
 #include "asm.h"
@@ -112,12 +113,16 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_VALUE_MUST_BE_LT_F,						true,	"Value in '%s' must be <$f." },
 	{ ERROR_VALUE_MUST_BE_LT_10000,					true,	"Value in '%s' must be <$10000." },
 	{ ERROR_ILLEGAL_OPERAND_COMBINATION,			true,	"Illegal combination of operands '%s'" },
+	{ ERROR_RECURSION_TOO_DEEP,                     true, "Recursion too deep in %s" },
+	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
+	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
 #define MAX_ERROR (( sizeof( sErrorDef ) / sizeof( ERROR_DEFINITION )))
 
-bool bStopAtEnd = false;
+bool *bStopAtEnd;
+bool bRemoveOutBin  = false;
 
 int nMaxPasses = 10;
 
@@ -418,6 +423,8 @@ fail:
     puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value)");
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
     puts("-S       strict syntax checking");
+    puts("-R       remove binary output-file in case of errors");
+    puts("-m#      max. allowed file-size in kB");
     puts("");
     puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
@@ -521,7 +528,15 @@ nofile:
             case 'S':
                 bStrictMode = true;
                 break;
+
+            case 'R':
+            	bRemoveOutBin = true;
+                break;
                 
+            case 'm':   /*  F_passes   */
+                maxFileSize = atol(str)*1024;
+                break;
+
             default:
                 goto fail;
             }
@@ -529,7 +544,10 @@ nofile:
         }
         goto fail;
     }
-    
+     
+    bStopAtEnd = malloc((nMaxPasses+1) * sizeof(bool));
+    memset(bStopAtEnd, 0, nMaxPasses+1);	// we dont count from zero ! (for fewer code changes)
+
     /*    INITIAL SEGMENT */
     
     {
@@ -650,10 +668,9 @@ nextpass:
         
         if ( pIncfile )
         {
-        /*
-        if (F_verbose > 1)
-        printf("back to: %s\n", Incfile->name);
-            */
+        	if (F_verbose > 3)
+        		printf("back to: %s\n", pIncfile->name);
+
             if (F_listfile)
                 fprintf(FI_listfile, "------- FILE %s\n", pIncfile->name);
         }
@@ -716,7 +733,7 @@ nextpass:
     }
     // Do not print any errors if assembly is successful!!!!! -FXQ
     // only print messages from last pass and if there's no errors
-    if (!bStopAtEnd)
+    if (!bStopAtEnd[pass])
     {
         passbuffer_output(MSGBUF);
     }
@@ -729,7 +746,16 @@ nextpass:
 	nError = ERROR_NON_ABORT;
     }
 
-    printf( "Complete.\n" );
+    if (nMacroClosings != nMacroDeclarations) {
+        /* determine the file pointer to use */
+        FILE *error_file = (F_listfile != NULL) ? FI_listfile : stdout;
+
+    	fprintf(error_file, "premature end of file, macros opened:%d  closed:%d", nMacroDeclarations, nMacroClosings);
+        fprintf(error_file, "Aborting assembly\n");
+
+        exit(ERROR_MISSING_ENDM);
+    }
+    printf( "Complete. (%d)\n", nError);
     return nError;
 }
 
@@ -1033,6 +1059,7 @@ void panic(const char *str)
 *  .w                      x
 *  .l                      x
 *  .u                      x
+*  .s       swapped short, force other endian with DC
 */
 
 
@@ -1052,6 +1079,10 @@ void findext(char *str)
         ++str;
         Extstr = str;
         switch(str[0]|0x20) {
+	     case 's':
+                Mnext = AM_OTHER_ENDIAN;
+                return;
+
         case '0':
         case 'i':
             Mnext = AM_IMP;
@@ -1268,6 +1299,14 @@ MNEMONIC *parse(char *buf)
     }
     Avbuf[j] = 0;
     
+    if (mne != NULL) {
+    	if (mne->flags & MF_BEGM) {
+    		nMacroDeclarations++;
+    	}
+    	if (mne->flags & MF_ENDM) {
+        	nMacroClosings++;
+    	}
+    }
     return mne;
 }
 
@@ -1275,6 +1314,7 @@ MNEMONIC *parse(char *buf)
 
 MNEMONIC *findmne(char *str)
 {
+	int h,k;
     int i;
     char c;
     MNEMONIC *mne;
@@ -1291,9 +1331,24 @@ MNEMONIC *findmne(char *str)
         buf[i] = c;
     }
     buf[i] = 0;
-    for (mne = MHash[hash1(buf)]; mne; mne = mne->next) {
+    h = hash1(buf);
+    mne = MHash[h];
+    k = 0;
+    while (mne != NULL) {
         if (strcmp(buf, mne->name) == 0)
             break;
+
+        k++;
+        mne = mne->next;
+        if (mne != NULL) {
+        	if ((mne == mne->next) && (k > 5)) { // any number bigger than 1 would do
+        		// should not happen at all, I'm not paranoid, I've had this problem really
+        		fprintf(stderr,"[%s] [%s] %08lx %08lx\n", buf, mne->name, (long)mne, (long)mne->next);
+        		fprintf(stderr,"BUG: %s:%d: chained list looped to itself and no match, would lock up endlessly\n", __FILE__, __LINE__);
+        		return NULL; // we need to return NULL here or the program will get stuck in an endless loop
+        					 // the BUG vanished with increased hashtable
+        	}
+        }
     }
     return mne;
 }
@@ -1329,6 +1384,10 @@ void v_macro(char *str, MNEMONIC *dummy)
         mac->name = strcpy(permalloc(strlen(str)+1), str);
         mac->flags = MF_MACRO;
         mac->defpass = pass;
+        if (mac == mac->next) {
+        	// should not happen
+        	fprintf(stderr,"BUG: %s:%d: permalloc() returned the same value twice, expect severe problems\n", __FILE__, __LINE__);
+        }
         MHash[i] = (MNEMONIC *)mac;
     }
     else {
@@ -1349,10 +1408,12 @@ void v_macro(char *str, MNEMONIC *dummy)
         
         mne = parse(buf);
         if (Av[1][0]) {
-            if (mne && mne->flags & MF_ENDM) {
+            if (mne != NULL) {	// for some reason I got a segfault while accessing mne->flags, should not happen but gdb said it was here
+            	if (mne->flags & MF_ENDM) {
                 if (!defined)
                     mac->strlist = base;
                 return;
+            	}
             }
         }
         if (!skipit && F_listfile && ListMode)
@@ -1389,11 +1450,13 @@ void addhashtable(MNEMONIC *mne)
 
 static unsigned int hash1(const char *str)
 {
-    unsigned int result = 0;
-    
-    while (*str)
-        result = (result << 2) ^ *str++;
-    return result & MHASHAND;
+    uint8_t a = 0;
+    uint8_t b = 0;
+    while (*str) {	// this is Fletcher's checksum, better distribution, faster
+    	a += *str++;
+    	b += a;
+    }
+    return ((((a << 8) & 0xFF00) | (b & 0xFF))  ) & MHASHAND;
 }
 
 void pushinclude(char *str)
@@ -1439,9 +1502,23 @@ int asmerr(int err, bool bAbort, const char *sText )
     {
         
         if (sErrorDef[err].bFatal)
-            bStopAtEnd = true;
+            bStopAtEnd[pass] = true;
         
-        for ( pincfile = pIncfile; pincfile->flags & INF_MACRO; pincfile=pincfile->next);
+	pincfile = pIncfile;
+	while(1) {
+		if (pincfile == NULL) {
+			fprintf(stderr, "%s:%d: error: pincfile is NULL, err:%d, [%s]: %s\n", __FILE__, __LINE__
+						, err, sText, sErrorDef[err].sDescription);
+			bAbort = true;
+			break;
+		}
+		if (pincfile->flags & INF_MACRO) {
+			pincfile = pincfile->next;
+			continue;
+		} else {
+			break;
+		}
+	}
         str = sErrorDef[err].sDescription;
 
         /*
@@ -1456,6 +1533,7 @@ int asmerr(int err, bool bAbort, const char *sText )
         error_file = (F_listfile != NULL) ? FI_listfile : stdout;
 
         /* print first part of message, different formats offered */
+	if (pincfile != NULL)
         switch (F_errorformat)
         {
             case ERRORFORMAT_WOE:
@@ -1520,7 +1598,7 @@ int asmerr(int err, bool bAbort, const char *sText )
             passbuffer_output(MSGBUF); // dump messages from this pass
             fprintf(error_file, "Aborting assembly\n");
             passbuffer_output(ERRORBUF); // time to dump the errors from this pass!
-            exit(EXIT_FAILURE);
+            exit(err);
         }
     }
     
@@ -1610,6 +1688,11 @@ int main(int ac, char **av)
 
     passbuffer_cleanup();
     
+    if (nError != 0) {
+    	if (bRemoveOutBin) {
+    		unlink(F_outfile);
+    	}
+    }
     return nError;
 }
 

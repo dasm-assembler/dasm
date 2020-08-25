@@ -39,6 +39,7 @@ extern MNEMONIC    MneHD6303[];
 extern MNEMONIC    Mne68705[];
 extern MNEMONIC    Mne68HC11[];
 extern MNEMONIC    MneF8[];
+extern MNEMONIC    Mne68908[];
 
 void generate(void);
 void genfill(long fill, long bytes, int size);
@@ -112,6 +113,13 @@ void v_processor(char *str, MNEMONIC *dummy)
 		MsbOrder = 1;
         Processor = 0xf8;
     }
+    if ((strcmp(str,"68908") == 0) || (strcmp(str,"68hc908") == 0)) {
+       if ( !bCalled ) {
+           addhashtable(Mne68908);
+       }
+       MsbOrder = 1;           /*  msb,lsb */
+       Processor = 68908;
+    }
 
     bCalled = true;
 
@@ -140,6 +148,8 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     short opidx;
     SYMBOL *symbase;
     int     opsize;
+    bool	byteRequested;
+    char sBuffer[128];
     
     Csegment->flags |= SF_REF;
     programlabel();
@@ -178,11 +188,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
 
     
     if ( bTrace )
-        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d\n", mne->okmask, addrmode, Cvt[addrmode]);
+        printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d   Mnext:%d   value: %ld\n", mne->okmask, addrmode, Cvt[addrmode], Mnext,  sym->value);
     
     if (badcode(mne,addrmode))
     {
-        char sBuffer[128];
         sprintf( sBuffer, "%s %s", mne->name, str );
         asmerr( ERROR_ILLEGAL_ADDRESSING_MODE, false, sBuffer );
         FreeSymbolList(symbase);
@@ -197,6 +206,36 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
         addrmode = Mnext;
         
+        //FIX: OPCODE.FORCE needs to be adjusted for x,y,sp indexing...
+        switch(sym->addrmode) {
+        	case AM_BYTEADR_SP:
+        		addrmode = AM_BYTEADR_SP;
+                if (Mnext == AM_WORDADR)
+                	addrmode = AM_WORDADR_SP;
+        		break;
+
+        	case AM_0Y:
+        		addrmode = AM_0Y;
+
+            	if(Mnext == AM_WORDADR)
+            		addrmode = AM_WORDADRY;
+
+            	if(Mnext == AM_BYTEADR)
+            		addrmode = AM_BYTEADRY;
+        		break;
+
+        	case AM_0X:
+        		addrmode = AM_0X;
+
+                if(Mnext == AM_WORDADR)
+                	addrmode = AM_WORDADRX;
+
+                if(Mnext == AM_BYTEADR)
+                	addrmode = AM_BYTEADRX;
+        		break;
+        }
+
+
         if (badcode(mne,addrmode))
         {
             asmerr( ERROR_ILLEGAL_FORCED_ADDRESSING_MODE, false, mne->name );
@@ -210,14 +249,52 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     }
     
     if ( bTrace )
-        printf("final addrmode = %d\n", addrmode);
+        printf("final addrmode = %d, opsize:%d Opsize[%d]:%d\n", addrmode, opsize, addrmode, Opsize[addrmode]);
+
+    byteRequested = false;
+    switch(Mnext) {
+    	case AM_IMM8:
+    	case AM_BYTEADR:
+    	case AM_BYTEADRX:
+    	case AM_BYTEADRY:
+    	case AM_BYTEADR_SP:
+    		byteRequested = true;
+    		if (opsize > 1) {
+    			sprintf( sBuffer, "%s %s, user requested byte mode", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+    		}
+    		break;
+    }
     
+    switch(addrmode) {
+    	case AM_IMM16:
+    	case AM_WORDADR:
+    	case AM_WORDADRX:
+    	case AM_WORDADRY:
+    	case AM_INDWORD:
+    	case AM_WORDADR_SP:
+    		if ((sym->value > 0xFFFF) || (sym->value < -0xFFFF)) {	// isn't this our space ?
+    			sprintf( sBuffer, "%s %s", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
+    		}
+    		break;
+
+    	case AM_IMM8:
+    	case AM_BYTEADR:
+    	case AM_BYTEADRX:
+    	case AM_BYTEADRY:
+    	case AM_BYTEADR_SP:
+    		if (sym->value < -0xFF) {	// isn't this our space ?
+    			sprintf( sBuffer, "negative %s %s", mne->name, str );
+    			asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+    		}
+    		break;
+    }
+
     while (opsize > Opsize[addrmode])
     {
         if (Cvt[addrmode] == 0 || badcode(mne,Cvt[addrmode]))
         {
-            char sBuffer[128];
-            
             if (sym->flags & SYM_UNKNOWN)
                 break;
             
@@ -228,6 +305,29 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                 sym->value=(char)(sym->value & 255);
                 break;
             }
+
+
+	    if ((sym->value > 255) && !byteRequested) {
+	    	// automatically increasing address-mode only if user has not explicitly stated
+		if (addrmode == AM_BYTEADRX) {
+		    if (! badcode(mne, AM_WORDADRX)) {
+			addrmode = AM_WORDADRX;
+			break;
+		    }
+		}
+		if (addrmode == AM_BYTEADRY) {
+		    if (! badcode(mne, AM_WORDADRY)) {
+			addrmode = AM_WORDADRY;
+			break;
+		    }
+		}
+		if (addrmode == AM_BYTEADR_SP) {
+		    if (! badcode(mne, AM_WORDADR_SP)) {
+			addrmode = AM_WORDADR_SP;
+			break;
+		    }
+		}
+	    }
 
             sprintf( sBuffer, "%s %s", mne->name, str );
             asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
@@ -251,8 +351,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
     case AM_BITMOD:
         sym = symbase->next;
-        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
+        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+            sprintf( sBuffer, "unknown %s %ld", mne->name, sym->value);
+            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+        }
         Gen[opidx++] = sym->value;
         
         if (!(symbase->flags & SYM_UNKNOWN))
@@ -276,9 +378,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         
         sym = symbase->next;
         
-        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
-        
+        if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+            sprintf( sBuffer, "%s %ld", mne->name, sym->value);
+            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+        }
         Gen[opidx++] = sym->value;
         sym = sym->next;
         break;
@@ -309,9 +412,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     {
         if (sym)
         {
-            if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100)
-                asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, NULL );
-            
+            if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
+                sprintf( sBuffer, "unknown && > 256 %s %ld", mne->name, sym->value);
+                asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
+            }
             Gen[opidx] = sym->value;
             sym = sym->next;
         }
@@ -348,7 +452,6 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                     //     another pass. ERROR_BRANCH_OUT_OF_RANGE was made non-fatal, but we keep 
                     //     pushing for Redo so assembly won't actually be succesfull until the branch
                     //     actually works.
-                        char sBuffer[64];
                         sprintf( sBuffer, "%ld", dest );
                         asmerr( ERROR_BRANCH_OUT_OF_RANGE, false, sBuffer );
             		++Redo;
@@ -563,6 +666,7 @@ v_dc(char *str, MNEMONIC *mne)
     long  value;
     char *macstr = 0;		/* "might be used uninitialised" */
     char vmode = 0;
+    char sBuffer[128];		/* verbose error messages*/
     
     Glen = 0;
     programlabel();
@@ -649,6 +753,17 @@ v_dc(char *str, MNEMONIC *mne)
                         Gen[Glen++] = (value >> 8) & 0xFF;
                     }
                     break;
+                case AM_OTHER_ENDIAN:
+                    if (MsbOrder == 0) {
+                        Gen[Glen++] = (value >> 8) & 0xFF;
+                        Gen[Glen++] = value & 0xFF;
+                    }
+                    else
+                    {
+                        Gen[Glen++] = value & 0xFF;
+                        Gen[Glen++] = (value >> 8) & 0xFF;
+                    }
+                	break;
                 case AM_LONG:
                     if (MsbOrder) {
                         Gen[Glen++] = (value >> 24)& 0xFF;
@@ -686,8 +801,7 @@ v_dc(char *str, MNEMONIC *mne)
                 //any value outside two's complement +ve and +ve byte representation is invalid...
                 if ((value < -0xFF)||(value > 0xFF)) 
 		{
-                    char sBuffer[128];
-                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    sprintf( sBuffer, "byte %s %ld", mne->name, value);
                     asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
 		}
                 Gen[Glen++] = value & 0xFF;
@@ -696,8 +810,7 @@ v_dc(char *str, MNEMONIC *mne)
 		//any value outside two's complement +ve and +ve word representation is invalid...
                 if ( (bStrictMode) && ((value < -0xFFFF)||(value > 0xFFFF)) )
 		{
-                    char sBuffer[128];
-                    sprintf( sBuffer, "%s %ld", mne->name, value);
+                    sprintf( sBuffer, "word %s %ld", mne->name, value);
                     asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
 		}
 
@@ -711,6 +824,21 @@ v_dc(char *str, MNEMONIC *mne)
                     Gen[Glen++] = (value >> 8) & 0xFF;
                 }
                 break;
+            case AM_OTHER_ENDIAN:
+                if ( (bStrictMode) && ((value < -0xFFFF)||(value > 0xFFFF)) ) {
+                    sprintf( sBuffer, "swapped %s %ld", mne->name, value);
+                    asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
+                }
+                if (MsbOrder == 0) {
+                    Gen[Glen++] = (value >> 8) & 0xFF;
+                    Gen[Glen++] = value & 0xFF;
+                }
+                else
+                {
+                    Gen[Glen++] = value & 0xFF;
+                    Gen[Glen++] = (value >> 8) & 0xFF;
+                }
+            	break;
             case AM_LONG:
                 if (MsbOrder) {
                     Gen[Glen++] = (value >> 24)& 0xFF;
@@ -1119,7 +1247,9 @@ v_execmac(char *str, MACRO *mac)
     programlabel();
     
     if (Mlevel == MAXMACLEVEL) {
-        puts("infinite macro recursion");
+        char errMsg[256];
+        sprintf(errMsg, " macro [%s] recursion > %d", mac->name, MAXMACLEVEL);
+        asmerr( ERROR_RECURSION_TOO_DEEP, true, errMsg );
         return;
     }
     ++Mlevel;
@@ -1541,6 +1671,14 @@ generate(void)
     
     if (Csegment->flags & SF_RORG)
         Csegment->rorg += Glen;
+
+    if (Csegment->org > maxFileSize) {
+    	char errMsg[128];
+    	sprintf(errMsg, "code segment growing larger (%ld) than max. allowed file size (%ld)\n"
+    					,Csegment->org, maxFileSize);
+    	asmerr( ERROR_RECURSION_TOO_DEEP, true, errMsg );
+    	return;
+    }
 }
 
 void closegenerate(void)
@@ -1564,8 +1702,14 @@ genfill(long fill, long entries, int size)
     int i;
     unsigned char c3,c2,c1,c0;
     
-    if (!bytes)
+    if (bytes == 0) {
+    	// nothing to do
         return;
+    }
+    if (bytes < 0) {
+    	asmerr( ERROR_ORIGIN_REVERSE_INDEXED, true, NULL );
+    	return;
+    }
     
     c3 = fill >> 24;
     c2 = fill >> 16;

@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /* for -T option [phf] */
 typedef enum
@@ -111,7 +112,9 @@ enum FORMAT
         ERROR_VALUE_MUST_BE_LT_10000,                   /* 30 */
         ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 31 */
 	
-	
+	ERROR_RECURSION_TOO_DEEP,			/* 32 */
+	ERROR_AVOID_SEGFAULT,				/* 33 */
+	ERROR_MISSING_ENDM,				/* 34 */
 	};
 
     typedef struct ERRORSTRUCT
@@ -156,10 +159,11 @@ enum FORMAT
 #define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
-#define SHASHSIZE   1024
-#define MHASHSIZE   1024
-#define SHASHAND    0x03FF
-#define MHASHAND    0x03FF
+#define N_HASH_BITS	12			// 10 was in original implementation
+#define SHASHSIZE   (1 << N_HASH_BITS)
+#define MHASHSIZE   (1 << N_HASH_BITS)
+#define SHASHAND    (SHASHSIZE -1)
+#define MHASHAND    (MHASHSIZE -1)
 #define ALLOCSIZE   16384
 #define MAXMACLEVEL 32
 #define TAB        9
@@ -170,24 +174,29 @@ enum FORMAT
 		AM_IMM8,				/*    immediate 8  bits   */
 		AM_IMM16,		        /*    immediate 16 bits   */
 		AM_BYTEADR,				/*    address 8 bits        */
-		AM_BYTEADRX,			/*    address 16 bits     */
-		AM_BYTEADRY,			/*    relative 8 bits     */
-		AM_WORDADR,				/*    index x 0 bits        */
-		AM_WORDADRX,			/*    index x 8 bits        */
-		AM_WORDADRY,			/*    index x 16 bits     */
-		AM_REL,					/*    bit inst. special   */
-		AM_INDBYTEX,			/*    bit-bra inst. spec. */
-		AM_INDBYTEY,			/*    index y 0 bits        */
-		AM_INDWORD,				/*    index y 8 bits        */
+		AM_BYTEADRX,			/*    index x + 8 bit offset     */
+		AM_BYTEADRY,			/*    index y + 8 bit offset     */
+		AM_WORDADR,				/*    extended addr        */
+		AM_WORDADRX,			/*    index x + 16 bit offset       */
+		AM_WORDADRY,			/*    index y + 16 bit offset      */
+		AM_REL,					/*    relative 8 bits   */
+		AM_INDBYTEX,			/*    indirect x     */
+		AM_INDBYTEY,			/*    indirect y     */
+		AM_INDWORD,				/*    indirect immediate    */
 		AM_0X,					/*    index x 0 bits        */
 		AM_0Y,					/*    index y 0 bits        */
-		AM_BITMOD,				/*    ind addr 8 bits     */
-		AM_BITBRAMOD,			/*    ind addr 16 bits    */
+		AM_BITMOD,				/*    spec. bit modifcation     */
+		AM_BITBRAMOD,			/*    spec. bit-test rel. branch    */
+		AM_BYTEADR_SP,				/*    index SP +8 bits     */
+		AM_WORDADR_SP,				/*    index SP +16 bits   */
+
 
 		AM_SYMBOL,
 		AM_EXPLIST,
 		AM_LONG,
 		AM_BSS,
+
+		AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
 
 		NUMOC
 	};
@@ -209,6 +218,8 @@ enum FORMAT
 #define AF_0Y					( 1L << AM_0Y )
 #define AF_BITMOD				( 1L << AM_BITMOD )
 #define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
+#define AF_BYTEADR_SP                          ( 1L << AM_BYTEADR_SP)
+#define AF_WORDADR_SP                          ( 1L << AM_WORDADR_SP)
 
 #define AM_BYTE					AM_BYTEADR
 #define AM_WORD					AM_WORDADR
@@ -222,6 +233,7 @@ STRLIST {
 
 #define STRLISTSIZE    sizeof(STRLIST *)
 
+#define MF_BEGM					0x02
 #define MF_IF					0x04
 #define MF_MACRO				0x08
 #define MF_MASK					0x10    /*  has mask argument (byte)    */
@@ -350,6 +362,8 @@ extern unsigned char    MsbOrder;
 extern unsigned char    Outputformat;
 extern unsigned long    Redo_why;
 
+extern unsigned long	maxFileSize;
+
 extern int Redo;
 extern int Redo_eval;
 
@@ -373,6 +387,9 @@ extern unsigned long    Processor;
 
 /*extern unsigned int _fmode;*/
 extern unsigned long  CheckSum;
+
+extern int nMacroDeclarations;
+extern int nMacroClosings;
 
 /* main.c */
 /*extern unsigned char Listing;*/

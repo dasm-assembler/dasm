@@ -3,52 +3,152 @@
 # Simple test script adapted from Matt Dillon's 2.16  release.
 # It's harder to do this in a Makefile, so let's use a script.
 
+should_fail="0"
+
+REL_DIR="../bin"
+
+DEFINES=""
+format="1"
+
+while [ "$1" != "" ]
+do
+    case "$1" in 
+	-R)	REL_DIR="$2"
+		shift
+		;;
+	-S)	should_fail="$2"
+		shift
+		;;
+	-D)	DEFINES="${DEFINES} -D$2"
+		shift
+		;;
+	-F)	format="$2"
+		shift
+		;;
+	-I)	DEFINES="${DEFINES} -I$2"
+		;;
+    esac
+    shift
+done
+
 echo "=== build test cases (strict=off)"
-echo
 
-for i in *.bin.ref
+fail="0"
+ok="0"
+nTests="0"
+
+leadingSpace() {
+    echo "$@" | awk '{ printf(" * % 32s", $0)}'
+}
+
+refFiles=`find . -type f -name '*.bin.ref'`
+
+for item in $refFiles
 do
-  i=$(echo $i | sed 's/.bin.ref/.asm/g')
-  NAME=`basename $i .asm`
-  echo "  * $NAME"
-  ../bin/dasm $i -f1 -o$NAME.bin -l$NAME.list.txt -DINEEPROM | \
-    grep -vE 'error|Complete|^?'
-  # echo "dasm returned $?"
-  cmp -s $NAME.bin $NAME.bin.ref
-  if [ $? == 0 ]
+    ARGS="-f${format}"
+
+    NAME=$(echo $item | sed 's/\.bin\.ref$//g;s/^\.\///g')
+
+    leadingSpace "$NAME"
+
+    if test -r ${NAME}.args
+    then
+	. ${NAME}.args
+    fi
+
+  if ${REL_DIR}/dasm ${NAME}.asm ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >$NAME.out 2>&1
   then
-    echo "    bin comparison: pass"
+    if test -s $NAME.bin
+    then
+	${REL_DIR}/ftohex 1 $NAME.bin $NAME.hex
+	if cmp -s $NAME.bin $NAME.bin.ref
+	then
+	    echo "	binary is same,	pass"
+	    ok="$[$ok+1]"
+	else
+	    # second compare test is not needed, just help to find the diff
+	    if ! test -r $NAME.hex.ref
+	    then
+		echo "		file [$NAME.hex.ref] missing	FAILED!" 
+	    else
+		diff -bBduw $NAME.hex $NAME.hex.ref >$NAME.hex.diff
+		echo "		binaries differ	FAILED!" 
+	    fi
+	    fail="$[$fail+1]"
+	fi 
+    else
+	echo "		file doesn't exist or has zero size	FAILED!" 
+	fail="$[$fail+1]"
+    fi
   else
-    echo "    bin comparison: fail"
+    echo "		assembly	FAILED! [$?]" 
+    fail="$[$fail+1]"
   fi
-  ../bin/ftohex 1 $NAME.bin $NAME.hex
-  # echo "ftohex returned $?"
-  cmp -s $NAME.hex $NAME.hex.ref
-  if [ $? == 0 ]
-  then
-    echo "    hex comparison: pass"
-  else
-    echo "    hex comparison: fail"
-  fi
-  echo
+    nTests="$[$nTests+1]"
 done
 
+LIST=`find . -type f -name '*.fail'`
+if [ "$LIST" != "" ]
+then
+
+echo ""
 echo "=== error test cases (strict=on)"
-echo
+
 # test for assembly sniplets that should fail
-for i in *.fail
+for item in $LIST
 do
-  i=$(echo $i | sed 's/.fail/.asm/g')
-  NAME=`basename $i .asm`
-  echo "  * $NAME"
-  ../bin/dasm $i -S -f1 -o$NAME.bin -l$NAME.list.txt -DINEEPROM 2>&1 | \
-    grep -vE 'error|Complete|^$'
-  grep error $NAME.list.txt 2>&1 >/dev/null
-  if [ $? == 0 ] 
-  then
-    echo "    error triggered: pass"
-  else
-    echo "    error triggered: fail"
-  fi
-  echo
+    ARGS="-f${format}"
+
+    NAME=$(echo $item | sed 's/\.fail$//g;s/^\.\///g')
+    leadingSpace "$NAME"
+
+    if test -r ${NAME}.args
+    then
+	. ${NAME}.args
+    fi
+    
+    if ! test -r ${NAME}.asm
+    then
+	echo "source file [${NAME}.asm] is missing"
+	fail="$[$fail+1]"
+    else
+        if ${REL_DIR}/dasm ${NAME}.asm -S ${ARGS} -o$NAME.bin -L$NAME.list.txt -DINEEPROM ${DEFINES} >${NAME}.out 2>&1
+	then
+	    echo "		no error	FAILED!"
+    	    fail="$[$fail+1]"
+	else 
+	    case "$ARGS" in
+		    *-R) if test -r $NAME.bin
+			 then
+			    echo "	file exists, FAILED!"
+			    fail="$[$fail+1]"
+			 else
+			    echo "	file was deleted, pass"
+			    ok="$[$ok+1]"
+			 fi
+			 ;;
+		    *)	 echo "	error_code [$?] pass"
+			 ok="$[$ok+1]"
+			 ;;
+	    esac
+	fi
+    fi
+    nTests="$[$nTests+1]"
 done
+
+fi
+
+echo -n "executed ${nTests} tests, $ok OK, $fail failed, result: "
+
+if [ "$[$ok+${should_fail}]" = "$nTests" ]
+then
+    echo "overall PASS"
+    exit 0
+else
+    suspect="$[$fail-${should_fail}]"
+    echo "need to investigate in $suspect test-cases"
+    exit $suspect
+fi
+
+
+

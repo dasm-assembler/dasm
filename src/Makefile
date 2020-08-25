@@ -50,9 +50,9 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 #CC= gcc
 
 OBJS= main.o ops.o globals.o exp.o symbols.o \
-      mne6303.o mne6502.o mne68705.o mne6811.o mnef8.o
+      mne6303.o mne6502.o mne68705.o mne6811.o mnef8.o mne68908.o
 SRCS= main.c ops.c globals.c exp.c symbols.c \
-      mne6303.c mne6502.c mne68705.c mne6811.c mnef8.c
+      mne6303.c mne6502.c mne68705.c mne6811.c mnef8.c mne68908.c
 
 ALL= dasm ftohex
 

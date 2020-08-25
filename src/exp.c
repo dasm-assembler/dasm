@@ -104,6 +104,7 @@ int IsAlphaNum( int c );
 *    val	zero page or absolute
 *    val,x	zero,x or absolute,x
 *    val,y	zero,y or absolute,y
+*    val,sp	stack pointer indexed + offset
 *    (val)	indirect
 *    (val,x)	zero indirect x
 *    (val),y	zero indirect y
@@ -131,6 +132,8 @@ opfunc_t Opdis[MAXOPS];
 
 int	Argi, Opi, Lastwasop;
 int	Argibase, Opibase;
+
+char ucasm_indexed_notation = false;
 
 SYMBOL *eval(const char *str, int wantmode)
 {
@@ -330,12 +333,39 @@ SYMBOL *eval(const char *str, int wantmode)
             /* fall thru OK */
             
         case '[':   /*  eventually an argument      */
+	    ucasm_indexed_notation = false;
             
+	    if ((((((str[1]|0x20) == 'x') || ((str[1]|0x20) == 'y')) && (str[2] == '+')) ||     // X- or Y-indexed address mode
+	        (((str[1]|0x20) == 's') && ((str[2]|0x20) == 'p') && (str[3] == '+'))) &&	// SP-indexed address mode
+		((Processor == 68705) || (Processor == 6811) || (Processor == 68908)))
+	    {
+		ucasm_indexed_notation = true;
+		// UCASM compatibility, allow notations [X+255], [Y+3], [SP+5]
+		switch(str[1]|0x20) {
+		    case 'x': 
+			cur->addrmode = AM_BYTEADRX; 
+			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
+			break;
+
+		    case 'y': cur->addrmode = AM_BYTEADRY; break;
+
+		    case 's': 
+			cur->addrmode = AM_BYTEADR_SP;
+			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
+			break;
+		}
+		str += 3;	/* skip '[',{x,y,s},'+' */
+		if ((cur->addrmode == AM_BYTEADR_SP) || (cur->addrmode == AM_WORDADR_SP)) {
+		    ++str;	/* skip also 'p' */
+		}
+	    } else {
+		ucasm_indexed_notation = false;
             if (Opi == MAXOPS)
                 puts("too many ops");
             else
                 Oppri[Opi++] = 0;
             ++str;
+	    }
             break;
             
         case ')':
@@ -374,10 +404,15 @@ SYMBOL *eval(const char *str, int wantmode)
             if (Opi != Opibase)
                 --Opi;
             ++str;
+
+	    if (ucasm_indexed_notation) {
+		ucasm_indexed_notation = false;
+	    } else {
             if (Argi == Argibase)
             {
                 puts("']' error, no arg on stack");
                 break;
+            }
             }
             
             if (*str == 'd')
@@ -436,27 +471,20 @@ SYMBOL *eval(const char *str, int wantmode)
             {
                 cur->addrmode = AM_0X;
                 ++str;
-
-                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
-                if(Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADRX;
-                if(Mnext==AM_BYTEADR)
-                     Mnext=AM_BYTEADRX;
-                if(Mnext==AM_INDWORD)
-                     Mnext=AM_0X;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
             }
             else if (scr == 'y' && !IsAlphaNum(str[2]))
             {
                 cur->addrmode = AM_0Y;
                 ++str;
-
-                //FIX: OPCODE.FORCE needs to be adjusted for x indexing...
-                if(Mnext==AM_WORDADR)
-                     Mnext=AM_WORDADRY;
-                if(Mnext==AM_BYTEADR)
-                     Mnext=AM_BYTEADRY;
-                if(Mnext==AM_INDWORD)
-                     Mnext=AM_0Y;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
+            }
+            else if ((scr == 's') && ((str[2]|0x20) == 'p') && !IsAlphaNum(str[3]))      // stack pointer indexed address mode
+            {
+                cur->addrmode = AM_BYTEADR_SP;
+                ++str;
+                ++str;
+                //FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
             }
             else
             {
@@ -506,7 +534,14 @@ SYMBOL *eval(const char *str, int wantmode)
             }
 
             if (*str == '0')
+            {
+                if (str[1] == 'x') {                   // allow also '0xAA' notation for '$AA'
+                    ++str;
+                    str = (char *)pushhex(str+1);
+                } else {
                 str = pushoct(str);
+                }
+            }
             else
             {
                 if (*str > '0' && *str <= '9')
@@ -642,6 +677,12 @@ void doop(opfunc_t func, int pri)
     {
         if (Xdebug)
             printf("doop @ %d unary\n", Opi);
+
+	if (Opi > MAXOPS) {
+		fprintf(stderr,"doop: error: operator index(%d) > MAXOPS(%d), probably too deep recursion", Opi, MAXOPS);
+		asmerr(ERROR_RECURSION_TOO_DEEP, true, "doop()");
+		return;
+	}
         Opdis[Opi] = func;
         Oppri[Opi] = pri;
         ++Opi;
@@ -899,16 +940,26 @@ const char *pushstr(const char *str)
     return str;
 }
 
+static int symbolRecursionCount = 0;
+
 const char *pushsymbol(const char *str)
 {
     SYMBOL *sym;
     const char *ptr;
     unsigned char macro = 0;
-    
+
+    symbolRecursionCount++;
+
+    if (symbolRecursionCount > 1000) {
+    	fprintf(stderr, "error: %s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
+    	asmerr(ERROR_RECURSION_TOO_DEEP, true, "pushsymbol()");
+    }
+
     for (ptr = str;
     *ptr == '_' ||
         *ptr == '.' ||
         (*ptr >= 'a' && *ptr <= 'z') ||
+        (*ptr == '@') ||                         // UCASM compatibility, allow at-sign to apear in label names
         (*ptr >= 'A' && *ptr <= 'Z') ||
         (*ptr >= '0' && *ptr <= '9');
     ++ptr
@@ -953,6 +1004,7 @@ const char *pushsymbol(const char *str)
         sym->flags = SYM_REF|SYM_MASREF|SYM_UNKNOWN;
         ++Redo_eval;
     }
+    symbolRecursionCount--;
     return ptr;
 }
 

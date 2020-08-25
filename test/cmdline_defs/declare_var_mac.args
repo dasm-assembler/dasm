@@ -1,0 +1,1 @@
+ARGS="-f1 -T1 -s${NAME}.sym -DRAM_START=0x60"

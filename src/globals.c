@@ -59,6 +59,11 @@ unsigned long   Redo_why = 0;
 int	Redo_eval = 0;	   /*  infinite loop detection only    */
 int Redo = 0;
 
+int nMacroDeclarations = 0;
+int nMacroClosings = 0;
+
+unsigned long maxFileSize = 640 * 1024;		// avoid recursive growing via set,eqm
+	// 640k are enough for everybody ... said Bill G. How many 64k pages have you ?
 
 unsigned long	Redo_if = 0;
 
@@ -82,8 +87,8 @@ unsigned char	 Fisclear;
 unsigned long	 Plab, Pflags;
 
 /*unsigned int	Adrbytes[]  = { 1, 2, 3, 2, 2, 2, 3, 3, 3, 2, 2, 2, 3, 1, 1, 2, 3 };*/
-unsigned int	Cvt[]	    = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0 };
-unsigned int	Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 0, 0, 1, 1 };
+unsigned int	Cvt[]	    = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0 };
+unsigned int	Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 0, 0, 1, 1, 1, 2 };
 
 MNEMONIC Ops[] = {
     { NULL, v_list    , "list",           0,      0, {0,} },
@@ -109,11 +114,13 @@ MNEMONIC Ops[] = {
     { NULL, v_eqm     , "eqm",            0,      0, {0,} },
     { NULL, v_set     , "set",            0,      0, {0,} },
     { NULL, v_setstr  , "setstr",         0,      0, {0,} },
-    { NULL, v_macro   , "mac",            MF_IF,  0, {0,} },
+    { NULL, v_macro   , "mac",            MF_IF|MF_BEGM,  0, {0,} },
+    { NULL, v_macro   , "macro",          MF_IF|MF_BEGM,  0, {0,} },
     { NULL, v_endm    , "endm",           MF_ENDM,0, {0,} },
     { NULL, v_mexit   , "mexit",          0,      0, {0,} },
     { NULL, v_ifconst , "ifconst",        MF_IF,  0, {0,} },
     { NULL, v_ifnconst, "ifnconst",       MF_IF,  0, {0,} },
+    { NULL, v_ifnconst, "ifndef",         MF_IF,  0, {0,} },
     { NULL, v_if      , "if",             MF_IF,  0, {0,} },
     { NULL, v_else    , "else",           MF_IF,  0, {0,} },
     { NULL, v_endif   , "endif",          MF_IF,  0, {0,} },
