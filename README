@@ -32,7 +32,7 @@ The Distribution
     The DASM distribution contains the following important files and
     directories of interest to all users:
 
-        doc/             Documentation and manuals
+        docs/            Documentation and manuals
         docker/          Contains files & instructions to create a docker
                          image to run a 'dasm build machine' container
         machines/        Support files for various 8-bit machines
