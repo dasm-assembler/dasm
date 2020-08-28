@@ -90,12 +90,24 @@ Items/examples that appear in source code are shown like this...
 \label{change:lsbmsb}
 In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, either in low/high or high/low ordering. The ordering, called the ``endianness'', differs between processors. In this document, \mono{LSB} refers to the least-significant byte, and \mono{MSB} refers to the most-significant byte, independent of the endianness of the processor. See \nameref{operators:unary} for the unary operators \mono{<} and \mono{>} which are used to retrieve the \mono{LSB} or \mono{MSB} from a symbol/value.
 
+\label{changelog:20200829formatdescription}
+\subsubsection{Format Description}
+
+The following format templates are used to describe items on the command line.
+
 \begin{table}[H]
 	\begin{tabular}{lll}
-			\mono{[item]} & Optional item\\
-		\mono{[item...]}&As many optional items as needed, separated by commas\\
-		\mono{item[,item...]} & At least one item followed by comma-separated items\\
-	\end{tabular}
+\mono{[item]}& Optional \mono{item}\\
+\mono{[]...}&Zero or more of the contents of \mono{[]}\\
+
+\\
+\textbf{Examples...}\\
+\\
+
+\mono{[item]}&Optional item\\
+		\mono{item[,item]...}&One or more items, separated by commas\\
+		\mono{item[ item]...} &One or more items, separated by spaces\\
+\\	\end{tabular}
 \end{table}
 
  
@@ -108,7 +120,7 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
  
  The the following contrived example will resolve in 12 passes:
  
- \begin{code}[caption=Multiple Passses - Complex Resolution of Symbols]
+ \begin{code}
    ORG 1
    REPEAT [[addr < 11] ? [addr-11]] + 11
      DC.b addr
@@ -116,9 +128,27 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
  addr:
  \end{code}
  
+ \begin{outputx}
+ > dasm test.asm -P11
+test.asm (8): error: Label mismatch...
+ --> addr 000b                  
+test.asm (8): error: Too many passes (12).
+\end{outputx}
+  
+In the above example, the example does not assemble because the number of passes (set to 11) is insufficient to resolve the value of addr.  
+    
+ \begin{outputx}
+ > dasm test.asm -P12
+ Complete. (0)
+\end{outputx} 
+ 
+ In the above example, 12 passes is sufficient to assemble the code.
+ 
+ There is generally no harm in setting the number of passes to a sufficiently high value.
+ 
  
  Most everything is recursive.  You cannot have a macro definition
- within a macro definition, but can nest macro calls, repeat loops,
+ within a macro definition, but you can nest macro calls, repeat loops,
  and include files.
  
  The other major feature in this assembler is the \nameref{pseudoop:subroutine} directive , which logically separates \nameref{locallabels} (starting with a dot).  This

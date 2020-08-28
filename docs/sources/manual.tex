@@ -26,7 +26,7 @@
 The assembler will return 0 on successful compilation, 1 otherwise.
 
 \begin{usage}
-dasm [sourcefile[ option]...]
+dasm[ sourcefile[ option]...]
 \end{usage}
 
 \label{changelog:20200824sourcefile}
@@ -34,9 +34,9 @@ If no \mono{sourcefile} is given, then \dasm will output a short help message, a
 
 \section{Format}
 
-Options are specified on the command-line, after the source file. There may be zero or more options each separated by whitespace. Some options require parameters. Default values (where an option is not explicitly defined) are described with each option below.
+Options are specified on the command-line, after the source file. There may be zero or more options each separated by whitespace. Some options require their own parameters. Default values (where an option is not explicitly defined) are described with each option below.
 
-An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' symbol, and followed by the option letter and then the parameter (if there is one). There must be no whitespace between the prefix, option letter or the parameter.
+An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' prefix, and followed by the option letter and then the parameter (if there is one). There must be no whitespace between the prefix, option letter or the parameter.
 
 \subsubsection{Example}
 
@@ -157,7 +157,7 @@ nothing but data.\\
 	\end{tabularx}
 \end{table}
 
-\textbf{It is a common problem to forget the format option on the command line, especially if you are expecting a pure binary ROM without a header. Use \mono{-f3} if you are assembling ROMs.}
+It is a \textbf{common problem} to forget the format option on the command line, especially if you are expecting a pure binary ROM without a header. Use \mono{-f3} if you are assembling ROMs.
 
 %\hrule
 \subsection{\texttt{-F Define Symbol}}
@@ -204,17 +204,21 @@ See \nameref{pseudoop:incdir} for the format of the directory name.\\
 \label{flag:listing}
 
 \begin{usage}
--lfilename
+-lfile.name
 \end{usage}
 
 \dasm is able to produce a comprehensive and extremely useful listing of the assembled source code. This file includes symbol values, code locations, and the source code itself. To enable generation of a listing file, use the \mono{-l} option.
 
-See also \nameref{flag:listingall}.
+See also \nameref{flag:listingall}.\\
 
 \hrule
 \subsection{\texttt{-L Listing Filename (all Passes)}}
 \label{flag:listingall}
 \index{Command Line!Options!Listing (all)}
+
+\begin{usage}
+-Lfile.name
+\end{usage}
 
 This option behaves the same as \nameref{flag:listing}, but lists the code on every pass. Warning: this can lead to some very big listings if \dasm needs to perform many passes on your code!
 
@@ -239,7 +243,7 @@ See also \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 \index{Command Line!Options!Output File}
 
 \begin{usage}
--ofilename
+-ofile.name
 \end{usage}
 
 Set the name of the filename for the output binary result of the assembly. If no name is specified, \dasm will write to the file ``\mono{a.out}''.
@@ -264,7 +268,7 @@ Sets the maximum number of passes performed by \dasm to \mono{value}.
 \dasm will keep performing passes until all references are resolved, or until the maximum number of passes is reached (in which case it will exit with an unresolved symbol error). Typically on machines these days, \dasm is so fast that a high number of passes is acceptable.
 
 \label{changelog:20200824passes}
-The default number of pases is 10.
+The default number of pases is 3.
 
 See also \nameref{flag:passes2}.\\
 
@@ -286,7 +290,7 @@ See also \nameref{flag:passes}.\\
 \index{Command Line!Options!Symbol Table File}
 
 \begin{usage}
--sfilename
+-sfile.name
 \end{usage}
 
 At the conclusion of assembly, the \mono{-s} option directs \dasm to save a symbol table to the specified file. A symbol table is a table listing all the symbols encountered during an assembly, and their values if known. By default, no symbol table file is generated.
@@ -436,14 +440,20 @@ Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16
 \textbf{Type}&\textbf{Format}&\textbf{Content}\\
 \hline
 \\
-\mono{Binary}       &\mono{\textbf{\%}n}        & \mono{0-1}\\
-\mono{Octal}        &\mono{\textbf{0}n}         & \mono{0-7}\\
+\mono{Binary}       &\mono{\%}n        & \mono{0-1}\\
+\\
+\mono{Octal}        &\mono{0}n         & \mono{0-7}\\
+\\
 \mono{Decimal}      &\mono{n}                   & \mono{0-9}, first digit non-\mono{0}\\
-\mono{Hexadecimal}  &\mono{\textbf{\$}n}        &case insensitive \mono{0-9,A-F}\\
-\mono{Character}    &\mono{\textbf{'c}}         &\mono{ASCII} character\\
-\mono{String}       &\mono{\textbf{``cc..''}}   & zero-terminated ASCII character string\\
+\\
+\mono{Hexadecimal}  &\mono{\$}n        &case insensitive \mono{0-9,A-F}\\
+\\
+\mono{Character}    &\mono{'c}         &\mono{ASCII} character\\
+\\
+\mono{String}       &\mono{``cc..''}   & zero-terminated ASCII character string\\
 					&                           & \textbf{not} zero-terminated when used in \mono{DC}/\mono{DS}/\mono{DV}.\\
-					&\mono{\textbf{[exp]d}}     & The constant expressions is evaluated and its\\
+\\					
+					&\mono{[exp]d}     & The constant expressions is evaluated and its\\
 					&                           &decimal result converted into an ASCII string.\\
 					&                           &Useful in conjunction with ECHO diagnostic output.\\
 \\
@@ -726,6 +736,8 @@ LAB4 SETSTR "Hello"  ; allocated as string
 lab,{1}              ; dynamic, inside macro
 lab@                 ; some symbols are valid too
  labWhoops           ; invalid - not in 1st column
+lab SET -INFINITY    ; SET: initial definition
+lab SET 0            ; SET: and re-use!
 \end{code}
 
 
