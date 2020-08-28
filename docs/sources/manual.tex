@@ -1768,6 +1768,24 @@ to determine the element size.
 \end{tabularx}
 \end{table}
 
+
+\label{changelog:20200829substitutions}
+First character equivalent substitutions:
+
+\begin{table}[H]
+\begin{tabularx}{\linewidth}{cccl}
+\toprule
+\textbf{Orig}&\textbf{Alt}&\textbf{Alt}&\textbf{Meaning}\\
+\hline
+\\
+	\mono{b} &\mono{z} &\mono{d}	&    byte, zeropage, direct\\
+	\mono{w} &\mono{e} &\mono{a}	&    word, extended, absolute\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+
 \begin{savequote}
 \sffamily
 ``Everyone is against micro managing but macro managing means you're working at the big picture but don't know the details.''
