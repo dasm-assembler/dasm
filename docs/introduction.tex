@@ -1,0 +1,161 @@
+\begin{savequote}
+\sffamily
+%I'm completely operational and all my circuits are functioning normally--
+%\qauthor{Hal (2001, A Space Odyssey)}
+%\index{AUV}
+%\index{AUV!\emph{Starbug}}
+"Do you program in Assembly?" she asked.\newline
+"NOP", he said.\\[0.5cm]
+
+%\qauthor{Sayer}
+
+
+\includegraphics[width=0.75\textwidth]{dasm-logo.png}
+
+
+\end{savequote}
+
+
+
+\chapter{Introduction}
+
+%\begin{epigraphs}
+%\qitem{
+%\emph{``Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows %where you live.''
+%\end{epigraphs}
+
+
+\section{About} 
+
+This is the Technical Documentation and User Guide for the \dasm macro-assembler. It explains how
+to use \dasm and the supported assembler directives.
+
+\subsection{Home}
+
+Since release 2.20.12, \dasm has lived at
+
+\url{https://dasm-assembler.github.io/}
+
+On that page you can download prebuilt binaries for MacOS, Linux, and Windows operating systems. You can also download the full source code and build the program binary yourself.
+
+
+\subsection{Features}
+
+\dasm is packed with features...
+
+\begin{itemize}
+	\item fast assembly
+\item supports several common 8 bit processor models
+\item takes as many passes as needed
+\item automatic checksum generation, special symbol '...'
+\item several binary output formats available.
+\item allows reverse indexed origins.
+\item multiple segments, BSS segments (no generation), relocatable origin.
+\item expressions, as in C but [] is used instead of () for parenthesis.
+(all expressions are computed with 32 bit integers)
+\item no real limitation on label size, label values are 32 bits.
+\item complex pseudo-ops, repeat loops, macros
+\item etc...
+\end{itemize}
+
+
+
+
+\subsection{Conventions in this Document}
+
+This document uses standardised terminology to describe usage and function.
+
+\textit{Should the name be ``\mono{dasm}'', ``\mono{DASM}'' or ``\mono{Dasm}''?}
+
+Yes. In this document we shall refer to it as \dasm.
+
+Usage of directives and command-line options are shown in a box like this...
+
+\begin{usage}
+dasm source.asm -f3 -v5 -otest.bin
+\end{usage}
+
+Items/examples that appear in source code are shown like this...
+
+\begin{code}
+  MAC END_BANK
+    IF _CURRENT_BANK_TYPE = _TYPE_RAM
+      CHECK_RAM_BANK_SIZE
+    ELSE
+      CHECK_BANK_SIZE
+    ENDIF
+  ENDM
+\end{code}
+
+\label{change:lsbmsb}
+In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, either in low/high or high/low ordering. The ordering, called the ``endianness'', differs between processors. In this document, \mono{LSB} refers to the least-significant byte, and \mono{MSB} refers to the most-significant byte, independent of the endianness of the processor. See \nameref{operators:unary} for the unary operators \mono{<} and \mono{>} which are used to retrieve the \mono{LSB} or \mono{MSB} from a symbol/value.
+
+\label{changelog:20200829formatdescription}
+\subsubsection{Format Description}
+
+The following format templates are used to describe items on the command line.
+
+\begin{table}[H]
+	\begin{tabular}{lll}
+\mono{[item]}& Optional \mono{item}\\
+\mono{[]...}&Zero or more of the contents of \mono{[]}\\
+
+\\
+\textbf{Examples...}\\
+\\
+
+\mono{[item]}&Optional item\\
+		\mono{item[,item]...}&One or more items, separated by commas\\
+		\mono{item[ item]...} &One or more items, separated by spaces\\
+\\	\end{tabular}
+\end{table}
+
+ 
+ 
+ 
+ \section{Assembler Passes}
+ \index{Assembler Passes}
+ 
+ Almost nothing need be resolved in the first pass.	\dasm is most likely to make multiple passes through the source code to resolve all symbols.  The maximum number of passes (default 10) is controllable by \nameref{flag:passes} and \nameref{flag:passes2}.  \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
+ 
+ The the following contrived example will resolve in 12 passes:
+ 
+ \begin{code}
+   ORG 1
+   REPEAT [[addr < 11] ? [addr-11]] + 11
+     DC.b addr
+   REPEND
+ addr:
+ \end{code}
+ 
+ \begin{outputx}
+ > dasm test.asm -P11
+test.asm (8): error: Label mismatch...
+ --> addr 000b                  
+test.asm (8): error: Too many passes (12).
+\end{outputx}
+  
+In the above example, the example does not assemble because the number of passes (set to 11) is insufficient to resolve the value of addr.  
+    
+ \begin{outputx}
+ > dasm test.asm -P12
+ Complete. (0)
+\end{outputx} 
+ 
+ In the above example, 12 passes is sufficient to assemble the code.
+ 
+ There is generally no harm in setting the number of passes to a sufficiently high value.
+ 
+ 
+ Most everything is recursive.  You cannot have a macro definition
+ within a macro definition, but you can nest macro calls, repeat loops,
+ and include files.
+ 
+ The other major feature in this assembler is the \nameref{pseudoop:subroutine} directive , which logically separates \nameref{locallabels} (starting with a dot).  This
+ allows you to reuse label names (for example, \mono{.1, .fail}) rather than
+ think up crazy combinations of the current subroutine to keep it all
+ unique.
+ 
+ See \nameref{flag:passes} and \nameref{flag:passes2}.
+ 
+ 
