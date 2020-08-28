@@ -34,8 +34,8 @@
 \def\tagform@#1{\maketag@@@{\cornersize{0.8}\ovalbox{\ignorespaces\sffamily{#1}\unskip\@@italiccorr}}}
 
 %% Load up PS insertion package
-\RequirePackage{psboxit}
-\PScommands
+%\RequirePackage{psboxit}
+%\PScommands
 
 %% Load up fancy headers and footers package
 \RequirePackage{fancyhdr}
@@ -44,9 +44,11 @@
 \fancyhead{}
 \fancyfoot{}
 %% make the odd pages have the section name on the top right
-\fancyhead[RO]{\sffamily\bfseries \rightmark}
+\fancyhead[RO]{
+\sffamily\bfseries \rightmark}
 %% make the even pages have the chapter name on the top left
-\fancyhead[LE]{\sffamily\bfseries \leftmark}
+\fancyhead[LE]{
+\sffamily\bfseries \leftmark}
 
 %% put the page numbers on the bottom in a nice box
 %% even side pages
@@ -57,12 +59,14 @@
 %{\hspace{\textwidth}\psboxit{box 0.8 setgray fill}
 %{\framebox[10mm][c]{\rule{0cm}{4mm}\color{black}{\bfseries \thepage}}}}}
 
-\fancyfoot[LE]{\thepage}
-\fancyfoot[RO]{\thepage}
+\fancyfoot[LE]{
+\thepage}
+\fancyfoot[C]{
+\mono{\thepage}}
 
 
 %% make the bottom line above the page number box
-%\renewcommand{\footrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0pt}
 %\renewcommand{\footruleskip}{0mm}
 
 %% bring the style into effect
@@ -72,9 +76,9 @@
 %% to have the same page number stuff on the bottom
 \fancypagestyle{plain}{
 \fancyhf{}
-\fancyfoot[RO]{\thepage}
+\fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
-%\renewcommand{\footrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
 }
 
 

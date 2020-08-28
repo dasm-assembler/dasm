@@ -5,8 +5,14 @@
 %\index{AUV}
 %\index{AUV!\emph{Starbug}}
 "Do you program in Assembly?" she asked.\newline
-"NOP", he said.
+"NOP", he said.\\[0.5cm]
+
 %\qauthor{Sayer}
+
+
+\includegraphics[width=0.75\textwidth]{dasm-logo.png}
+
+
 \end{savequote}
 
 
@@ -98,7 +104,7 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
  \section{Assembler Passes}
  \index{Assembler Passes}
  
- Almost nothing need be resolved in pass 1.	\dasm is most likely to make several passes through the source code to resolve all symbols.  The maximum number of passes (default 10) is controllable by \nameref{flag:passes} and \nameref{flag:passes2}.  \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
+ Almost nothing need be resolved in the first pass.	\dasm is most likely to make multiple passes through the source code to resolve all symbols.  The maximum number of passes (default 10) is controllable by \nameref{flag:passes} and \nameref{flag:passes2}.  \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
  
  The the following contrived example will resolve in 12 passes:
  
@@ -120,5 +126,6 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
  think up crazy combinations of the current subroutine to keep it all
  unique.
  
+ See \nameref{flag:passes} and \nameref{flag:passes2}.
  
  

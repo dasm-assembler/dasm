@@ -2,6 +2,8 @@
 \sffamily
 ``Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live.''
 \qauthor{Martin Golding}
+
+
 \end{savequote}
 
 \chapter{Command-Line}
@@ -30,7 +32,7 @@ dasm [sourcefile[ option]...]
 \label{changelog:20200824sourcefile}
 If no \mono{sourcefile} is given, then \dasm will output a short help message, and exit. Otherise, the \mono{sourcefile} becomes the file that \dasm will assemble, and further parameters are parsed as options.
 
-\section{Options}
+\section{Format}
 
 Options are specified on the command-line, after the source file. There may be zero or more options each separated by whitespace. Some options require parameters. Default values (where an option is not explicitly defined) are described with each option below.
 
@@ -42,14 +44,10 @@ An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' symbol, and
 dasm source.asm -f2 -ooutput.bin -llisting.txt -v3 -DVER=4
 \end{usage}
 
-This example will assemble the file ``source.asm'', using output format 2 (random access segments). The resultant binary will be saved to the file ``output.bin'' and a listing file written to ``listing.txt''. During the assembly, verbosity of the output is set to 3 (unresolved and unreferenced symbols displayed every pass). The value of the symbol (which will be available in the source code) ``VER'' is set to 4.
+This example will assemble the file \mono{source.asm}, using output format \mono{2} (random access segments). The resultant binary will be saved to the file \mono{output.bin} and a listing file written to \mono{listing.txt}. During the assembly, verbosity of the output is set to \mono{3} (unresolved and unreferenced symbols displayed every pass). The value of the symbol (which will be available in the source code) \mono{VER} is set to \mono{4}.
 
-%\section{Option Details}
+\section{Options}
 
-
-
-
-\hrule
 \subsection{\texttt{-d Debug}}
 \index{Command Line!Options!Debug}
 \begin{usage}
@@ -57,7 +55,7 @@ This example will assemble the file ``source.asm'', using output format 2 (rando
 \end{usage}
 
 \label{changelog:20200824developers}
-This option is for developers of the \dasm assembler, and is essentially inactive in release versions.
+This option is for \dasm's developers, and is essentially inactive in release versions.
 \\
 \hrule
 
@@ -81,9 +79,19 @@ dasm source.asm -DSPEED=40
 \end{usage}
 
 \begin{code}
-  lda #SPEED    ; will load 40
+  lda #SPEED       ; will load 40
   sta velocity
 \end{code}
+
+\begin{code}
+; Use the symbol to assemble different code
+  IF SPEED < 30
+    jsr FastDraw   ; not assembled
+  ELSE
+    jsr SlowDraw   ; is assembled
+  ENDIF
+\end{code}
+
 
 \hrule
 
@@ -431,7 +439,7 @@ Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16
 \mono{Binary}       &\mono{\textbf{\%}n}        & \mono{0-1}\\
 \mono{Octal}        &\mono{\textbf{0}n}         & \mono{0-7}\\
 \mono{Decimal}      &\mono{n}                   & \mono{0-9}, first digit non-\mono{0}\\
-\mono{Hexadecimal}  &\mono{\textbf{\$}n} or \mono{\textbf{0x}n}     &case insensitive \mono{0-9,A-F}\\
+\mono{Hexadecimal}  &\mono{\textbf{\$}n}        &case insensitive \mono{0-9,A-F}\\
 \mono{Character}    &\mono{\textbf{'c}}         &\mono{ASCII} character\\
 \mono{String}       &\mono{\textbf{``cc..''}}   & zero-terminated ASCII character string\\
 					&                           & \textbf{not} zero-terminated when used in \mono{DC}/\mono{DS}/\mono{DV}.\\
@@ -445,7 +453,7 @@ Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16
 
 Even though decimal numbers can't start with \mono{0}, the octal \mono{0} is equivalent. In other words, \mono{0} is \mono{0}.
 
-Negative signs are placed before the number prefix (e.g., \mono{-0x123}).
+Negative signs are placed before the number prefix (e.g., \mono{-\$123}).
 
 \subsubsection{Examples}
 
@@ -559,7 +567,7 @@ There is a special-case for negative numbers used in operands. Although internal
   lda #-129    ; ERROR - outside 8-bit size
 \end{code}
 
-\label{changelog:rangebug}
+\label{changelog:20200824rangebug}
 {\color{red}Bug: Currently \dasm allows values in the range -\$FF to +\$FF. This is incorrect. The correct range is -\$80 to +\$FF}
 
 
@@ -637,7 +645,7 @@ There is a special-case for negative numbers used in operands. Although internal
 \end{table}
 
 
-\section{``Why'' Codes}
+\section{Why-Codes}
 
 \dasm can display the reason (via \nameref{flag:verbosity}) it needs to do another pass. Internally, these reasons are stored in the ``why'' word.
 
@@ -701,15 +709,23 @@ Label definitions start at the beginning of a line and are encoded in ASCII; the
 Label definitions can end with a colon, but the usage of the label must not include the colon. This can be helpful when you are editing your code if you want to search for your label definition \mono{label:} which will return just one result (unless it's a local label, which may be duplicated), or \mono{label} which will return all instances.
 
 \subsubsection{Examples}
-\begin{code}[caption=Use of Colon in Label Names]
+\begin{code}
+; Usage of colon in label names
 loop:       jmp loop    ; OK
             jmp loop:   ; error: Illegal character ':'
 \end{code}
 
 
 \begin{code}[caption=Global Label Definitions]
-Label1
-Label2:
+; Examples of label/symbol definitions
+Label1               ; standard
+Label2:              ; optional colon
+lab3 = %101010       ; the answer
+LAB4 SETSTR "Hello"  ; allocated as string
+.lab6                ; local
+lab,{1}              ; dynamic, inside macro
+lab@                 ; some symbols are valid too
+ labWhoops           ; invalid - not in 1st column
 \end{code}
 
 
@@ -755,17 +771,16 @@ The example above shows the result of the use of local and global labels, and th
 \section{Dynamic Labels}
 \index{Labels!Dynamic}
 \label{todo}
-{\color{red}Does this work?}
 
 When used in a symbol name, the ``\mono{,}'' operator indicates one or more
 arguments that follow should be evaluated, and the resulting values 
 should be concatenated to the label, to create a dynamic symbol name. 
 
 \begin{usage}
-symbol, arg1[, argn...]
+symbol,arg1[,argn...]
 \end{usage}
 
-String literals can be specified with quotes around the string
+String literals in arguments must be specified with quotes around the string
 text.  Expression operators can also be used, but due to label
 parsing constraints, they should not contain spacing.
 
@@ -775,8 +790,36 @@ of \mono{EQU/SET} directives, so dynamic labels can be used with opcodes.
 \subsubsection{Example}
 
 \begin{code}
-CON,cat
+; define and use a dynamic label
+CON,"cat"               ; define label
+        jmp CONcat      ; use the generated label
 \end{code}
+
+\subsubsection{Example}
+
+\begin{code}
+; Use a dynamic label inside a macro
+
+N SET 0         ; instance number
+
+  MAC dynm      ; {1}=base name
+{1},"_",N       ; define label using {1} and instance #
+N SET N+1
+  ENDM
+
+  
+  dynm fna
+  jmp fna_0     ; OK
+
+  dynm fna
+  jmp fna_1     ; OK
+  
+  dynm fnb
+  jmp fnb_2     ; OK
+  jmp fnb_0     ; ERROR - does not exist
+
+\end{code}
+
 
 \begin{savequote}
 \sffamily
@@ -793,7 +836,7 @@ CON,cat
 
 Also known as pseudo-ops, directives appear in the source code. They instruct \dasm what to do during assembly. These are distinct from the mnemonics in the source code, which contains the human-readable instructions for the microprocessor itself. Directives include macros, segment definitions, setting the origin/location of code, etc. They are not case-sensitive.
 
-There must be whitespace before a directive. Thus, directives must not appear in the first column of any line.
+There must be whitespace before a directive. Thus, directives must not appear in the first column of any line. Directives are not case-sensitive, but in this document they are shown in uppercase.
 
 Some directives cannot have labels on the same line - for example, those where there is no possibility of evaluating a label's value because no origin/segment has yet been defined. For directives where a label is illegal, or does not make sense, this is explicitly stated.
 
@@ -914,6 +957,23 @@ symbol SET exp
 
 Same as \nameref{pseudoop:equ}, but the symbol may be reassigned later.\\
 
+\subsubsection{Example}
+
+\begin{code}
+; Using SET to do calcualtions
+N SET 1 
+SUM SET 0
+  REPEAT 10
+SUM SET SUM+N
+N SET N+1
+  REPEND
+  ECHO "Sum of 1 to 10 is", [SUM]d
+\end{code}
+
+\begin{outputx}
+Sum of 1 to 10 is 55
+\end{outputx}
+
 
 \hrule
 \subsection{\texttt{SETSTR}}
@@ -932,16 +992,12 @@ macro to echo or otherwise use the name of an argument.
 
 \begin{code}[caption=Use of SETSTR to Display Function Name]
 ; Use SETSTR to output a parameter as a string
-    MAC CALL
-    ; {1} = function name
+    MAC CALL    ; {1} = function name
 .FNAME  SETSTR {1}
         ECHO "This is the function name: ", .FNAME
     ENDM
     
-    
-; test it...
-
-    CALL HelloWorld        
+    CALL HelloWorld        ; test it...
 \end{code}
 
 \begin{outputx}
@@ -1418,7 +1474,7 @@ varn          ds 2
 \end{code}
 
 In the example shown above, the \mono{variables} segment is unitialised. The variables \mono{foo1}, \mono{bar2}, and \mono{varn} are declared using \mono{DS} directive to ``reserve/allocate'' appropriate amounts of memory. Their addresses are automatically calculated by \dasm. The relevant part of the symbol table is shown below, to make clear that although the segment is unitialised, the labels/variables have correct values.
-\newline
+
 \begin{code}[caption=Generated Symbol Values]
 foo1                     0080                  
 bar2                     0081                  
@@ -1458,7 +1514,10 @@ Any label on the \nameref{pseudoop:align} line will be associated its value afte
 
 
 \section{Control}
+
+
 \subsection{\texttt{PROCESSOR}}
+\label{changelog:20200824processor}
 \label{pseudoop:processor}
 \index{Directives!Control!\texttt{PROCESSOR}}
 \index{Processor}
@@ -1480,22 +1539,22 @@ Only one \nameref{pseudoop:processor} directive may be declared in the entire as
 	
 \subsubsection{Supported Microprocessors}	
 \index{Processor!Supported Microprocessors}	
-	\begin{table}[H]
-		\begin{tabularx}{\textwidth}{lll}
-			\toprule
-			\textbf{Type}&\textbf{Endian}&\textbf{Byte Order}\\
-			\hline
-			\\
-			MOS Technology 6502&little-endian&\mono{LSB}, \mono{MSB}\\
-			Motorola 68HC11&big-endian&\mono{MSB}, \mono{LSB}\\
-			Motorola 68705&big-endian&\mono{MSB}, \mono{LSB}\\
-			Motorola 6803&big-endian&\mono{MSB}, \mono{LSB}\\
-			Hitachi HD6303&big-endian&\mono{MSB}, \mono{LSB}\\
-			Fairchild F8&big-endian&\mono{MSB}, \mono{LSB}\\
-			\\
-			\bottomrule
-		\end{tabularx}
-	\end{table}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{llll}
+\toprule
+\textbf{\mono{type}}&\textbf{Identity}&\textbf{Endian}&\textbf{Byte Order}\\
+\hline
+\\
+\mono{6502}      &MOS Technology 6502   &little-endian  &\mono{LSB}, \mono{MSB}\\
+\mono{68HC11}    &Motorola 68HC11       &big-endian     &\mono{MSB}, \mono{LSB}\\
+\mono{68705}     &Motorola 68705        &big-endian     &\mono{MSB}, \mono{LSB}\\
+\mono{6803}      &Motorola 6803         &big-endian     &\mono{MSB}, \mono{LSB}\\
+\mono{HD6303}    &Hitachi HD6303        &big-endian     &\mono{MSB}, \mono{LSB}\\
+\mono{F8}        &Fairchild F8          &big-endian     &\mono{MSB}, \mono{LSB}\\
+\\
+\bottomrule
+\end{tabularx}
+\end{table}
 	
 \subsubsection{Example}
 \begin{code}
@@ -1505,9 +1564,7 @@ Only one \nameref{pseudoop:processor} directive may be declared in the entire as
 \index{Processor!Atari 2600}
 For the \mono{6507} microprocessor (as used in the Atari 2600 machine), use ``\nameref{pseudoop:processor} \mono{6502}'' as these two microprocessors are identical except for their addressing range.
 	
-Different processor	models use different byte orderings (little-endian, big-endian) formats.  The processor's endian format does
-not affect the header in the output files (\mono{-f1} and \mono{-f2}), which are
-always little-endian (\mono{LSB}, \mono{MSB}).  The processor byte ordering affects all address, word, and	long values.\\
+Different processor	models use different endianness (byte ordering of word values, being little-endian or big-endian). The processor's endiannessdoes not affect the header in the output files (\mono{-f1} and \mono{-f2}), which are always little-endian (\mono{LSB}, \mono{MSB}).  The processor byte ordering affects all address, word, andlong values.\\
 
 \hrule
 
@@ -1522,6 +1579,19 @@ always little-endian (\mono{LSB}, \mono{MSB}).  The processor byte ordering affe
 The expressions (which may also be strings), are echoed on the
 screen and into the list file.\\
 
+To output values in decimal use the format \mono{[exp]d}
+
+\subsubsection{Example}
+
+\begin{code}
+answer = 42
+  ECHO "Hex=",answer,"Decimal=",[answer]d
+\end{code}
+
+\begin{outputx}
+Hex= $2a Decimal= 42
+\end{outputx}
+
 \hrule
 
 \subsection{\texttt{SUBROUTINE}}
@@ -1532,9 +1602,9 @@ screen and into the list file.\\
   SUBROUTINE [name]
 \end{usage}
 
-This isn't really a subroutine, but a boundry that resets the scope of \nameref{locallabels}. Those which are defined before the \nameref{pseudoop:subroutine} directive are not visible after it.
+This isn't really a subroutine, but a boundary that resets the scope of \nameref{locallabels}. Those which are defined before the \nameref{pseudoop:subroutine} directive are not visible after it.
 
-Local labels are must be unique within the scope of the subroutine in which they are defined, and cannot be accessed outside of that scope. Local label names do not need to be unique, provided that they are not duplicated within a single scope. In other words, names can be re-used.
+Local labels must be unique within the scope of the subroutine in which they are defined, and cannot be accessed outside of that scope. Local label names do not need to be unique, provided that they are not duplicated within a single scope. In other words, names can be re-used.
 
 Macros implicitly define a new subroutine scope both at their beginning, and end. Local labels defined inside a macro are not avalable outside it, and local labels defined before a macro usage instance are also no longer visible after the instantiation. Automatic new local label scope boundries occur for each macro level.
 
@@ -1566,6 +1636,24 @@ Note that the function name label can be on the same line as the directive, if d
 
 An implicit \nameref{pseudoop:subroutine} scope is in effect when \nameref{macros} are instantiated, so local labels cannot be accessed spanning a macro instantiation.\\
 
+\subsubsection{Example}
+
+\begin{code}
+  MAC DO
+  ; body
+  ENDM
+
+.lab
+  jmp .lab     ; OK
+  
+  DO  ; instantiate macro
+  
+  jmp .lab     ; ERROR
+\end{code}
+
+See \nameref{pseudoop:mac}.
+
+
 \hrule
 \subsection{\texttt{ERR}}
 \label{pseudoop:err}
@@ -1580,18 +1668,26 @@ Abort assembly. Useful in conjunction with \nameref{conditionals} to end an esse
 \subsubsection{Example}
 
 \begin{code}
-; Failsafe call of function in another bank
   MAC CALL ; function name
-    IF SLOT_{1} == _BANK_SLOT
+    IFNCONST {1}
 FNAME SETSTR {1}
-      ECHO "ERROR: Incompatible slot for ", FNAME
+      ECHO FNAME," does not exist!"
       ERR
+    ELSE
+      jsr {1}
     ENDIF
-    lda #BANK_{1}
-    sta SET_BANK
-    jsr {1}
-ENDM
-\end{code}\\
+  ENDM
+
+test
+
+  CALL test         ; OK
+  CALL test2        ; "test2 does not exist!" then halts
+\end{code}
+
+\begin{outputx}
+test2 does not exist!
+source.asm (37): error: ERR pseudo-op encountered
+\end{outputx}
 
 \hrule
 
@@ -1756,10 +1852,29 @@ HiTable
 	.byte >Routine2
 	.byte >Routine3
 	
-	\end{code}\\
-	
+	\end{code}
+		
+\subsubsection{Example}
+
+\begin{code}
+; Inserts a page break if the object would overlap a page
+
+  MAC OPTIONAL_PAGEBREAK ; { labelString, size }
+    IF (>( * + {2} -1 )) > ( >* )
+.EARLY_LOCATION  SET *
+      ALIGN 256
+        ECHO "Page break for", {1}
+        ECHO "wasted", [* - .EARLY_LOCATION]d, "bytes"
+    ENDIF
+  ENDM
+\end{code}		
+		
+		
+		
+Paired with \nameref{pseudoop:endm}.\\
+
 \hrule
-	
+
 	
 \subsection{\texttt{ENDM}}
 \label{pseudoop:endm}
@@ -1772,7 +1887,9 @@ HiTable
 		
 		End of macro definition.
 		
-		\textbf{No label is allowed to the left of the directive.}\\
+		\textbf{No label is allowed to the left of the directive.}
+
+Paired with \nameref{pseudoop:mac}.\\
 		
 \hrule
 		

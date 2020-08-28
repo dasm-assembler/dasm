@@ -35,7 +35,7 @@
 
 \definecolor{darkGreen}{rgb}{0,0.4,0}
 \definecolor{gley}{rgb}{0.92,0.92,0.92}
-\definecolor{brack}{rgb}{0.4,0.4,0.4}
+\definecolor{brack}{rgb}{0.8,0.8,0.8}
 \definecolor{pale}{rgb}{0.95,0.95,1}
 \definecolor{gleen}{rgb}{0.95,1,0.95}
 \definecolor{fgreen}{rgb}{0.45,0.6,0.45}
@@ -79,24 +79,18 @@
 
 \lstnewenvironment{code}[1][]%
 {\noindent\minipage{\linewidth}\medskip 
-	\lstset{framesep=5pt,xleftmargin=5pt,xrightmargin=5pt,basicstyle=\ttfamily\small,morecomment=[n][\color{gray}]{;}{\^^M},frame=single}}
+	\lstset{framesep=5pt,xleftmargin=0pt,xrightmargin=0pt,basicstyle=\ttfamily\small,morecomment=[n][\color{gray}]{;}{\^^M},frame=single}}
 {\endminipage}
 
 \lstnewenvironment{outputx}[1][]%
 {\noindent\minipage{\linewidth}\medskip 
-	\lstset{framesep=5pt,xleftmargin=5pt,xrightmargin=5pt,basicstyle=\ttfamily\small\color{yellow},morecomment=[n][\color{gray}]{;}{\^^M},frame=single,backgroundcolor=\color{black}}}
+	\lstset{framesep=5pt,xleftmargin=0pt,xrightmargin=0pt,basicstyle=\ttfamily\small\color{black},morecomment=[n][\color{gray}]{;}{\^^M},frame=single,backgroundcolor=\color{brack}}}
 {\endminipage}
 
 \lstnewenvironment{usage}[1][]%
 {\noindent\minipage{\linewidth}\medskip 
-	\lstset{framesep=5pt,xleftmargin=5pt,xrightmargin=5pt,basicstyle=\ttfamily\small,backgroundcolor=\color{pale},frame=single}}
+	\lstset{framesep=5pt,xleftmargin=0pt,xrightmargin=0pt,basicstyle=\ttfamily\small,backgroundcolor=\color{pale},frame=single}}
 {\endminipage}
-
-
-
-
-
-
 
 
 \makeindex
@@ -107,7 +101,7 @@
 
 
 	\include{titlepage}
-	\include {preface}
+	\include {changelog}
 		
 	\cleardoublepage
 	\pagenumbering{roman} %i,ii,iii etc
