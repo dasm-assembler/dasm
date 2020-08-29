@@ -116,8 +116,9 @@ The following format templates are used to describe items on the command line.
 \subsubsection{Examples}
 
 \begin{code}
-A[ B|C]         "A" or "A B" or "A C"
+A[ {B|C}]       "A" or "A B" or "A C"
 DC[{.B|.W|.L}]  "DC" or "DC.B" or "DC.W" or "DC.L"
+DC[.{B|W|L}]    the same
 \end{code} 
  
  
