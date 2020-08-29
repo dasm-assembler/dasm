@@ -1044,18 +1044,18 @@ This is the function name: HelloWorld
 \index{Directives!Data!\texttt{DC}}
 
 \begin{usage}
-   DC[.B|.W|.L] exp[,exp...]
+   DC[{.B|.W|.L}] exp,...
 \end{usage}
 
 Declare data in the current segment.  No output is generated if within a uninitialised \mono{.U} segment. The byte ordering (the endian order) for the selected processor is used for each entry.
 
-The default size extension (.B, .W, .L) is .B (byte).
+The default size extension (\mono{.B}, \mono{.W}, \mono{.L}) is \mono{.B} (byte).
 
 \subsubsection{Alternates}
 \begin{usage}
-   BYTE exp[,exp...]
-   WORD exp[,exp...]
-   LONG exp[,exp...]
+   BYTE exp,...
+   WORD exp,...
+   LONG exp,...
 \end{usage}
 
 \subsubsection{Examples}
@@ -1087,10 +1087,10 @@ VAL SET VAL + 1
 \index{Directives!Data!\texttt{DS}}
 
 \begin{usage}
-  DS[.B|.W|.L] exp[,fill]
+  DS[{.B|.W|.L}] exp[,fillvalue]
 \end{usage}
 
-Declare space and fill with value (if specificed, otherwise default is 0). The optional size extender (.B, .W, .L) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables).  The number of bytes generated is \mono{exp} $\times$ data size (1,2, or 4)
+Declare space and fill with a fillvalue (if specificed, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables).  The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
 
 The default size extension is a byte.
 
@@ -1122,7 +1122,7 @@ varn          ds.w 2    ; 4 bytes (2 longs)   @ $8C-$8F
 \index{Directives!Data!\texttt{DV}}
 
 \begin{usage}
-  DV[.B|.W|.L] eqmlabel exp[,exp...]
+  DV[{.B|.W|.L}] eqmlabel exp,...
 \end{usage}
 
 This is equivalent to \nameref{pseudoop:dc}, but each \mono{exp} in the list is passed
@@ -1139,7 +1139,7 @@ See also: \nameref{pseudoop:eqm}.\\
 \index{Directives!Data!\texttt{HEX}}
 
 \begin{usage}
-  HEX hh[hh...]
+  HEX {hh...}
 \end{usage}
 
 This sets down raw hexadecimal data.  Whitespace is optional between each \mono{hh} byte.
@@ -1171,12 +1171,13 @@ Conditionals allow selected selections of code to be assembled.\\
 \label{pseudoop:ifconst}
 \index{Directives!Conditionals!\texttt{IFCONST}}
 
+\begin{usage}
+  IFCONST exp
+\end{usage}
+
 A useful method is to use \nameref{pseudoop:ifconst} or \nameref{pseudoop:ifnconst} to check for the definition of a symbol and then conditionally assemble code based on the result. This can be especially useful with symbols defined via the command-line.
 
 \subsubsection{Examples}
-\begin{usage}
-dasm source.asm -DPI=3
-\end{usage}
 
 \begin{code}
   IFCONST PI
@@ -1185,6 +1186,12 @@ dasm source.asm -DPI=3
     ENDIF
   ENDIF
 \end{code}\\
+
+\begin{outputx}
+> dasm source.asm -DPI=3
+Are you sure?
+\end{outputx}
+
 
 Is \mono{TRUE} if the expression result is defined, \mono{FALSE} otherwise
 and no error is generated if the expression is undefined.
@@ -1236,10 +1243,6 @@ Neither \nameref{pseudoop:if} nor \nameref{pseudoop:else} will be executed if th
 is undefined.  In that case, another assembly
 pass is performed and phase errors (in the next pass only) will not
 be reported unless the verbosity is set to 1 or more.
-
-\subsubsection{Example}
-
-A useful method is to use \nameref{pseudoop:ifconst} or \nameref{pseudoop:ifnconst} to check for the definition of a symbol and then conditionally assemble code based on the result. This can be especially useful with symbols defined via the command-line.
 
 \subsubsection{Examples}
 
@@ -1435,7 +1438,7 @@ Any label on the \nameref{pseudoop:org} line will be allocated its value after t
 \end{usage}
 
 This activates the relocatable origin.  All generated
-addresses, including '.', although physically placed at the
+addresses, including `.', although physically placed at the
 true origin, will use values from the relocatable origin.
 While in effect both the physical origin and relocatable origin
 are updated.
@@ -1505,13 +1508,13 @@ bar2          ds 10
 varn          ds 2
 \end{code}
 
-In the example shown above, the \mono{variables} segment is unitialised. The variables \mono{foo1}, \mono{bar2}, and \mono{varn} are declared using \mono{DS} directive to ``reserve/allocate'' appropriate amounts of memory. Their addresses are automatically calculated by \dasm. The relevant part of the symbol table is shown below, to make clear that although the segment is unitialised, the labels/variables have correct values.
+In the example shown above, the \mono{variables} segment is unitialised. The zero-page variables (starting at location \mono{\$80}) \mono{foo1}, \mono{bar2}, and \mono{varn} are declared using \mono{DS} directive to ``reserve/allocate'' appropriate amounts of memory. Their addresses are automatically calculated by \dasm. The relevant part of the symbol table is shown below, to make clear that although the segment is unitialised, the labels/variables have correct values.
 
-\begin{code}[caption=Generated Symbol Values]
+\begin{outputx}
 foo1                     0080                  
 bar2                     0081                  
 varn                     008b                  
-\end{code}\\
+\end{outputx}\\
 
 \hrule
 
@@ -1523,9 +1526,8 @@ varn                     008b
   ALIGN n[,fill]
 \end{usage}
 
-Align the current program counter to an n-byte boundry.	If the \mono{fill} option is present, then that value will be used to fill the space generated. The default fill value is 0.
-
-This should not be confused with the default fill value used by the \nameref{pseudoop:org} directive.
+Align the current program counter to an n-byte boundry.	If the \mono{fill} option is present, then that value will be used to fill the space generated. The default fill value is \mono{0}. The \nameref{pseudoop:align} default value should not be confused with the \nameref{pseudoop:org} 
+directive's default fill value.
 
 Any label on the \nameref{pseudoop:align} line will be associated its value after the directive is processed.
 

@@ -20,6 +20,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{inconsolata}
 \usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+
 \usepackage[pdfpagelabels,colorlinks,linkcolor=black,citecolor=brown,plainpages=false]{hyperref}
 
 \setlength{\headheight}{15pt}
@@ -93,6 +96,17 @@
 {\noindent\minipage{\linewidth}\medskip 
 	\lstset{framesep=5pt,xleftmargin=0pt,xrightmargin=0pt,basicstyle=\ttfamily\small,backgroundcolor=\color{pale},frame=single}}
 {\endminipage}
+
+\newcommand*{\authorimg}[1]{%
+  \raisebox{-.3\baselineskip}{%
+    \includegraphics[
+      height=\baselineskip,
+      width=\baselineskip,
+      keepaspectratio,
+    ]{#1}%
+  }%
+}
+
 
 
 \makeindex

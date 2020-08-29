@@ -51,7 +51,7 @@ On that page you can download prebuilt binaries for MacOS, Linux, and Windows op
 \item several binary output formats available.
 \item allows reverse indexed origins.
 \item multiple segments, BSS segments (no generation), relocatable origin.
-\item expressions, as in C but [] is used instead of () for parenthesis.
+\item expressions, as in C but \mono{[]} is used instead of \mono{()} for parenthesis.
 (all expressions are computed with 32 bit integers)
 \item no real limitation on label size, label values are 32 bits.
 \item complex pseudo-ops, repeat loops, macros
@@ -106,23 +106,27 @@ The following format templates are used to describe items on the command line.
 \mono{item}& one item\\
 \mono{item ...}&  one or more items, space-separated\\
 \mono{item,...}&  one or more items, comma-separated\\
-\mono{item|...}&  one or more items, bar-separated\\
+\mono{\{item|...\}}&  only one of the items, bar-separated\\
 \mono{[]} &optional\\
 \bottomrule
 \\
 \end{tabularx}
 \end{table}
 
+\subsubsection{Examples}
+
 \begin{code}
 A[ B|C]         "A" or "A B" or "A C"
-DC[.B|.W|.L]    "DC" or "DC.B" or "DC.W" or "DC.L"
+DC[{.B|.W|.L}]  "DC" or "DC.B" or "DC.W" or "DC.L"
 \end{code} 
  
  
  \section{Assembler Passes}
  \index{Assembler Passes}
  
- Almost nothing need be resolved in the first pass.	\dasm is most likely to make multiple passes through the source code to resolve all symbols.  The maximum number of passes (default 10) is controllable by \nameref{flag:passes} and \nameref{flag:passes2}.  \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
+ Almost nothing \textbf{absolutely must} be resolved in the first pass.	\dasm is most likely to make multiple passes through the source code to resolve all symbols.  The maximum number of passes (default 3) is controllable. \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
+ 
+ See  \nameref{flag:passes} and \nameref{flag:passes2}.
  
  The the following contrived example will resolve in 12 passes:
  
