@@ -26,7 +26,7 @@
 The assembler will return 0 on successful compilation, 1 otherwise.
 
 \begin{usage}
-dasm[ sourcefile[ option]...]
+dasmn [sourcefile [option ...]]
 \end{usage}
 
 \label{changelog:20200824sourcefile}
@@ -204,7 +204,7 @@ See \nameref{pseudoop:incdir} for the format of the directory name.\\
 \label{flag:listing}
 
 \begin{usage}
--lfile.name
+-lfilename
 \end{usage}
 
 \dasm is able to produce a comprehensive and extremely useful listing of the assembled source code. This file includes symbol values, code locations, and the source code itself. To enable generation of a listing file, use the \mono{-l} option.
@@ -217,7 +217,7 @@ See also \nameref{flag:listingall}.\\
 \index{Command Line!Options!Listing (all)}
 
 \begin{usage}
--Lfile.name
+-Lfilename
 \end{usage}
 
 This option behaves the same as \nameref{flag:listing}, but lists the code on every pass. Warning: this can lead to some very big listings if \dasm needs to perform many passes on your code!
@@ -243,7 +243,7 @@ See also \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 \index{Command Line!Options!Output File}
 
 \begin{usage}
--ofile.name
+-ofilename
 \end{usage}
 
 Set the name of the filename for the output binary result of the assembly. If no name is specified, \dasm will write to the file ``\mono{a.out}''.
@@ -277,6 +277,12 @@ See also \nameref{flag:passes2}.\\
 \label{flag:passes2}
 \index{Command Line!Options!Passes (Fewer Checks)}
 
+\begin{usage}
+-pvalue
+\end{usage}
+
+Sets the maximum number of passes performed by \dasm to \mono{value}.
+
 This is the same as \nameref{flag:passes}, but instructs \dasm to perform fewer checks.
 
 \label{todo}
@@ -290,7 +296,7 @@ See also \nameref{flag:passes}.\\
 \index{Command Line!Options!Symbol Table File}
 
 \begin{usage}
--sfile.name
+-sfilename
 \end{usage}
 
 At the conclusion of assembly, the \mono{-s} option directs \dasm to save a symbol table to the specified file. A symbol table is a table listing all the symbols encountered during an assembly, and their values if known. By default, no symbol table file is generated.
@@ -327,6 +333,10 @@ WSYNC                    0002
 \label{flags:strictsyntax}
 \index{Command Line!Options!Strict Syntax Checking}
 
+\begin{usage}
+-S
+\end{usage}
+
 This option switches on more stringent checking of source code issues. 
 
 Duplicate macro definitions are flagged as errors.
@@ -354,8 +364,8 @@ See also \nameref{flag:symboltable} to enable symbol table output.
 \mono{\textbf{value}}&\textbf{Sort By}\\
 \hline
 \\
-0&Symbol Alphabetically (default)\\
-1&Address/Value\\
+\mono{0}&Symbol Alphabetically (default)\\
+\mono{1}&Address/Value\\
 \\
 \bottomrule
 \end{tabularx}
@@ -378,9 +388,9 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 \mono{\textbf{value}}&\textbf{Result}\\
 \hline
 \\
-0&Only warnings and errors (default)\\
+\mono{0}&Only warnings and errors (default)\\
 \\
-1&Segment table information generated after each pass\\
+\mono{1}&Segment table information generated after each pass\\
 &Include file names are displayed\\
 &Item statistics on why the assembler is going to make another pass\\
 &R1,R2 reason code: R3\\
@@ -390,7 +400,7 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 &pass (but only R1 determines the need for another pass).  R3\\
 &is a BITMASK of the reasons why another pass is required.\\
 
-2&Mismatches between program labels and symbols are displayed\\
+\mono{2}&Mismatches between program labels and symbols are displayed\\
 &on every pass (usually none occur in the first pass unless you\\
 &have re-declared a symbol name).\\
 \\
@@ -403,8 +413,8 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 &~~\mono{(s)}  = symbol created with \nameref{pseudoop:set} or \nameref{pseudoop:eqm} directive\\
 \\
 
-3&Unresolved and unreferenced symbols are displayed every pass\\
-4&Symbol table displayed to \mono{STDOUT} every pass\\
+\mono{3}&Unresolved and unreferenced symbols are displayed every pass\\
+\mono{4}&Symbol table displayed to \mono{STDOUT} every pass\\
 \\
 \bottomrule
 \end{tabularx}
@@ -461,7 +471,7 @@ Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16
 \end{tabularx}
 \end{table}
 
-Even though decimal numbers can't start with \mono{0}, the octal \mono{0} is equivalent. In other words, \mono{0} is \mono{0}.
+Even though decimal numbers can't start with \mono{0}, as that describes an octal number, the octal \mono{0} is equivalent. In other words, \mono{0\textsubscript{10}} = \mono{0\textsubscript{8}}.
 
 Negative signs are placed before the number prefix (e.g., \mono{-\$123}).
 
@@ -569,16 +579,26 @@ Operators in any expression are evaluated in order of precedence. The following 
 
 Some operations will result in non-byte values when a byte value was wanted.	For example: \mono{$\sim$1} is not \mono{\$FF}, but instead \mono{\$FFFFFFFF}. Preceding it with a \mono{<} (take LSB of) will solve the problem.
 
-There is a special-case for negative numbers used in operands. Although internally 32-bit, numbers in the range -1 to -128 are treated as two's complement 8-bit numbers in this situation. Another way of thinking of this - it is not necessary to take the \mono{LSB} of the number if it is in the range -128 to 255, as \dasm will recognise this as a valid signed/unsigned 8-bit number and do this automatically.
-
-\begin{code}
-  lda #-1      ; OK
-  lda #$FF     ; same as -1
-  lda #-129    ; ERROR - outside 8-bit size
-\end{code}
+However, there is a special-case for negative numbers used in operands. Although internally 32-bit, numbers in the range -1 to -128 are treated as two's complement 8-bit numbers in this situation. Another way of thinking of this - it is not necessary to take the \mono{LSB} of the number if it is in the range -128 to 255, as \dasm will recognise this as a valid signed/unsigned 8-bit number and do this automatically.
 
 \label{changelog:20200824rangebug}
-{\color{red}Bug: Currently \dasm allows values in the range -\$FF to +\$FF. This is incorrect. The correct range is -\$80 to +\$FF}
+{\color{bug}Bug: Currently \dasm allows values in the range \mono{-\$FF} to \mono{+\$FF}. This is incorrect. The correct range is \mono{-\$80} to \mono{+\$FF}}.
+
+\subsubsection{Examples}
+
+\begin{code}
+; Special case handling of 8-bit negatives
+  lda #-1           ; OK
+  lda #$FF          ; same as -1
+  lda #-129         ; ERROR - outside 8-bit size
+\end{code}
+
+\begin{code}
+; Extracting low and high byte of value
+  lda #<addr        ; low byte of symbol address/value
+  lda #>$12345678   ; =  $56, the high byte of the low word
+\end{code}
+
 
 
 \subsubsection{Binary Operators}
@@ -730,7 +750,7 @@ loop:       jmp loop    ; OK
 ; Examples of label/symbol definitions
 Label1               ; standard
 Label2:              ; optional colon
-lab3 = %101010       ; the answer
+lab3 = %101010       ; life, the universe, and everything
 LAB4 SETSTR "Hello"  ; allocated as string
 .lab6                ; local
 lab,{1}              ; dynamic, inside macro
@@ -864,7 +884,7 @@ All directives (and incidentally also the mnemonics) can be prefixed with a dot 
 \index{Directives!Includes!\texttt{INCBIN}}
 
 \begin{usage}
-  INCBIN "file.name"
+  INCBIN "filename"
 \end{usage}
 
 Include the binary contents of another file literally in the output.\\
@@ -884,7 +904,7 @@ the name is not an absolute pathname, the directory list is tried.
 You can optionally end the directory name with a ``\mono{/}''. 
 
 \index{todo}
-{\color{red}AmigaDOS filename conventions imply that two slashes at the end of a directory indicates the parent directory, and so this does an \nameref{pseudoop:include}~\mono{"/directory"}}
+{\color{todo}AmigaDOS filename conventions imply that two slashes at the end of a directory indicates the parent directory, and so this does an \nameref{pseudoop:include}~\mono{"/directory"}}
 	
 The command-line option \mono{-Idirectory} is equivalent to an \nameref{pseudoop:incdir}~\mono{"directory"} directive placed at the beginning of the source file.
 
@@ -1006,7 +1026,7 @@ macro to echo or otherwise use the name of an argument.
 ; Use SETSTR to output a parameter as a string
     MAC CALL    ; {1} = function name
 .FNAME  SETSTR {1}
-        ECHO "This is the function name: ", .FNAME
+        ECHO "This is the function name:", .FNAME
     ENDM
     
     CALL HelloWorld        ; test it...

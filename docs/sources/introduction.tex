@@ -88,7 +88,9 @@ Items/examples that appear in source code are shown like this...
 \end{code}
 
 \label{change:lsbmsb}
-In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, either in low/high or high/low ordering. The ordering, called the ``endianness'', differs between processors. In this document, \mono{LSB} refers to the least-significant byte, and \mono{MSB} refers to the most-significant byte, independent of the endianness of the processor. See \nameref{operators:unary} for the unary operators \mono{<} and \mono{>} which are used to retrieve the \mono{LSB} or \mono{MSB} from a symbol/value.
+In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, either in low/high or high/low ordering. The ordering, called the ``endianness'', differs between processors. In this document, \mono{LSB} refers to the least-significant byte, and \mono{MSB} refers to the most-significant byte, independent of the endianness of the processor. See the unary operators \mono{<} and \mono{>} which are used to retrieve the \mono{LSB} or \mono{MSB} from a symbol/value.
+
+See \nameref{operators:unary}.
 
 \label{changelog:20200829formatdescription}
 \subsubsection{Format Description}
@@ -96,21 +98,25 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
 The following format templates are used to describe items on the command line.
 
 \begin{table}[H]
-	\begin{tabular}{lll}
-\mono{[item]}& Optional \mono{item}\\
-\mono{[]...}&Zero or more of the contents of \mono{[]}\\
-
+	\begin{tabularx}{\linewidth}{lll}
+	\toprule
+\textbf{Format}&\textbf{Result}\\
+\hline
 \\
-\textbf{Examples...}\\
+\mono{item}& one item\\
+\mono{item ...}&  one or more items, space-separated\\
+\mono{item,...}&  one or more items, comma-separated\\
+\mono{item|...}&  one or more items, bar-separated\\
+\mono{[]} &optional\\
+\bottomrule
 \\
-
-\mono{[item]}&Optional item\\
-		\mono{item[,item]...}&One or more items, separated by commas\\
-		\mono{item[ item]...} &One or more items, separated by spaces\\
-\\	\end{tabular}
+\end{tabularx}
 \end{table}
 
- 
+\begin{code}
+A[ B|C]         "A" or "A B" or "A C"
+DC[.B|.W|.L]    "DC" or "DC.B" or "DC.W" or "DC.L"
+\end{code} 
  
  
  \section{Assembler Passes}
