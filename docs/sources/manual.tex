@@ -21,16 +21,58 @@
 
 \section{Usage}
 \index{Command Line!Usage}
-\dasm is a command-line tool. It parses the command-line for the input source file, which must be present, and optional  and assemble-time options, assembles the source file, and produces a binary output as well as other outputs as specified in the options. The source file must be ASCII-encoded, but comments may contain Unicode characters.
+\dasm is a command-line tool. It parses the command-line for the input source file, which must be present, and optional assemble-time options, assembles the source file, and produces outputs as specified in the options. The source file must be ASCII-encoded, but comments may contain Unicode characters.
+
+One option you are most likely to need is \nameref{flag:outputfile} to specify the binary file for output.
 
 The assembler will return 0 on successful compilation, 1 otherwise.
 
 \begin{usage}
-dasmn [sourcefile [option ...]]
+dasm
+dasm sourcefile
+dasm sourcefile [option ...]
 \end{usage}
 
 \label{changelog:20200824sourcefile}
-If no \mono{sourcefile} is given, then \dasm will output a short help message, and exit. Otherise, the \mono{sourcefile} becomes the file that \dasm will assemble, and further parameters are parsed as options.
+If no \mono{sourcefile} is given, then \dasm will output a short help message, and exit with an assembly error. Otherise, the \mono{sourcefile} becomes the file that \dasm will assemble, and any further parameters are parsed as options.
+
+\label{changelog:20200831help}
+\begin{outputx2}
+> dasm
+DASM 2.20.14
+Copyright (c) 1988-2020 by the DASM team.
+License GPLv2+: GNU GPL version 2 or later (see file LICENSE).
+DASM is free software: you are free to change and redistribute it.
+There is ABSOLUTELY NO WARRANTY, to the extent permitted by law.
+
+Usage: dasm sourcefile [options]
+
+-f#      output format 1-3 (default 1)
+-oname   output file name (else a.out)
+-lname   list file name (else none generated)
+-Lname   list file, containing all passes
+-sname   symbol dump file name (else none generated)
+-v#      verboseness 0-4 (default 0)
+-d       debug mode (for developers)
+-Dsymbol              define symbol, set to 0
+-Dsymbol=expression   define symbol, set to expression
+-Msymbol=expression   define symbol using EQM (same as -D)
+-Idir    search directory for INCLUDE and INCBIN
+-p#      maximum number of passes
+-P#      maximum number of passes, with fewer checks
+-T#      symbol table sorting (default 0 = alphabetical,
+         1 = address/value)
+-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)
+-S       strict syntax checking
+
+Report bugs on https://github.com/dasm-assembler/dasm please!
+
+Fatal assembly error: Check command-line format.
+\end{outputx2}
+
+
+
+
 
 \section{Format}
 
@@ -70,7 +112,7 @@ Defines a symbol and sets it to the expression \mono{exp}.
 
 Can be used to set values for symbols used inside the code.
 
-See also \nameref{flag:definesymbolF}, \nameref{flag:definesymbolM}.
+See \nameref{flag:definesymbolF}, \nameref{flag:definesymbolM}.
 
 \subsubsection{Example}
 
@@ -170,13 +212,15 @@ It is a \textbf{common problem} to forget the format option on the command line,
 
 Define a symbol and set its value to 0.
 
-This symbol is then usable in the source code as if it were a part of the code itself, defined via \nameref{pseudoop:eqm}. This can be useful for controlling the conditional assembly of parts of code via the \nameref{pseudoop:ifconst} and \nameref{pseudoop:ifnconst} directives.
+This symbol is then usable in the source code as if it were a part of the code itself. This can be useful for controlling the conditional assembly of parts of code.
 
-See also \nameref{flag:definesymbol}, \nameref{flag:definesymbolM}.
+See related options \nameref{flag:definesymbol} and \nameref{flag:definesymbolM}.
 
 \subsubsection{Example}
 
-In this example after our command line \mono{dasm source.asm -FTEST}, or \mono{dasm source.asm} we can control which code is assembled, with constructs as shown below.
+\begin{outputx}
+> dasm source.asm -FTEST
+\end{outputx}
 
 \begin{code}
   IFCONST TEST
@@ -209,7 +253,7 @@ See \nameref{pseudoop:incdir} for the format of the directory name.\\
 
 \dasm is able to produce a comprehensive and extremely useful listing of the assembled source code. This file includes symbol values, code locations, and the source code itself. To enable generation of a listing file, use the \mono{-l} option.
 
-See also \nameref{flag:listingall}.\\
+See alternate: \nameref{flag:listingall}.\\
 
 \hrule
 \subsection{\texttt{-L Listing Filename (all Passes)}}
@@ -222,7 +266,7 @@ See also \nameref{flag:listingall}.\\
 
 This option behaves the same as \nameref{flag:listing}, but lists the code on every pass. Warning: this can lead to some very big listings if \dasm needs to perform many passes on your code!
 
-See also \nameref{flag:listing}.
+See alternate: \nameref{flag:listing}.
 
 \subsection{\texttt{-M Define Symbol}}
 \label{flag:definesymbolM}
@@ -235,7 +279,7 @@ Deprecated.
 
 Defines a symbol and sets it to the expression \mono{exp]}.
 
-See also \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
+See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 
 \hrule
 \subsection{\texttt{-o Output File}}
@@ -246,14 +290,15 @@ See also \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 -ofilename
 \end{usage}
 
-Set the name of the filename for the output binary result of the assembly. If no name is specified, \dasm will write to the file ``\mono{a.out}''.
+Set the name of the filename for the output binary result of the assembly. If no name is specified, \dasm will write to the file ``\mono{a.out}''. See \nameref{flag:outputformat} for the format of the output file. If you want a pure binary output file without headers, you \textbf{must} add option \mono{-f3}.
 
 \subsubsection{Example}
 \begin{usage}
-dasm source.asm -orom.bin
+dasm source.asm -orom.bin -f3
 \end{usage}
 
-This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin} with the binary results of the assembly. The format of the binary file is controlled by \nameref{flag:outputformat}. If you want a pure binary output file without headers, you \textbf{must} also use option \mono{-f3}.\\
+This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin} with the binary results of the assembly, without header information.\\
+
 
 \hrule
 \subsection{\texttt{-p Number of Passes}}
@@ -270,7 +315,7 @@ Sets the maximum number of passes performed by \dasm to \mono{value}.
 \label{changelog:20200824passes}
 The default number of pases is 3.
 
-See also \nameref{flag:passes2}.\\
+See \nameref{flag:passes2}.\\
 
 \hrule
 \subsection{\texttt{-P Number of Passes (Fewer Checks)}}
@@ -288,7 +333,7 @@ This is the same as \nameref{flag:passes}, but instructs \dasm to perform fewer 
 \label{todo}
 {\color{red}And these are...?}
 
-See also \nameref{flag:passes}.\\
+See \nameref{flag:passes}.\\
 
 \hrule
 \subsection{\texttt{-s Symbol Table File}}
@@ -355,7 +400,7 @@ Duplicate macro definitions are flagged as errors.
 
 Controls the sorting of lines in the symbol table.
 
-See also \nameref{flag:symboltable} to enable symbol table output.
+See \nameref{flag:symboltable} to enable symbol table output.
 
 
 \begin{table}[H]
@@ -1130,7 +1175,7 @@ through the symbolic expression specified by the \mono{eqmlabel}.
 The expression is held in a special symbol dotdot '\mono{..}' on each
 call to the \mono{eqmlabel}.
 
-See also: \nameref{pseudoop:eqm}.\\
+See \nameref{pseudoop:eqm}.\\
 
 \hrule
 
@@ -1822,7 +1867,7 @@ Macros are user-defined \nameref{chapter:pseudoops}, and when used well they can
 
 A macro is effectively a text-substitution template. Wherever the name of a macro is used, the body of the macro is inserted. During the insertion, parameters passed to the macro may be substituted inside the body as specified by the macro definition.
 
-Macros automatically generate an implicit \nameref{pseudoop:subroutine} when instantiated, which guarantees distinct local labels for that macro instance.
+\includegraphics[width=1cm]{important}Macros automatically generate an implicit \nameref{pseudoop:subroutine} when instantiated, which guarantees distinct local labels for that macro instance.
 
 This can sometimes be inconvenient, as it can ``hide'' local labels in code using the macro, but there is currently no way known to prevent this.
 

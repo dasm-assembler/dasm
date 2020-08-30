@@ -109,12 +109,10 @@ The following format templates are used to describe items on the command line.
 \mono{\{item|...\}}&  only one of the items, bar-separated\\
 \mono{[]} &optional\\
 \bottomrule
-\\
 \end{tabularx}
 \end{table}
 
 \subsubsection{Examples}
-
 \begin{code}
 A[ {B|C}]       "A" or "A B" or "A C"
 DC[{.B|.W|.L}]  "DC" or "DC.B" or "DC.W" or "DC.L"
@@ -125,9 +123,13 @@ DC[.{B|W|L}]    the same
  \section{Assembler Passes}
  \index{Assembler Passes}
  
- Almost nothing \textbf{absolutely must} be resolved in the first pass.	\dasm is most likely to make multiple passes through the source code to resolve all symbols.  The maximum number of passes (default 3) is controllable. \dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
+\dasm is most likely to make multiple passes through the source code to resolve all symbols. It is not necessary for anything to be resolved in the first pass. The maximum number of passes (default 3) is controllable.
+
+\dasm will return an error if it can't resolve all referenced symbols within the maximum number of passes.
  
  See  \nameref{flag:passes} and \nameref{flag:passes2}.
+
+\subsubsection{Example}
  
  The the following contrived example will resolve in 12 passes:
  
@@ -167,6 +169,6 @@ In the above example, the example does not assemble because the number of passes
  think up crazy combinations of the current subroutine to keep it all
  unique.
  
- See \nameref{flag:passes} and \nameref{flag:passes2}.
+ See \nameref{flag:passes}, \nameref{flag:passes2}, and \nameref{pseudoop:subroutine}.
  
  
