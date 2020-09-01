@@ -8,9 +8,9 @@ Special-case information, and tips and tricks for the processors supported by \d
 
 \subsection{Support for Illegal Opcodes}
 
-The effects of the ``unused'' opcodes on the 6502 are by now relatively well documented. These are variously described as illegal, undocumented, invalid, and unspecified. Modern programs use some of these, as they provide additional capabilities (particularly speed improvements) over the use of the standard opcodes. \dasm explicitly supports some of the commonly used `stable' illegal opcodes, and those are listed below. In this table, LL references the low byte of a 16-bit value, and HH the high byte.)
+The effects of the ``unused'' opcodes on the 6502 are by now relatively well documented. These are variously described as illegal, undocumented, invalid, and unspecified. Modern programs use some of these, as they provide additional capabilities (particularly speed improvements) over the use of the standard opcodes. \dasm explicitly supports some of the commonly used `stable' illegal opcodes.
 
-\url{http://www.oxyron.de/html/opcodes02.html} provides a good table of the opcodes and their mnemonics.  Some of the illegal opcodes shown in Figure \ref{fig:IllegalOp}  are not supported by \dasm.
+\url{http://www.oxyron.de/html/opcodes02.html} provides a good table of all the illegal opcodes and their proposed/standard mnemonics.  Some of the illegal opcodes shown in Figure \ref{fig:IllegalOp}  are not supported by \dasm.
 
 %\includegraphics[width=1\textwidth]{images/illegal}
 \begin{landscape}
@@ -36,7 +36,7 @@ The effects of the ``unused'' opcodes on the 6502 are by now relatively well doc
 
 \chapter{The Machines}
 
-\dasm supports specific machinesand processors through the provision of additional source-code files that can assist with programming each platform. These files are located in the \mono{machines} subdirectory. Support is provided for...
+\dasm supports specific machines and processors through the provision of companion source-code files that can assist with programming each platform. These files are located in the \mono{machines} subdirectory. Support is provided for...
 
 \begin{itemize}
 \item \nameref{machine:atari2600}
