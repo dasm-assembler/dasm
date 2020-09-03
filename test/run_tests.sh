@@ -127,8 +127,22 @@ do
 			    ok="$[$ok+1]"
 			 fi
 			 ;;
-		    *)	 echo "	error_code [$?] pass"
-			 ok="$[$ok+1]"
+		    *)	 got_error_level="$?"
+			 expected_error_level=`cat $item`
+			 if [ "${expected_error_level}" = "" ]
+			 then
+			    echo "		testcase definition incomplete, missing error_level (${got_error_level}), FAILED!"
+			    fail="$[$fail+1]"
+			 else
+			    if [ "${got_error_level}" != "${expected_error_level}" ]
+			    then
+				echo "		got error_level (${got_error_level}) but expected (${expected_error_level}), double FAULT!"
+				fail="$[$fail+1]"
+			     else
+				echo "	error_code [${got_error_level}] pass"
+				ok="$[$ok+1]"
+			     fi
+			 fi
 			 ;;
 	    esac
 	fi
