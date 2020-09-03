@@ -1,22 +1,24 @@
 ; MACRO.H
-; Version 1.07, 19/January/2020
+; Version 1.09, 05/SEP/2020
 
-VERSION_MACRO         = 107
+VERSION_MACRO         = 109
 
 ;
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
-; PLEASE DO *NOT* REDISTRIBUTE MODIFIED VERSIONS OF THIS FILE!
+; The latest version can be found at https://dasm-assembler.github.io/
 ;
 ; This file defines DASM macros useful for development for the Atari 2600.
 ; It is distributed as a companion machine-specific support package
-; for the DASM compiler. Updates to this file, DASM, and associated tools are
-; available at at http://www.atari2600.org/dasm
+; for the DASM compiler.
 ;
-; Many thanks to the people who have contributed.  If you take issue with the
-; contents, or would like to add something, please write to me
-; (atari2600@taswegian.com) with your contribution.
-;
+; Many thanks to the people who have contributed. If you find an issue with the
+; contents, or would like ot add something, please report as an issue at...
+; https://github.com/dasm-assembler/dasm/issues
+
+
 ; Latest Revisions...
+; 1.09  05/SEP/2020     - updated license/links
+
 ; 1.08  13/JUL/2020     - added use of LXA to CLEAN_START
 ; 1.07  19/JAN/2020     - correction to comment VERTICAL_SYNC
 ; 1.06  03/SEP/2004     - nice revision of VERTICAL_SYNC (Edwin Blink)

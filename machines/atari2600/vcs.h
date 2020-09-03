@@ -1,24 +1,24 @@
 ; VCS.H
-; Version 1.05, 13/November/2003
+; Version 1.06, 06/SEP/2020
 
-VERSION_VCS         = 105
+VERSION_VCS         = 106
 
-; THIS IS A PRELIMINARY RELEASE OF *THE* "STANDARD" VCS.H
+; THIS IS A *THE* "STANDARD" VCS.H
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
-; PLEASE DO *NOT* REDISTRIBUTE THIS FILE!
+; The latest version can be found at https://dasm-assembler.github.io/
 ;
 ; This file defines hardware registers and memory mapping for the
 ; Atari 2600. It is distributed as a companion machine-specific support package
 ; for the DASM compiler. Updates to this file, DASM, and associated tools are
-; available at at http://www.atari2600.org/dasm
+; available at at https://dasm-assembler.github.io/
 ;
-; Many thanks to the original author(s) of this file, and to everyone who has
-; contributed to understanding the Atari 2600.  If you take issue with the
-; contents, or naming of registers, please write to me (atari2600@taswegian.com)
-; with your views.  Please contribute, if you think you can improve this
-; file!
+; Many thanks to the people who have contributed. If you find an issue with the
+; contents, or would like ot add something, please report as an issue at...
+; https://github.com/dasm-assembler/dasm/issues
+
 ;
 ; Latest Revisions...
+; 1.06  05/SEP/2020     Modified header/license and links to new versions
 ; 1.05  13/NOV/2003      - Correction to 1.04 - now functions as requested by MR.
 ;                        - Added VERSION_VCS equate (which will reflect 100x version #)
 ;                          This will allow conditional code to verify VCS.H being
