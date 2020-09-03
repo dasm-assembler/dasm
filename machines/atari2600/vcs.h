@@ -3,7 +3,7 @@
 
 VERSION_VCS         = 106
 
-; THIS IS A *THE* "STANDARD" VCS.H
+; THIS IS *THE* "STANDARD" VCS.H
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
 ; The latest version can be found at https://dasm-assembler.github.io/
 ;
