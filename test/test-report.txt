@@ -54,7 +54,10 @@
  *                        6502_X16b	error_code [5] pass
  *                         6502_16b	error_code [5] pass
  *                 reverse_segfault	error_code [38] pass
+ *   selftest/6_false_positive_fail		got error_level (1) but expected (15), double FAULT!
  *             selftest/5_must_fail		no error	FAILED!
+ *     selftest/8_false_positive_OK	error_code [27] pass
+ *   selftest/7_false_positive_fail		testcase definition incomplete, missing error_level (27), FAILED!
  *                         supercat	error_code [18] pass
  *                         6502_16w	error_code [5] pass
  *                      68908_SP16b	error_code [5] pass
@@ -71,4 +74,4 @@
  *                      doublemacro	error_code [25] pass
  *                    recursive_eqm	error_code [38] pass
  *                    recursive_set	error_code [38] pass
-executed 70 tests, 65 OK, 5 failed, result: overall PASS
+executed 73 tests, 66 OK, 7 failed, result: overall PASS

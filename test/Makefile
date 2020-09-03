@@ -5,7 +5,7 @@ DASM=../bin/dasm
 FTOHEX=../bin/ftohex
 
 test:
-	./run_tests.sh -S 5 | tee test-report.txt
+	./run_tests.sh -S 7 | tee test-report.txt
 
 %.bin: %.asm
 	$(DASM) $< -o$@ -f1 -DINEEPROM
