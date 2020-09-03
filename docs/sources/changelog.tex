@@ -7,6 +7,10 @@ This section lists recent changes to the document, with most recent entries firs
 \subsection*{Changes}
 
 \begin{itemize}
+\item[]\mono{2020.09.04}
+\item \hyperref[changelog:20200904illegal]{Much work on the illegal opcodes section of the 6502 chapter. In particular, all of the mnemonics and opcodes are now checked/cross-referenced with online sources identifying illegal, but functional opcodes. These have been checked against the \dasm source code to find out which are actually used/available. The tables section includes opcode-to-mnemonic, and also cycle timings for all instructions. The missing opcodes that \dasm doesn't support have been identified. The next step of all this will be to list the illegal opcodes that are supported and exactly what they do.}
+\item[]\mono{2020.09.03}
+\item \hyperref[changelog:20200903bug]{Added the information about the broken opcodes in HD6303, retrieved from the file BUGS in the source code. I'm starting to go throught the code itself to bring the manual up to date.}
 \item[]\mono{2020.09.02}
 \item \hyperref[changelog20200901_nop3]{There's a new chapter where all the special-case stuff for specific processors is going. In particular, explicit support of 6502 illegal opcodes is in the process of being documented. Did you even know \dasm explicitly supports many (but not all) of the illegal opcodes and their addressing modes? I knew about explicit support for ``nop 0'' and ``lax'' but few of the others. Note in this section how I have lifted a table from an online page, but have attributed it as I was taught when I was doing my formal research writing, so hopefully this will be OK.}
 \item \hyperref[changelog20200901_nop3]{There's a new chapter with details for each of the machines that are explicitly supported with include files, macros, etc. Of course, I only know the '2600 so that's all there is at this stage. Help needed for the others.}

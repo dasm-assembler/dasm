@@ -22,8 +22,15 @@
 \usepackage{tikz}
 \usepackage{wrapfig}
 \usepackage{graphicx}
-
+\usepackage{rotating}
+\usepackage{dingbat}
+\usepackage{pifont}
+\newcommand{\xmark}{\ding{55}}
+\usepackage{color,colortbl}
+\usepackage{longtable}
 \usepackage[pdfpagelabels,colorlinks,linkcolor=black,citecolor=brown,plainpages=false]{hyperref}
+\usepackage{adjustbox}
+\usepackage{colortbl}
 
 \setlength{\headheight}{15pt}
 
@@ -44,6 +51,12 @@
 \definecolor{fgreen}{rgb}{0.45,0.6,0.45}
 \definecolor{bug}{rgb}{0.9,0.3,0.3}
 \definecolor{todo}{rgb}{0.5,0.5,0.1}
+\definecolor{illegal}{rgb}{0.75,1,0.75}
+\definecolor{unimplemented}{rgb}{0.75,0.75,1}
+\definecolor{unstable}{rgb}{0.9,0.9,0.5}
+\definecolor{ghost}{rgb}{0.65,0.65,0.65}
+\definecolor{ghost2}{rgb}{0.85,0.85,0.85}
+\definecolor{missing}{rgb}{1,0.85,0.85}
 
 % Define the assembler name as a command so it is consistent and easily changed
 \newcommand{\dasm}{{\color{brown}\mono{\textbf{dasm}}}\xspace}
