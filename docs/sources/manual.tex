@@ -76,6 +76,18 @@ Fatal assembly error: Check command-line format.
 
 \section{Format}
 
+\subsection{Spaces in Filenames}
+\label{changelog:20200906spaces}
+
+If a filename (source, output, listing file) contains spaces, the whole filename may be surrounded with quotes, or the spaces may be escaped with a backslash character - depending on your OS support for these.
+
+\begin{usage}
+dasm "source file.asm"
+dasm source\ file.asm
+\end{usage}
+
+\subsection{Options}
+
 Options are specified on the command-line, after the source file. There may be zero or more options each separated by whitespace. Some options require their own parameters. Default values (where an option is not explicitly defined) are described with each option below.
 
 An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' prefix, and followed by the option letter and then the parameter (if there is one). There must be no whitespace between the prefix, option letter or the parameter.
@@ -484,8 +496,23 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 \index{Base!10 decimal}
 \index{Base!16 hexadecimal}
 
+\label{changelog:20200905range}
+\subsection{Magnitude}
 All numbers and addresses in \dasm are represented internally as signed 32-bit values.
 
+Numbers are range-checked at point of usage. Byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{255}) inclusive, as these values are the extremes of what can be represented with signed and unsigned 8-bit values. Word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{65535}) as these are the extremes of signed and unigned 16-bit values.
+
+Note that the assembler cannot tell the difference between the representation (in 8 and 16 bits) of signed/unsigned representation of negative and positive numbers, as they share the same bit patterns. 
+
+\begin{code}
+ lda #%11111111  ; is this 255 or -1?
+\end{code}
+
+The answer to the above question is that it depends on what the programmer does with the value, as in signed 8-bit arithmetic, \mono{\%11111111} is \mono{-1}, and in unsigned 8-bit arithmetic it is \mono{255}. This is not as confusing as it sounds, as the assembler works in signed 32-bit arithmetic and the signedness of these values (particularly when taking the low byte/word) is unambiguous.
+
+It is common for programmers who want all bits set to simply use \mono{-1}.
+
+\subsection{Base Representation}
 Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16 (hexadecimal), or as ASCII characters. It doesn't matter to \dasm which format you use, so use what makes the most sense in your code. The interpretation of the value is determined by the prefix and digits used, as shown in the following table.
 
 \label{changelog:20200824const}
@@ -525,12 +552,18 @@ Negative signs are placed before the number prefix (e.g., \mono{-\$123}).
 \begin{code}
  lda #%101          ; binary = 5 decimal
  lda #%10101010     ; binary = 170 decimal
- lda #%100000001    ; ERROR - only 8 bits in binary bytes
  lda #015           ; octal = 13 decimal
  lda #$FF           ; hexadecimal = 255 decimal (unsigned)
                     ;             = -1 decimal (signed)
  lda #'A            ; ASCII character = 65 decimal
 \end{code}
+
+\begin{code}
+VAL = -129
+ lda #VAL           ; ERROR - outside byte range
+\end{code}
+
+
 
 \begin{code}
 ; A great approximation for Pi is 355/113
