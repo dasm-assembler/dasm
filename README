@@ -97,10 +97,8 @@ Using DASM
     bin/dasm executable without options, which will print a short help
     message summarizing all available options.
 
-    The DASM distribution includes documentation in the doc/ directory:
-    https://raw.github.com/dasm-assembler/dasm/master/doc/dasm.txt
-    However, the documentation is incomplete as of release 2.20.11. We
-    are urgently looking for volunteers to bring it up to date.
+    For a comprehensive User Guide to using DASM, grab:
+    https://raw.githubusercontent.com/dasm-assembler/dasm/master/docs/dasm.pdf    
 
     Documentation for using DASM to produce code for the F8 processor
     is currently in the directory machines/channel-f/ but will be
