@@ -9,7 +9,10 @@ DASM 2.20.14-SNAPSHOT readme
     Download the latest compiled & packaged version of DASM from here:
     https://github.com/dasm-assembler/dasm/releases/latest
 
-    The documentation for DASM can be found here:
+    For a comprehensive User Guide to using DASM, grab:
+    https://raw.githubusercontent.com/dasm-assembler/dasm/master/docs/dasm.pdf    
+
+    Other documentation is at:
     https://raw.github.com/dasm-assembler/dasm/master/doc/dasm.txt
 
     This file describes the DASM source distribution, how to compile DASM, 
