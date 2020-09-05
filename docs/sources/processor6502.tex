@@ -201,11 +201,10 @@ Abbreviation&Mode&Example\\
 
 \begin{table}[H]
 \begin{tabular}{ll}
-\cellcolor{illegal}&Illegal, but supported by \dasm\\
-\cellcolor{unimplemented}&Highly unstable. Not supported\\
-\cellcolor{unstable}&Unstable and/or not supported\\
-\cellcolor{missing}&Illegal but stable, and missing from \dasm\\
-&Use \mono{.byte} to insert opcode, operand(s) into code\\
+\cellcolor{illegal}&Stable. Supported by \dasm.\\
+\cellcolor{missing}&Stable. Not supported.\\
+\cellcolor{unstablecertain}&Unstable in some situations. Not supported.\\
+\cellcolor{unimplemented}&Highly unstable. Not supported.\\
 \end{tabular}
 \end{table}
 
@@ -245,6 +244,21 @@ Abbreviation&Mode&Example\\
 \mono{\color{ghost}\xmark} %(abs)
 \\
 
+\cellcolor{unstablecertain}\mono{AHX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\cellcolor{unstablecertain}\mono{\$93}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
 
 \mono{ANC}&
 \mono{\color{ghost}\xmark}& % implied
@@ -261,18 +275,18 @@ Abbreviation&Mode&Example\\
 \mono{\color{ghost}\xmark} %(abs)
 \\
 \mono{}& %ANC#2
-\mono{\color{ghost}\xmark}& % implied
-\cellcolor{illegal}\mono{\$2B}& % immediate
-\mono{\color{ghost}\xmark}& %zp
-\mono{\color{ghost}\xmark}& %zp,x
-\mono{\color{ghost}\xmark}& %abs
-\mono{\color{ghost}\xmark}& %abs,x
-\mono{\color{ghost}\xmark}& %abs,y
-\mono{\color{ghost}\xmark}& %(zp,x)
-\mono{\color{ghost}\xmark}& %(zp),y
-\mono{\color{ghost}\xmark}& %zp,y
-\mono{\color{ghost}\xmark} & %rel
-\mono{\color{ghost}\xmark} %(abs)
+\mono{}& % implied
+\cellcolor{missing}\mono{\$2B}& % immediate
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{} & %rel
+\mono{} %(abs)
 \\
 
 \mono{AND}&
@@ -815,6 +829,22 @@ Abbreviation&Mode&Example\\
 \mono{\color{ghost}\xmark}& %rel
 \mono{\color{ghost}\xmark} %(abs)
 \\
+
+\cellcolor{missing}\mono{KIL}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
 
 \mono{LAS}&
 \mono{\color{ghost}\xmark}& %iMP
@@ -1635,7 +1665,7 @@ Abbreviation&Mode&Example\\
 \mono{\$0{\color{ghost}x}}&&
 \mono{BRK}&
 \mono{ORA}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{SLO}&
 \cellcolor{illegal}\mono{NOP}&
 \mono{ORA}&
@@ -1655,7 +1685,7 @@ Abbreviation&Mode&Example\\
 \mono{\$1{\color{ghost}x}}&&
 \mono{BPL}&
 \mono{ORA}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{SLO}&
 \cellcolor{illegal}\mono{NOP}&
 \mono{ORA}&
@@ -1675,7 +1705,7 @@ Abbreviation&Mode&Example\\
 \mono{\$2{\color{ghost}x}}&&
 \mono{JSR}&
 \mono{AND}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{RLA}&
 \mono{BIT}&
 \mono{AND}&
@@ -1684,7 +1714,7 @@ Abbreviation&Mode&Example\\
 \mono{PLP}&
 \mono{AND}&
 \mono{ROL}&
-\cellcolor{illegal}\mono{ANC}&
+\cellcolor{missing}\mono{ANC}&
 \mono{BIT}&
 \mono{AND}&
 \mono{ROL}&
@@ -1695,7 +1725,7 @@ Abbreviation&Mode&Example\\
 \mono{\$3{\color{ghost}x}}&&
 \mono{BMI}&
 \mono{AND}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{RLA}&
 \cellcolor{missing}\mono{NOP}&
 \mono{AND}&
@@ -1715,7 +1745,7 @@ Abbreviation&Mode&Example\\
 \mono{\$4{\color{ghost}x}}&&
 \mono{RTI}&
 \mono{EOR}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{SRE}&
 \cellcolor{missing}\mono{NOP}&
 \mono{EOR}&
@@ -1735,7 +1765,7 @@ Abbreviation&Mode&Example\\
 \mono{\$5{\color{ghost}x}}&&
 \mono{BVC}&
 \mono{EOR}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{SRE}&
 \cellcolor{missing}\mono{NOP}&
 \mono{EOR}&
@@ -1755,7 +1785,7 @@ Abbreviation&Mode&Example\\
 \mono{\$6{\color{ghost}x}}&&
 \mono{RTS}&
 \mono{ADC}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{RRA}&
 \cellcolor{missing}\mono{NOP}&
 \mono{ADC}&
@@ -1776,7 +1806,7 @@ Abbreviation&Mode&Example\\
 \mono{\$7{\color{ghost}x}}&&
 \mono{BVS}&
 \mono{ADC}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{RRA}&
 \cellcolor{missing}\mono{NOP}&
 \mono{ADC}&
@@ -1806,7 +1836,7 @@ Abbreviation&Mode&Example\\
 \mono{DEY}&
 \cellcolor{missing}\mono{NOP}&
 \mono{TXA}&
-\cellcolor{unimplemented}\mono{\color{ghost}---}&
+\cellcolor{unimplemented}\mono{XAA}&
 \mono{STY}&
 \mono{STA}&
 \mono{STX}&
@@ -1818,8 +1848,8 @@ Abbreviation&Mode&Example\\
 \mono{\$9{\color{ghost}x}}&&
 \mono{BCC}&
 \mono{STA}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{unstablecertain}\mono{AHX}&
 \mono{STY}&
 \mono{STA}&
 \mono{STX}&
@@ -1827,11 +1857,11 @@ Abbreviation&Mode&Example\\
 \mono{TYA}&
 \mono{STA}&
 \mono{TXS}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{unstablecertain}\mono{TAS}&
+\cellcolor{unstablecertain}\mono{SHY}&
 \mono{STA}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
-\cellcolor{unstable}\mono{\color{ghost}---}
+\cellcolor{unstablecertain}\mono{SHX}&
+\cellcolor{unstablecertain}\mono{AHX}
 \\
 %\hline
 
@@ -1848,7 +1878,7 @@ Abbreviation&Mode&Example\\
 \mono{TAY}&
 \mono{LDA}&
 \mono{TAX}&
-\cellcolor{unimplemented}\mono{\color{ghost}---}&
+\cellcolor{unimplemented}\mono{LAX}&
 \mono{LDY}&
 \mono{LDA}&
 \mono{LDX}&
@@ -1860,7 +1890,7 @@ Abbreviation&Mode&Example\\
 \mono{\$B{\color{ghost}x}}&&
 \mono{BCS}&
 \mono{LDA}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{LAX}&
 \mono{LDY}&
 \mono{LDA}&
@@ -1902,7 +1932,7 @@ Abbreviation&Mode&Example\\
 \mono{\$D{\color{ghost}x}}&&
 \mono{BNE}&
 \mono{CMP}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{DCP}&
 \cellcolor{missing}\mono{NOP}&
 \mono{CMP}&
@@ -1944,7 +1974,7 @@ Abbreviation&Mode&Example\\
 \mono{\$F{\color{ghost}x}}&&
 \mono{BEQ}&
 \mono{SBC}&
-\cellcolor{unstable}\mono{\color{ghost}---}&
+\cellcolor{missing}\mono{KIL}&
 \cellcolor{illegal}\mono{ISC}&
 \cellcolor{missing}\mono{NOP}&
 \mono{SBC}&
@@ -1965,12 +1995,16 @@ Abbreviation&Mode&Example\\
 \end{table}
 \begin{table}[H]
 \begin{tabular}{ll}
-\cellcolor{illegal}&Illegal, but supported by \dasm.\\
+\begin{tabular}{ll}
+\end{tabular}&
+\begin{tabular}{ll}
+\cellcolor{illegal}&Stable. Supported by \dasm.\\
+\cellcolor{missing}&Stable. Not supported.\\
+\cellcolor{unstablecertain}&Unstable in some situations. Not supported.\\
 \cellcolor{unimplemented}&Highly unstable. Not supported.\\
-\cellcolor{unstable}&Unstable and/or not supported.\\
-\cellcolor{missing}&Illegal but stable, and missing from \dasm.\\
-&Use \mono{.byte} to insert opcode, operand(s) into code\\
 \end{tabular}
+\end{tabular}
+
 \end{table}
 \end{landscape}
 
@@ -1979,7 +2013,7 @@ Abbreviation&Mode&Example\\
 
 \subsection{Instruction Cycle Counts}
 \index{Processor!6502!Instruction Cycle Timing}
-\def\arraystretch{0.95}
+\def\arraystretch{0.98}
 \begin{table}[H]
 %\tabcolsep=0.085cm
 \begin{tabular}{c|ccccccccccccccccc}
@@ -1993,120 +2027,120 @@ Abbreviation&Mode&Example\\
 \mono{\$0{\color{ghost}x}}&&
 \mono{7}&
 \mono{6}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{3}&
+$\infty$&
+\mono{8}&
+\mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{3}&
 \mono{2}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{4}&
+\mono{2}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\arrayrulecolor{ghost2}\hline
 
 \mono{\$1{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 %\hline
 
 \mono{\$2{\color{ghost}x}}&&
 \mono{6}&
 \mono{6}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
+$\infty$&
+\mono{8}&
 \mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{4}&
 \mono{2}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
+\mono{2}&
 \mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\hline
 
 \mono{\$3{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 %\hline
 
 \mono{\$4{\color{ghost}x}}&&
 \mono{6}&
 \mono{6}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{3}&
+$\infty$&
+\mono{8}&
+\mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{3}&
 \mono{2}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
+\mono{2}&
 \mono{3}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\hline
 
 \mono{\$5{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 %\hline
 
@@ -2114,20 +2148,20 @@ Abbreviation&Mode&Example\\
 \mono{\$6{\color{ghost}x}}&&
 \mono{6}&
 \mono{6}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{3}&
+$\infty$&
+\mono{8}&
+\mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{4}&
 \mono{3}&
 \mono{3}&
-\cellcolor{illegal}\mono{3}&
+\mono{3}&
 \mono{5}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\hline
 
@@ -2135,41 +2169,41 @@ Abbreviation&Mode&Example\\
 \mono{\$7{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 %\hline
 
 
 \mono{\$8{\color{ghost}x}}&&
-\cellcolor{illegal}\mono{2}&
+\mono{2}&
 \mono{6}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{6}&
-\mono{3}&
-\mono{3}&
-\mono{3}&
-\cellcolor{illegal}\mono{3}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
+\mono{6}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
 \mono{2}&
-\cellcolor{unimplemented}\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
 \mono{4}&
 \mono{4}&
 \mono{4}&
-\cellcolor{illegal}\mono{4}
+\mono{4}
 \\
 %\hline
 
@@ -2177,20 +2211,20 @@ Abbreviation&Mode&Example\\
 \mono{\$9{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono6{}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{unstable}\mono{6}&
+$\infty$&
+\mono{6}&
 \mono{4}&
 \mono{4}&
 \mono{4}&
-\cellcolor{illegal}\mono{4}&
+\mono{4}&
 \mono{2}&
 \mono{5}&
 \mono{2}&
-\cellcolor{unstable}\mono{5}&
-\cellcolor{unstable}\mono{5}&
 \mono{5}&
-\cellcolor{unstable}\mono{5}&
-\cellcolor{unstable}\mono{5}
+\mono{5}&
+\mono{5}&
+\mono{5}&
+\mono{5}
 \\
 %\hline
 
@@ -2199,19 +2233,19 @@ Abbreviation&Mode&Example\\
 \mono{2}&
 \mono{6}&
 \mono{2}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{3}&
 \mono{3}&
 \mono{3}&
-\cellcolor{illegal}\mono{3}&
+\mono{3}&
 \mono{2}&
 \mono{2}&
 \mono{2}&
-\cellcolor{unimplemented}\mono{2}&
+\mono{2}&
 \mono{4}&
 \mono{4}&
 \mono{4}&
-\cellcolor{illegal}\mono{4}
+\mono{4}
 \\
 %\hline
 
@@ -2219,20 +2253,20 @@ Abbreviation&Mode&Example\\
 \mono{\$B{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{ 5+}&
+$\infty$&
+\mono{ 5+}&
 \mono{4}&
 \mono{4}&
 \mono{4}&
-\cellcolor{illegal}\mono{4}&
+\mono{4}&
 \mono{2}&
 \mono{ 4+}&
 \mono{2}&
-\cellcolor{illegal}\mono{ 4+}&
 \mono{ 4+}&
 \mono{ 4+}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{ 4+}
+\mono{ 4+}&
+\mono{ 4+}
 \\
 %\hline
 
@@ -2240,20 +2274,20 @@ Abbreviation&Mode&Example\\
 \mono{\$C{\color{ghost}x}}&&
 \mono{2}&
 \mono{6}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{8}&
+\mono{2}&
+\mono{8}&
 \mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{2}&
 \mono{2}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
+\mono{2}&
 \mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\hline
 
@@ -2261,20 +2295,20 @@ Abbreviation&Mode&Example\\
 \mono{\$D{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 %\hline
 
@@ -2282,20 +2316,20 @@ Abbreviation&Mode&Example\\
 \mono{\$E{\color{ghost}x}}&&
 \mono{2}&
 \mono{6}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{8}&
+\mono{2}&
+\mono{8}&
 \mono{3}&
 \mono{3}&
 \mono{5}&
-\cellcolor{illegal}\mono{5}&
+\mono{5}&
 \mono{2}&
 \mono{2}&
 \mono{2}&
-\cellcolor{illegal}\mono{2}&
+\mono{2}&
 \mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}
+\mono{6}
 \\
 %\hline
 
@@ -2303,20 +2337,20 @@ Abbreviation&Mode&Example\\
 \mono{\$F{\color{ghost}x}}&&
 \mono{ 2+}&
 \mono{ 5+}&
-\cellcolor{unstable}$\infty$&
-\cellcolor{illegal}\mono{8}&
-\cellcolor{illegal}\mono{4}&
+$\infty$&
+\mono{8}&
+\mono{4}&
 \mono{4}&
 \mono{6}&
-\cellcolor{illegal}\mono{6}&
+\mono{6}&
 \mono{2}&
 \mono{ 4+}&
-\cellcolor{illegal}\mono{2}&
-\cellcolor{illegal}\mono{7}&
-\cellcolor{illegal}\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
 \mono{ 4+}&
 \mono{7}&
-\cellcolor{illegal}\mono{7}
+\mono{7}
 \\
 
 \end{tabular}
@@ -2325,11 +2359,11 @@ Abbreviation&Mode&Example\\
 \begin{table}[H]
 \begin{tabular}{ll}
 \begin{tabular}{ll}
-\cellcolor{illegal}&Illegal, but supported by \dasm.\\
-\cellcolor{unimplemented}&Highly unstable. Not supported.\\
-\cellcolor{unstable}&Unstable and/or not supported.\\
-\cellcolor{missing}&Illegal but stable, and missing from \dasm.\\
-&Use \mono{.byte} to insert opcode, operand(s) into code\\
+%\cellcolor{illegal}&Illegal, but supported by \dasm.\\
+%\cellcolor{unimplemented}&Highly unstable. Not supported.\\
+%\cellcolor{unstable}&Unstable and/or not supported.\\
+%\cellcolor{missing}&Illegal but stable, and missing from \dasm.\\
+%&Use \mono{.byte} to insert opcode, operand(s) into code\\
 \end{tabular}&
 \begin{tabular}{l}
 (+) add 1 cycle if branch instruction performed\\
