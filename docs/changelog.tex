@@ -1,0 +1,52 @@
+\index{Change Log}
+\section*{Change Log}
+\label{section:changelog}
+
+This section lists recent changes to the document, with most recent entries first. Each item line hyperlink to the relevant place in the document.
+
+\subsection*{Changes}
+
+\begin{itemize}
+
+\item[]\mono{2020.09.06}
+\item \hyperref[changelog:20200906res]{Added the RES directive for the F8 processor. Replaces DS on that architecture.}
+\item \hyperref[changelog:20200906f8]{Merged the interesting Channel F documentation. This has highlighted a few missing things from the main doc (e.g., RES directive)}
+\item \hyperref[changelog:20200906spaces]{Corrected incorrect usage for spaces in filenames.}
+\item[]\mono{2020.09.04}
+\item \hyperref[changelog:20200905range]{Documented the range checking of byte and word values.}
+\item \hyperref[changelog:20200904illegal]{Much work on the illegal opcodes section of the 6502 chapter. In particular, all of the mnemonics and opcodes are now checked/cross-referenced with online sources identifying illegal, but functional opcodes. These have been checked against the \dasm source code to find out which are actually used/available. The tables section includes opcode-to-mnemonic, and also cycle timings for all instructions. The missing opcodes that \dasm doesn't support have been identified. The next step of all this will be to list the illegal opcodes that are supported and exactly what they do.}
+\item[]\mono{2020.09.03}
+\item \hyperref[changelog:20200903bug]{Added the information about the broken opcodes in HD6303, retrieved from the file BUGS in the source code. I'm starting to go throught the code itself to bring the manual up to date.}
+\item[]\mono{2020.09.02}
+\item \hyperref[changelog20200901_nop3]{There's a new chapter where all the special-case stuff for specific processors is going. In particular, explicit support of 6502 illegal opcodes is in the process of being documented. Did you even know \dasm explicitly supports many (but not all) of the illegal opcodes and their addressing modes? I knew about explicit support for ``nop 0'' and ``lax'' but few of the others. Note in this section how I have lifted a table from an online page, but have attributed it as I was taught when I was doing my formal research writing, so hopefully this will be OK.}
+\item \hyperref[changelog20200901_nop3]{There's a new chapter with details for each of the machines that are explicitly supported with include files, macros, etc. Of course, I only know the '2600 so that's all there is at this stage. Help needed for the others.}
+\item[]\mono{2020.08.31}
+\item \hyperref[changelog:20200831help]{Documented the default \dasm help message, and in the process spotted two options (-R and -m) which were not in the documentation. But then I found that the latest version of \dasm doesn't \textbf{have} these options; they have recently been removed!}
+\item[]\mono{2020.08.29}
+\item \hyperref[changelog:20200829substitutions]{Added extensions equivalent substitutions table}
+\item \hyperref[changelog:20200829formatdescription]{Tried to simplify the format templates for this document's descriptions of options}
+\item \hyperref[changelog:20200824passes]{Actual testing shows the default \# passes to be 3, so document has been updated to this value}
+\item Modified the 'output' box visuals to black on grey instead of white on black
+
+\item[]\mono{2020.08.24}
+\item \hyperref[changelog:20200824const]{Removed 0x for hexadecimal. Apparently recently removed from the code?}
+\item \hyperref[changelog:20200824license]{Upgraded license to GPL v3 to be compatible with .STY files used for generation of this manual}
+\item \hyperref[changelog:20200824processor]{Fixed table of processor types to explicity list PROCESSOR values}
+\item \hyperref[changelog:20200824rangebug]{Documented dasm bug in constants signed range checking for 8-bit operands}
+\item \hyperref[changelog:20200824const]{Constants and Numbers duplicate sections merged.}
+\item \hyperref[changelog:20200824arithmetic]{Corrected error in table - || is logical-OR and \&\& is logical-AND when used in expressions. They will return 0 or 1 results.}
+\item \hyperref[changelog:20200824org]{Clarified the ORG/RORG usage in the \nameref{flag:outputformat} table, in regards to the requirement that data must be in order in initialised segments}
+\item \hyperref[changelog:20200824error]{Revamped the comment about error types}
+\item \hyperref[changelog:20200824passes]{Mentioned default number of passes}
+\item \hyperref[changelog:20200824developers]{Clarified the -d option}
+\item \hyperref[changelog:20200824sourcefile]{Clarified commmand-line format}
+\item \hyperref[changelog:specialcase]{Added note about special-casing of negative operands}
+\item \hyperref[changelog:alternateunary]{Added alternates to unary operator table}
+\item \hyperref[section:numberformat]{Added section describing \nameref{section:numberformat}}
+
+\item[]\mono{2020.08.23}
+\item \hyperref[changelog:20200823colon]{Added some usage notes about colon in label names and why it can be advantageous. I still hate it.}
+\item \hyperref[section:changelog]{Added this change log section.}
+\end{itemize}
+
+
