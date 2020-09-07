@@ -811,6 +811,9 @@ Labels are and symbols assigned addresses or values by \dasm. These values are c
 
 Label definitions start at the beginning of a line and are encoded in ASCII; they must start with a letter or \mono{@} or {\_}, and can include letters, numbers, and some symbols.
 
+
+
+
 \label{changelog:20200823colon}
 \subsubsection{Colon Usage}
 \index{Labels!Use of Colon in}
@@ -849,7 +852,6 @@ Usually local labels are used in macros and within actual code subroutines. This
 
 \subsubsection{Example}
 \begin{code}[caption=Scope of Local Labels]
-
     ; Define macro
 
     MAC DO
@@ -857,7 +859,6 @@ Usually local labels are used in macros and within actual code subroutines. This
 .mac    jmp .mac       ; OK - local macro label       
     ENDM
     
-
     ; elsewhere in the code...
     
 .local  jmp .local     ; OK - local label
@@ -875,8 +876,6 @@ global  jmp global     ; OK - global label
 \end{code}
 
 The example above shows the result of the use of local and global labels, and the effects of implicit \nameref{pseudoop:subroutine} as a result of a macro instance.
-
-
 
 \section{Dynamic Labels}
 \index{Labels!Dynamic}
@@ -897,15 +896,13 @@ parsing constraints, they should not contain spacing.
 The concat-eval ``\mono{,}'' operator also works on the expression side
 of \mono{EQU/SET} directives, so dynamic labels can be used with opcodes. 
 
-\subsubsection{Example}
+\subsubsection{Examples}
 
 \begin{code}
 ; define and use a dynamic label
 CON,"cat"               ; define label
         jmp CONcat      ; use the generated label
 \end{code}
-
-\subsubsection{Example}
 
 \begin{code}
 ; Use a dynamic label inside a macro
@@ -917,7 +914,6 @@ N SET 0         ; instance number
 N SET N+1
   ENDM
 
-  
   dynm fna
   jmp fna_0     ; OK
 
@@ -927,8 +923,23 @@ N SET N+1
   dynm fnb
   jmp fnb_2     ; OK
   jmp fnb_0     ; ERROR - does not exist
-
 \end{code}
+
+\subsection{Deprecated Form}
+\label{changelog:20200907deprecated}
+\dasm currently supports labels defined as per the following...
+
+\begin{usage}
+[]...^[]...label
+\end{usage}
+
+That might look a bit weird because, basically, it is. Essentially, whitespace carat whitespace and then the label name. This is a \textbf{deprecated} format that may not be supported by future versions of \dasm. Do not use.
+
+\begin{code}
+   ^ weirdLabel  ; this is a weird way to define a label
+ normalLabel     ; this is a normal way
+\end{code}
+
 
 
 \begin{savequote}
@@ -1164,6 +1175,8 @@ VAL SET VAL + 1
 \label{pseudoop:ds}
 \index{Directives!Data!\texttt{DS}}
 
+\emph{Not available for the F8 processor - use \nameref{pseudoop:res}}
+
 \begin{usage}
   DS[{.B|.W|.L}] exp[,fillvalue]
 \end{usage}
@@ -1173,6 +1186,9 @@ Declare space and fill with a fillvalue (if specificed, otherwise default is 0).
 The default size extension is a byte.
 
 The fill value is not related to the fill value used by \nameref{pseudoop:org}.
+
+
+
 
 \subsubsection{Examples}
 
@@ -1237,13 +1253,49 @@ produces the following sequence of decimal values in the binary...
 26 69 69 19 37 79 62 18
 \end{outputx}
 	
+\hrule
+	
+	
+\subsection{\texttt{RES}}
+\label{changelog:20200906res}
+\label{pseudoop:res}	
+	
+\emph{Not available for 6502 - use \nameref{pseudoop:ds}}
+	
+\emph{Since \mono{DS} is an F8 instruction (decrement scratchpad register),
+the \mono{DS} directive isn't available anymore if \dasm assembles
+F8 code, and this \mono{RES} directive is provided as an alternative.
+}
+
+
+\begin{usage}
+  RES[{.B|.W|.L}] exp[,fillvalue]
+\end{usage}
+
+Declare space and fill with a fillvalue (if specificed, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables).  The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
+
+The default size extension is a byte.
+
+The fill value is not related to the fill value used by \nameref{pseudoop:org}.
+
+
+\subsubsection{Examples}
+
+\begin{code}[caption=Declaring Space]
+ res 2     ; 2 bytes of default value 0
+ res 2,10  ; 2 bytes of value 10
+ res 10,2  ; 10 bytes of value 2
+ res.w 2   ; 4 bytes (2 words) of default value 0
+ res.l 0   ; define no space at all
+ \end{code}
+
+	
 \section{Conditionals}
 \label{conditionals}
 
 
 Conditionals allow selected selections of code to be assembled.\\
 
-\hrule
 
 \subsection{\texttt{IFCONST}}
 \label{pseudoop:ifconst}
