@@ -15,8 +15,9 @@
 
 \section{Atari 2600}
 \label{machine:atari2600}
+\label{changelog:20200908atari}
 
-The Atari 2600 is a game console from 1978 that uses a 6507 processor. This processor is similar to the 6502 processor (supported by \dasm). The difference in the processors is the number of hardware address lines on the chips; these being 16 on the 6502, and 12 on the 6507. Thus, the 6502 can directly address 64K of memory and the 6507 only 4K of memory.  From the point of view of \dasm, the machines are identical, as the 6502 and 6507 share a common instruction set.
+The Atari 2600 is a game console from 1977 that uses a 6507 processor. This processor is similar to the 6502 processor (supported by \dasm). The difference in the processors is the number of hardware address lines on the chips; these being 16 on the 6502, and 13 on the 6507. Thus, the 6502 can directly address 64 KiB of memory and the 6507 only 8 KiB of memory.  From the point of view of \dasm, the machines are identical, as the 6502 and 6507 share a common instruction set.
 
 For programming the Atari 2600, use \mono{PROCESSOR 6502} at the start of your program.
 
