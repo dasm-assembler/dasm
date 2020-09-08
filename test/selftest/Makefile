@@ -6,7 +6,7 @@ DASM=../../bin/dasm
 FTOHEX=../../bin/ftohex
 
 test: 
-	@../run_tests.sh -R ../../bin -S 5
+	@../run_tests.sh -R ../../bin -S 7
 
 %.bin: %.asm
 	$(DASM) $< -o$@ -f1 

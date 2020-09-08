@@ -678,7 +678,7 @@ void doop(opfunc_t func, int pri)
         if (Xdebug)
             printf("doop @ %d unary\n", Opi);
 
-	if (Opi > MAXOPS) {
+	if (Opi >= MAXOPS) {
 		fprintf(stderr,"doop: error: operator index(%d) > MAXOPS(%d), probably too deep recursion", Opi, MAXOPS);
 		asmerr(ERROR_RECURSION_TOO_DEEP, true, "doop()");
 		return;
