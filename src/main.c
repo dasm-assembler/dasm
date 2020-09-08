@@ -119,6 +119,7 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
 	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
 	{ ERROR_MISSING_COMMENT_END,			true, "Multi-line comment not closed." },
+	{ ERROR_SPURIOUS_COMMENT_START,			true, "Multi-line comment closed without open." },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -939,7 +940,11 @@ static const char *cleanup(char *buf, bool bDisable)
     mlstart=strstr(buf,"/*");
     mlend=strstr(buf,"*/");
     semistart=strstr(buf,";");
-
+    if (!mlflag) // check for spurious comment close
+    {
+        if (mlend && ((!semistart) || (mlstart < semistart)))
+                asmerr( ERROR_SPURIOUS_COMMENT_START, false, NULL );
+    }
     if (mlflag)
     {
         if ( mlend && (mlend  >= mlstart) ) 
