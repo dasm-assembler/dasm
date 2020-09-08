@@ -928,7 +928,31 @@ static const char *cleanup(char *buf, bool bDisable)
     STRLIST *strlist;
     int arg, add;
     const char *comment = "";
-    
+    static int mlflag = 0;
+
+    char *mlstart, *mlend, *semistart;
+    mlstart=strstr(buf,"/*");
+    mlend=strstr(buf,"*/");
+    semistart=strstr(buf,";");
+
+    if (mlflag)
+    {
+        if ( mlend && (mlend  >= mlstart) ) 
+                mlflag=0; // turn off multiline comments
+        memmove(buf+1,buf,strlen(buf)+1); // make room for the last comment
+        buf[0]=';';
+    }
+    else 
+    {
+        if (mlstart && ((!semistart) || (mlstart < semistart)))
+        {
+            if (mlstart >= mlend) // handle single-line /*   */
+                mlflag=1; // turn on multiline comments
+            memmove(mlstart+1,mlstart,strlen(mlstart)+1); // make room for a comment
+            * mlstart=';';
+        }
+    }
+
     for (str = buf; *str; ++str)
     {
         switch(*str)
