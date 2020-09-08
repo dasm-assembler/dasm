@@ -6,8 +6,106 @@
 
 \end{savequote}
 
-\chapter{Command-Line}
 
+\chapter{Source Code}
+\index{Source Code}
+\label{changelog:20200908source}
+
+\section{Encoding}
+\index{Source Code!Format!Encoding}
+
+Source code files are written as plain-text (generally ASCII encoding) files.
+
+\index{Source Code!Format!End-of-Line}
+Both Windows-style (carriage-return, line-feed) and Unix-style (line-feed) line endings are supported by \dasm.
+
+\section{Comments}
+\index{Source Code!Comments}
+
+\dasm supports two different comment styles: traditional assembler single-line semicolon-delimited comments, and C-style ``\mono{/* ... */}'' delimited multiline comments.
+
+\index{Source Code!Format!Unicode}
+Note that comments may contain Unicode characters, as \dasm effectively ignores the contents of comments, but assembled code cannot contain Unicode.
+
+A comment directive anywhere on a line ("\mono{;}" or "\mono{/*}" or "\mono{*/}") terminates \dasm's label/directive/instruction parser for the rest of that line.
+
+\subsection{Assembler-style Comments: ;...}
+\index{Source Code!Comments!Assembler-style}
+
+The presence of a semicolon at any character in a line will flag the rest of that line (semicolon included) as a comment. It is common when writing code to place a semicolon at the beginning of lines to disable them from being assembled.
+
+There may be valid labels, directives, and/or instructions before the comment. These will be correctly assembled.
+
+\subsubsection{Examples}
+\begin{code}
+; this is a comment
+      ; and so is this
+label ; this is a label followed by a comment
+;label   this is a comment, NOT a label
+  lda #2 ; <-- this instruction IS assembled
+  ;lda #2   <-- this instruction is NOT assembled
+\end{code}
+
+\begin{code}
+  MAC TEST ;{1}=value  <-- a comment showing params
+  ENDM
+\end{code}  
+
+\subsection{C-style Comments: /* ... */ }
+\index{Source Code!Comments!C-style}
+
+C-style comments mark all text between and including \mono{/*} and \mono{*/} as a comment.
+
+C-style comments make it easy to disable the assembly of blocks of code or spanning multiple lines.
+
+\subsubsection{Correct Examples}
+\begin{code}
+/* This single line comment is valid */
+ lda #1 /* And this comment is valid too */
+
+/* And so is this
+Multiline comment */
+
+
+\end{code}
+
+It can sometimes be useful to enable/disable multi-line comments with a semicolon...
+
+\begin{code}
+;/*
+ lda #2  ;<-- comment disabled. This IS assembled
+;*/
+
+/*
+ lda #2  ;<-- comment enabled. This is NOT assembled
+ */
+\end{code}
+
+
+\subsubsection{Malformed Examples}
+\begin{code}
+/* the opcode to the right will be ignored */ lda #1
+
+/* and so is the opcode
+that follows this block
+*/ lda #1
+\end{code}
+
+\subsection{Commenting Out Large Blocks}
+\index{Source Code!Comments!Disabling Large Blocks}
+
+There are several ways to disable ("comment-out") large parts of the source code.
+
+\begin{itemize}
+\item Place a semicolon at the start of every line of the code to disable (Assembler-style)
+\item Bracket the part to disable with \mono{/*} and \mono{*/}  (C-style)
+\item Surround the block with the conditionals "\mono{IF 0}" at the start, followed by "\mono{ENDIF}" at the end. To re-enable the code, change the \mono{0} to \mono{1}. Note that this method is may fail if the enclosed code has conditionals.
+\end{itemize}
+
+
+
+\chapter{Command-Line}
+\index{Command Line}
 %\index{AUV!\emph{dasm}}
 %\label{chap:Starbug}
 
@@ -39,7 +137,8 @@ If no \mono{sourcefile} is given, then \dasm will output a short help message, a
 \label{changelog:20200831help}
 \begin{outputx2}
 > dasm
-DASM 2.20.14
+boo@Andrews-MacBook-Pro dasm % bin/dasm
+DASM 2.20.14-SNAPSHOT
 Copyright (c) 1988-2020 by the DASM team.
 License GPLv2+: GNU GPL version 2 or later (see file LICENSE).
 DASM is free software: you are free to change and redistribute it.
@@ -60,10 +159,12 @@ Usage: dasm sourcefile [options]
 -Idir    search directory for INCLUDE and INCBIN
 -p#      maximum number of passes
 -P#      maximum number of passes, with fewer checks
--T#      symbol table sorting (default 0 = alphabetical,
-         1 = address/value)
+-T#      symbol table sorting
+         (default 0 = alphabetical, 1 = address/value)
 -E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)
 -S       strict syntax checking
+-R       remove binary output-file in case of errors
+-m#      max. allowed file-size in kB
 
 Report bugs on https://github.com/dasm-assembler/dasm please!
 
@@ -86,6 +187,8 @@ dasm "source file.asm"
 dasm source\ file.asm
 \end{usage}
 
+
+
 \subsection{Options}
 
 Options are specified on the command-line, after the source file. There may be zero or more options each separated by whitespace. Some options require their own parameters. Default values (where an option is not explicitly defined) are described with each option below.
@@ -94,11 +197,11 @@ An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' prefix, and
 
 \subsubsection{Example}
 
-\begin{usage}
-dasm source.asm -f2 -ooutput.bin -llisting.txt -v3 -DVER=4
-\end{usage}
+\begin{outputx}
+> dasm source.asm -f2 -oout.bin -llist.txt -v3 -DVER=4
+\end{outputx}
 
-This example will assemble the file \mono{source.asm}, using output format \mono{2} (random access segments). The resultant binary will be saved to the file \mono{output.bin} and a listing file written to \mono{listing.txt}. During the assembly, verbosity of the output is set to \mono{3} (unresolved and unreferenced symbols displayed every pass). The value of the symbol (which will be available in the source code) \mono{VER} is set to \mono{4}.
+This example will assemble the file \mono{source.asm}, using output format \mono{2} (random access segments). The resultant binary will be saved to the file \mono{out.bin} and a listing file written to \mono{list.txt}. During the assembly, verbosity of the output is set to \mono{3} (unresolved and unreferenced symbols displayed every pass). The value of the symbol (which will be available in the source code) \mono{VER} is set to \mono{4}.
 
 \section{Options}
 
@@ -128,9 +231,9 @@ See \nameref{flag:definesymbolF}, \nameref{flag:definesymbolM}.
 
 \subsubsection{Example}
 
-\begin{usage}
-dasm source.asm -DSPEED=40
-\end{usage}
+\begin{outputx}
+> dasm source.asm -DSPEED=40
+\end{outputx}
 
 \begin{code}
   lda #SPEED       ; will load 40
@@ -294,6 +397,29 @@ Defines a symbol and sets it to the expression \mono{exp]}.
 See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 
 \hrule
+
+\subsection{\texttt{-m Maximum Output File Size}}
+\label{flag:maximum}
+\index{Command Line!Options!Maximum File Size}
+\begin{usage}
+-mvalue
+\end{usage}
+
+\label{changelog:20200908optionm}
+Sets the maximum size (in \mono{KiB} units) allowed for the output binary. Can be used in conjunction with \nameref{flag:remove} to detect assembly anomalies and clean-up afterwards.
+
+\subsubsection{Example}
+\begin{outputx}
+> dasm source.asm -orom.bin -m2
+\end{outputx}
+
+This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin}, restricting the output binary to \mono{2 KiB}. An error will be generated if the output file exceeds this size. This can be useful for ensuring ROM size limits are not exceeded.
+
+See aslo \nameref{flag:remove}.\\
+
+\hrule
+
+
 \subsection{\texttt{-o Output File}}
 \label{flag:outputfile}
 \index{Command Line!Options!Output File}
@@ -305,9 +431,9 @@ See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 Set the name of the filename for the output binary result of the assembly. If no name is specified, \dasm will write to the file ``\mono{a.out}''. See \nameref{flag:outputformat} for the format of the output file. If you want a pure binary output file without headers, you \textbf{must} add option \mono{-f3}.
 
 \subsubsection{Example}
-\begin{usage}
-dasm source.asm -orom.bin -f3
-\end{usage}
+\begin{outputx}
+> dasm source.asm -orom.bin -f3
+\end{outputx}
 
 This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin} with the binary results of the assembly, without header information.\\
 
@@ -348,6 +474,26 @@ This is the same as \nameref{flag:passes}, but instructs \dasm to perform fewer 
 See \nameref{flag:passes}.\\
 
 \hrule
+
+
+\subsection{\texttt{-R Remove Output File}}
+\label{flag:remove}
+\index{Command Line!Options!Remove}
+\begin{usage}
+-R
+\end{usage}
+
+\label{changelog:20200908optionR}
+Removes the binary output file if \dasm encounters an error during assembly.\\
+
+Can be used in conjunction with \nameref{flag:maximum} to remove erroneous binaries, for example if a ROM size limit is exceeded.
+
+See aslo \nameref{flag:maximum}.
+\\
+
+
+\hrule
+
 \subsection{\texttt{-s Symbol Table File}}
 \label{flag:symboltable}
 \index{Command Line!Options!Symbol Table File}
@@ -363,7 +509,11 @@ The symbol table may be sorted alphabetically or numerically with the \nameref{f
 
 \subsubsection{Example}
 
-After the execution of the command ``\mono{dasm source.asm -ssource.sym}'', the file \mono{source.sym} would contain the symbol table in the format as shown in the example below. Each line gives a symbol name, its final resolved address/value, and a flag field. In the flag field,  \mono{(R )} indicates the symbol has been used/referenced and not just defined.
+\begin{outputx}
+> dasm source.asm -ssource.sym
+\end{outputx}
+
+After the execution of the above, the file \mono{source.sym} would contain the symbol table in the format as shown in the example below. Each line gives a symbol name, its final resolved address/value, and a flag field. In the flag field,  \mono{(R )} indicates the symbol has been used/referenced and not just defined.
 
 \begin{code}
 --- Symbol List (sorted by symbol)
@@ -592,10 +742,21 @@ PIDIGITS = 1000000 * 355/113
 
 Expressions are calculations involving symbols and numbers. These calculations are performed by \dasm during the assembly process. Often, symbols will have unkonwn values during an assembly pass, and thus an expression cannot be evaluated. \dasm will, in these cases, perform another assembly pass - often, unknown values are resolved later in the assembly.  A successful assembly is one where no errors have been detected, and all referenced symbols have been resolved.
 
-Square brackets \mono{[]} may be used to group expressions.  The precedence of operators
-is the same as for the C-language in almost all respects.  Use
-brackets \mono{[ ]} when you are unsure. The reason round brackets \mono{()} cannot be used to
-group expressions is due to a conflict with 6502 and other assembly languages which use them to specifiy indirect memory access (for example, ``\mono{lda (zp),y}'').
+\subsection{Brackets}
+\label{changelog:20200908brackets}
+
+The precedence of operators is the same as for the C-language in almost all respects.  
+
+Either square brackets \mono{[]} or round brackets \mono{()} may be used to group expressions and to clarify/adjust precedence, depending on which \nameref{pseudoop:processor} is in effect for the assembly. Differences are related to the use of round brackets in assembler instructions. 
+
+\subsubsection{F8 and Other Processors}
+
+Either bracket type may be used in all situatinos.
+
+\subsubsection{6502 Processor}
+
+Use square brackets \mono{[]} when you are unsure. The reason round brackets \mono{()} cannot be used to
+group expressions is due to a conflict with 6502 assembly language which use them to specifiy indirect memory access (for example, ``\mono{lda (zp),y}'').
 
 It is possible to use round brackets \mono{()} instead of square brackets \mono{[]} in expressions following directives, but not following mnemonics.
 
@@ -731,6 +892,9 @@ However, there is a special-case for negative numbers used in operands. Although
 \toprule
 \textbf{Symbol} & \textbf{Meaning}\\
 \hline
+\\
+\index{Symbol!...}
+\index{Symbol!checksum}
 \mono{...} & Checksum so far (of actually-generated data)\\
 \mono{..} & Evaluated value in \nameref{pseudoop:dv} directive \\
 \mono{.} & Current program counter\\
@@ -741,6 +905,8 @@ However, there is a special-case for negative numbers used in operands. Although
 & (as of the beginning of the instruction)\\
 \mono{name} & Represents a global symbol name. Beginning with an alpha\\
 &character and containing letters, numbers, or  underscores.\\
+& Symbol definitions may end with a colon, but reference must\\
+& omit the colon.\\
 \mono{nnn\$} & Local label, much like `\mono{.name}', except that defining\\
 & a non-local label has the effect that \mono{SUBROUTINE} has on`\mono{.name}'.\\
 & They are unique within \mono{MACRO}s, like `\mono{.name}'.\\
@@ -764,6 +930,7 @@ The list of available reasons include:
 	\toprule
 	\textbf{Bit} & \textbf{Usage}\\
 	\hline
+	\\
 \mono{0}&   expression in mnemonic not resolved\\
 \mono{1}&   -\\
 \mono{2}&   expression in a \mono{DC} not resolved\\
@@ -785,7 +952,7 @@ The list of available reasons include:
 \\
 \bottomrule
 \end{tabularx}
-\caption{\label{tab:constants}WHY Codes}
+%\caption{\label{tab:constants}WHY Codes}
 \end{table}
 
 \label{changelog:20200824error}
