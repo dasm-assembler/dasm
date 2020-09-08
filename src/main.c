@@ -65,6 +65,8 @@ void passbuffer_update(int,char *);
 void passbuffer_output(int);
 void passbuffer_cleanup(void);
 
+int mlflag = 0; // multi-line comments 
+
 static char erroradd1[500]; // temp error holders
 static char erroradd2[500];
 static char erroradd3[500];
@@ -116,6 +118,7 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_RECURSION_TOO_DEEP,                     true, "Recursion too deep in %s" },
 	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
 	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
+	{ ERROR_MISSING_COMMENT_END,			true, "Multi-line comment not closed." },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -693,6 +696,9 @@ nextpass:
     fclose(FI_temp);
     if (FI_listfile)
         fclose(FI_listfile);
+
+    if (mlflag) // check if a multi-line comment is missing a terminator
+        return ERROR_MISSING_COMMENT_END;
     
     if (Redo)
     {
@@ -928,7 +934,6 @@ static const char *cleanup(char *buf, bool bDisable)
     STRLIST *strlist;
     int arg, add;
     const char *comment = "";
-    static int mlflag = 0;
 
     char *mlstart, *mlend, *semistart;
     mlstart=strstr(buf,"/*");
