@@ -30,7 +30,7 @@
 This is the Technical Documentation and User Guide for the \dasm macro-assembler. It explains how
 to use \dasm and the supported assembler directives.
 
-\subsection{Home}
+\section{Home}
 
 Since release 2.20.12, \dasm has lived at
 
@@ -39,7 +39,7 @@ Since release 2.20.12, \dasm has lived at
 On that page you can download prebuilt binaries for MacOS, Linux, and Windows operating systems. You can also download the full source code and build the program binary yourself.
 
 
-\subsection{Features}
+\section{Features}
 
 \dasm is packed with features...
 
@@ -51,17 +51,14 @@ On that page you can download prebuilt binaries for MacOS, Linux, and Windows op
 \item several binary output formats available.
 \item allows reverse indexed origins.
 \item multiple segments, BSS segments (no generation), relocatable origin.
-\item expressions, as in C but \mono{[]} is used instead of \mono{()} for parenthesis.
-(all expressions are computed with 32 bit integers)
-\item no real limitation on label size, label values are 32 bits.
+\item expressions, as in C
+\item expressions are computed using 32 bit integers
+\item no real limitation on label size
 \item complex pseudo-ops, repeat loops, macros
-\item etc...
 \end{itemize}
 
 
-
-
-\subsection{Conventions in this Document}
+\section{Conventions in this Document}
 
 This document uses standardised terminology to describe usage and function.
 
@@ -92,8 +89,16 @@ In 8-bit microprocessors, 16-bit values are represented by pairs of bytes, eithe
 
 See \nameref{operators:unary}.
 
+\subsection{SI Units}
+\label{changelog:20200909SI}
+Computer memory sizes are referred to in this document using SI units.
+
+In particular, \mono{kilo} (\mono{K}) is \mono{1000}, and \mono{kibi} (\mono{Ki}) is \mono{1024}. A \mono{bit} is \mono{b}, a \mono{byte} is \mono{B}. Thus, \mono{4096 bytes} is \mono{4 kibibytes}, or \mono{4 KiB}.
+
+Historically, disk drive manufacturers for this change in usage from the traditional use of "kilobyte", as they wanted to make their drives seem bigger than they were, so they divided capacity by 1000 instead of 1024 when listing drive size.
+
+\subsection{Format Description}
 \label{changelog:20200829formatdescription}
-\subsubsection{Format Description}
 
 The following format templates are used to describe items on the command line.
 
@@ -107,7 +112,9 @@ The following format templates are used to describe items on the command line.
 \mono{item ...}&  one or more items, space-separated\\
 \mono{item,...}&  one or more items, comma-separated\\
 \mono{\{item|...\}}&  only one of the items, bar-separated\\
-\mono{[]} &optional\\
+\mono{[item]} &optional item\\
+\mono{[ ]...}&optional whitespace(s)\\
+\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -119,9 +126,8 @@ DC[{.B|.W|.L}]  "DC" or "DC.B" or "DC.W" or "DC.L"
 DC[.{B|W|L}]    the same
 \end{code} 
  
- 
- \section{Assembler Passes}
- \index{Assembler Passes}
+\section{Assembler Passes}
+\index{Assembler Passes}
  
 \dasm is most likely to make multiple passes through the source code to resolve all symbols. It is not necessary for anything to be resolved in the first pass. The maximum number of passes (default 3) is controllable.
 
