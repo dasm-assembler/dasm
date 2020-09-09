@@ -128,7 +128,7 @@ do
 			 fi
 			 ;;
 		    *)	 got_error_level="$?"
-			 expected_error_level=`cat $item`
+			 expected_error_level=`cat $item | head -1`
 			 if [ "${expected_error_level}" = "" ]
 			 then
 			    echo "		testcase definition incomplete, missing error_level (${got_error_level}), FAILED!"
