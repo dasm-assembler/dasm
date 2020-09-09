@@ -21,6 +21,7 @@ Both Windows-style (carriage-return, line-feed) and Unix-style (line-feed) line 
 
 \section{Comments}
 \index{Source Code!Comments}
+\label{changelog:20200909comment}
 
 \dasm supports two different comment styles: traditional assembler single-line semicolon-delimited comments, and C-style ``\mono{/* ... */}'' delimited multiline comments.
 
@@ -56,7 +57,7 @@ label ; this is a label followed by a comment
 
 C-style comments mark all text between and including \mono{/*} and \mono{*/} as a comment.
 
-C-style comments make it easy to disable the assembly of blocks of code or spanning multiple lines.
+C-style comments make it easy to disable the assembly of blocks of code spanning multiple lines.
 
 \subsubsection{Correct Examples}
 \begin{code}
@@ -89,6 +90,13 @@ It can sometimes be useful to enable/disable multi-line comments with a semicolo
 /* and so is the opcode
 that follows this block
 */ lda #1
+
+*/ a closing comment directive without a starting one first
+   is flagged by dasm as an error
+
+/* This comment is missing the closing end-of-comment.
+   dasm will flag an error
+
 \end{code}
 
 \subsection{Commenting Out Large Blocks}
@@ -706,6 +714,7 @@ Negative signs are placed before the number prefix (e.g., \mono{-\$123}).
  lda #$FF           ; hexadecimal = 255 decimal (unsigned)
                     ;             = -1 decimal (signed)
  lda #'A            ; ASCII character = 65 decimal
+ lda #'A'           ; ERROR - no trailing quote allowed!
 \end{code}
 
 \begin{code}

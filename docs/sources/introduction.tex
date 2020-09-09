@@ -95,7 +95,7 @@ Computer memory sizes are referred to in this document using SI units.
 
 In particular, \mono{kilo} (\mono{K}) is \mono{1000}, and \mono{kibi} (\mono{Ki}) is \mono{1024}. A \mono{bit} is \mono{b}, a \mono{byte} is \mono{B}. Thus, \mono{4096 bytes} is \mono{4 kibibytes}, or \mono{4 KiB}.
 
-Historically, disk drive manufacturers for this change in usage from the traditional use of "kilobyte", as they wanted to make their drives seem bigger than they were, so they divided capacity by 1000 instead of 1024 when listing drive size.
+Historically, disk drive manufacturers were responsible for this change in meaning of the "kilobyte", as they divided capacity by 1000 instead of 1024 when listing drive size. This not only made their drives seem bigger, it created an ambiguity when discussing computer and disk memory size. The adoption of the new SI units for computer memory size removed the ambiguity.
 
 \subsection{Format Description}
 \label{changelog:20200829formatdescription}
@@ -154,7 +154,7 @@ test.asm (8): error: Label mismatch...
 test.asm (8): error: Too many passes (12).
 \end{outputx}
   
-In the above example, the example does not assemble because the number of passes (set to 11) is insufficient to resolve the value of addr.  
+In the above example, the example does not assemble because the number of passes (set to 11) is insufficient to resolve the value of \mono{addr}.  
     
  \begin{outputx}
  > dasm test.asm -P12
