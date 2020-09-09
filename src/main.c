@@ -386,6 +386,7 @@ static int MainShadow(int ac, char **av, bool *pbTableSort )
     
     char buf[MAXLINE];
     int i;
+    int argVal;
     MNEMONIC *mne;
     
     int oldredo = -1;
@@ -424,7 +425,7 @@ fail:
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
     puts("-S       strict syntax checking");
     puts("-R       remove binary output-file in case of errors");
-    puts("-m#      max. allowed file-size in kB");
+    puts("-m#      safety barrier to abort on recursions, max. allowed file-size in kB");
     puts("");
     puts("Report bugs on https://github.com/dasm-assembler/dasm please!");
 
@@ -534,7 +535,12 @@ nofile:
                 break;
                 
             case 'm':   /*  F_passes   */
-                maxFileSize = atol(str)*1024;
+            	argVal = atol(str);
+            	if (argVal < 64) {
+            		panic("-m Switch invalid argument, should be > 64");
+            	} else {
+            		maxFileSize = argVal;
+            	}
                 break;
 
             default:
