@@ -536,7 +536,7 @@ nofile:
                 
             case 'm':   /*  F_passes   */
             	argVal = atol(str);
-            	if (argVal < 64) {
+            	if (argVal <= 64) {
             		panic("-m Switch invalid argument, should be > 64");
             	} else {
             		maxFileSize = argVal;
