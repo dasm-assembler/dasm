@@ -20,6 +20,7 @@ Source code files are written as plain-text (generally ASCII encoding) files.
 Both Windows-style (carriage-return, line-feed) and Unix-style (line-feed) line endings are supported by \dasm.
 
 \section{Comments}
+\index{Comments}
 \index{Source Code!Comments}
 \label{changelog:20200909comment}
 
@@ -32,6 +33,7 @@ A comment directive anywhere on a line ("\mono{;}" or "\mono{/*}" or "\mono{*/}"
 
 \subsection{Assembler-style Comments: ;...}
 \index{Source Code!Comments!Assembler-style}
+\index{Comments!Assembler-style}
 
 The presence of a semicolon at any character in a line will flag the rest of that line (semicolon included) as a comment. It is common when writing code to place a semicolon at the beginning of lines to disable them from being assembled.
 
@@ -54,6 +56,7 @@ label ; this is a label followed by a comment
 
 \subsection{C-style Comments: /* ... */ }
 \index{Source Code!Comments!C-style}
+\index{Comments!C-style}
 
 C-style comments mark all text between and including \mono{/*} and \mono{*/} as a comment.
 
@@ -101,6 +104,7 @@ that follows this block
 
 \subsection{Commenting Out Large Blocks}
 \index{Source Code!Comments!Disabling Large Blocks}
+\index{Comments!Disabling Large Blocks}
 
 There are several ways to disable ("comment-out") large parts of the source code.
 
@@ -410,18 +414,23 @@ See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 \label{flag:maximum}
 \index{Command Line!Options!Maximum File Size}
 \begin{usage}
--mvalue
+-msize
 \end{usage}
 
 \label{changelog:20200908optionm}
-Sets the maximum size (in \mono{KiB} units) allowed for the output binary. Can be used in conjunction with \nameref{flag:remove} to detect assembly anomalies and clean-up afterwards.
+
+The \mono{-m} switch is not intended to limit the size of the created binary. Instead, it provides a safety-halting mechanism to prevent erroneous/recursive code from creating huge binaries, in situations that may not otherwise be detected.
+
+The \mono{size} parameter is the halting condition. \dasm will halt with an error if the size of the generated binary exceeds this value. The default maximum size is \mono{640 KiB}.
+
+This switch is generally useful for architectures with more than \mono{10} memory banks. It can be used in conjunction with \nameref{flag:remove} to detect assembly anomalies and clean-up afterwards.
 
 \subsubsection{Example}
 \begin{outputx}
-> dasm source.asm -orom.bin -m2
+> dasm source.asm -orom.bin -m128
 \end{outputx}
 
-This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin}, restricting the output binary to \mono{2 KiB}. An error will be generated if the output file exceeds this size. This can be useful for ensuring ROM size limits are not exceeded.
+This example will assemble the file \mono{source.asm} and write the file \mono{rom.bin}, halting with an error if the output binary exceeds \mono{128 KiB} (an indication of a potential recursion error in the code generation).
 
 See aslo \nameref{flag:remove}.\\
 
