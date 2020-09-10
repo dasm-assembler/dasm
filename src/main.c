@@ -119,7 +119,7 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_AVOID_SEGFAULT,				true, "Internal error in %s" },
 	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
 	{ ERROR_MISSING_COMMENT_END,			true, "Multi-line comment not closed." },
-	{ ERROR_SPURIOUS_COMMENT_START,			true, "Multi-line comment closed without open." },
+	{ ERROR_SPURIOUS_COMMENT_CLOSE,			true, "Multi-line comment closed without open." },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 
@@ -940,26 +940,59 @@ static const char *cleanup(char *buf, bool bDisable)
     mlstart=strstr(buf,"/*");
     mlend=strstr(buf,"*/");
     semistart=strstr(buf,";");
-    if (!mlflag) // check for spurious comment close
+
+    if (mlflag) // a previous multi-line comment is in progress...
     {
-        if (mlend && ((!semistart) || (mlstart < semistart)))
-                asmerr( ERROR_SPURIOUS_COMMENT_START, false, NULL );
+        if ( mlend )
+        {
+            mlflag=0; // turn off multiline comments
+	    char tempbuf[MAXLINE];
+            char *tmpc;
+            *mlend = 0;
+            tmpc = mlend+1;
+            while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
+            {
+                if((*tmpc == '\r')||(*tmpc == '\n'))
+                    *tmpc=0;
+                tmpc++;
+            }
+	    snprintf(tempbuf,MAXLINE,"%s;*/%s",mlend+2,buf); // put the comment at the end of the line
+            strncpy(buf,tempbuf,MAXLINE);
+            return(cleanup(buf,bDisable)); // repeat for any single-line comments that may follow
+        }
+        else
+        {
+            memmove(buf+1,buf,strlen(buf)+1); // make room for the last comment
+            buf[0]=';';
+        }
     }
-    if (mlflag)
+    else // we're not presently in the middle of a multi-line comment...
     {
-        if ( mlend && (mlend  >= mlstart) ) 
-                mlflag=0; // turn off multiline comments
-        memmove(buf+1,buf,strlen(buf)+1); // make room for the last comment
-        buf[0]=';';
-    }
-    else 
-    {
+        // check for spurious comment close
+        if (mlend && ( (!semistart) || (mlend < semistart) ) && ( (!mlstart) ||  (mlend < mlstart) ) )
+            asmerr( ERROR_SPURIOUS_COMMENT_CLOSE, false, NULL );
         if (mlstart && ((!semistart) || (mlstart < semistart)))
         {
-            if (mlstart >= mlend) // handle single-line /*   */
-                mlflag=1; // turn on multiline comments
+            if (mlend && (mlstart < mlend) && ((!semistart)||(mlend < semistart))) // single line /* */
+            {
+	        char tempbuf[MAXLINE];
+                char *tmpc;
+                *mlstart = 0; 
+                *(mlend+1)=0;
+                tmpc = mlend+2;
+                while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
+                {
+                    if((*tmpc == '\r')||(*tmpc == '\n'))
+                        *tmpc=0;
+                    tmpc++;
+                }
+	        snprintf(tempbuf,MAXLINE,"%s%s;/%s",buf,mlend+2,mlstart+1); // move the first comment to the end of the line
+                strcpy(buf,tempbuf);
+                return(cleanup(buf,bDisable)); // repeat for any single-line comments that may follow
+            }
+            mlflag=1; // turn on multiline comments
             memmove(mlstart+1,mlstart,strlen(mlstart)+1); // make room for a comment
-            * mlstart=';';
+            *mlstart=';';
         }
     }
 
