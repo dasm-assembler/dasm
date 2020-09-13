@@ -6,9 +6,8 @@ made. Check the GitHub commit history for that. :-)
 
 new in DASM version 2.20.14:
 
-    * Finally: Technical Documentation and User Guide for
-      dasm in PDF format, written by Andrew Davie in his 
-      engaging and witty way of writing.
+    * Technical Documentation / User Guide for dasm in PDF format,
+      written by Andrew Davie in his engaging style.
 
     * Dynamic Labels support by concatenating evaluated values
 
