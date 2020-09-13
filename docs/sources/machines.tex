@@ -1,29 +1,37 @@
+\chapter{Machines}
+\label{Machine}
 
-
-\chapter{The Machines}
-
-\dasm supports specific machines and processors through the provision of companion source-code files that can assist with programming each platform. These files are located in the \mono{machines} subdirectory. Support is provided for...
+\dasm supports specific machines and processors through the provision of companion source-code files that can assist with programming each platform. These files are located in the \mono{machines} subdirectory. Machine-specific support is provided for...
 
 \begin{itemize}
-\item \nameref{machine:atari2600}
-\item Atari 7800
-\item Channel F
+\item \nameref{Machine:atari2600}
+\item \nameref{machine:atari7800}
+\item \nameref{machine:channelF}
 \item 68hc11
 \item 68hc908
 \end{itemize}
 
 
 \section{Atari 2600}
-\label{machine:atari2600}
+\index{Machine:Atari 2600}
+\label{Machine:atari2600}
 \label{changelog:20200908atari}
 
-The Atari 2600 is a game console from 1977 that uses a 6507 processor. This processor is similar to the 6502 processor (supported by \dasm). The difference in the processors is the number of hardware address lines on the chips; these being 16 on the 6502, and 13 on the 6507. Thus, the 6502 can directly address 64 KiB of memory and the 6507 only 8 KiB of memory.  From the point of view of \dasm, the machines are identical, as the 6502 and 6507 share a common instruction set.
+The \mono{Atari 2600} is a game console from \mono{1977} that uses a \mono{6507} processor. This processor is similar to the \mono{6502} processor (supported by \dasm). The difference in the processors is the number of hardware address lines on the chips; these being \mono{16} on the \mono{6502}, and \mono{13} on the \mono{6507}. Thus, the \mono{6502} can directly address \mono{64 KiB} of memory and the \mono{6507} only \mono{8 KiB} of memory.  From the point of view of \dasm, the machines are identical, as the \mono{6502} and \mono{6507} share a common instruction set.
 
-For programming the Atari 2600, use \mono{PROCESSOR 6502} at the start of your program.
+\subsection{Processor selection}
+
+The target CPU is selected with \nameref{pseudoop:processor}
+as the first directive inside the source file that should be assembled.
+
+\begin{usage}
+	processor 6502
+\end{usage}
+
 
 \subsection{Support Files}
 
-The Atari 2600 is explicitly supported with two files generally included in most programs for that machine.
+The \mono{Atari 2600} is explicitly supported with two files generally included in most programs for that machine.
 
 \subsubsection{\mono{vcs.h}}
 
@@ -34,203 +42,40 @@ Contains the standardised register definitions for the \mono{RIOT} and \mono{TIA
 
 Contains some useful macros.
 
-\section{HD6303}
+\section{Atari 7800}
+\index{machine!Atari 7800}
+\label{machine:atari7800}
 
-\subsection{Broken Opcodes Bug}
-\label{changelog:20200903bug}
-The \mono{AIM}, \mono{OIM}, \mono{EIM}, and \mono{TIM} opcodes are broken. These instructions are \textbf{three} bytes long according to the data sheets, yet in \dasm they are
-treated as \textbf{two} byte instructions.
-
-These instructions are supposed
-to work as follows:
-
-\begin{code}
-	tim	#$10,$C2
-	tim	#$80,$00,x
-\end{code}
-
-So there's an immediate value \textbf{and} a zero-page address
-for these instructions! \dasm, however, only accepts these:
-
-\begin{code}
-	tim	$10
-	tim	$10,x
-\end{code}
-
-These opcodes simply don't fit into the "regular pattern" of 8-bit CPUs
-we deal with in \dasm. Fixing this will require changes to
-\dasm beyond just fixing the instruction table, and the parser code is not even remotely ready for this.
-
-The "workaround" for now is to use macros instead of the
-actual instructions, see \mono{../test/broken6303hack.asm} for
-details.
-
-
-\section{Channel F}
-\label{changelog:20200906f8}
+The \mono{Atari 7800 ProSystem}, or simply the \mono{Atari 7800}, is a home video game console officially released by the Atari Corporation in \mono{1986}. It is almost fully backward-compatible with the \nameref{Machine:Atari 2600}. It uses a variant of the \mono{6502} processor.
 
 \subsection{Processor selection}
 
-With DASM, the target CPU is selected with the PROCESSOR
-directive inside the source file that should be assembled.
-The F8 CPU is selected like this:
+The target CPU is selected with \nameref{pseudoop:processor}
+as the first directive inside the source file that should be assembled.
 
 \begin{usage}
-	processor f8
-	processor F8	; case insensitive
+	processor 6502
 \end{usage}
 
-\subsection{Expressions with parentheses}
+\subsection{Support Files}
+
+The \mono{Atari 7800} is explicitly supported with two files generally included in most programs for that machine.
+
+\subsubsection{\mono{vcs.h}}
+
+Contains the standardised register definitions.
+
+\subsubsection{\mono{macro.h}}
+
+Contains some useful macros.
 
 
-Some of DASM's backends, for instance the one for the 6502,
-don't allow parentheses in expressions that are part of a
-mnemonic's operand, because parentheses are used in the 
-6502's assembly language to denote indirect addressing.
-Instead, you have to use brackets.
+\section{Channel F}
+\label{machine:channelF}
 
-This is not the case with the F8 backend. Both parentheses
-and brackets can be used everywhere, so the following lines
-are parsed and assembled correctly:
+\label{changelog:20200906f8}
+\index{Machine!Channel F}
 
-\begin{code}
-        as      (2+2)*2 ; Assembles to $c8
-        as      [2+2]*2 ; Assembles to $c8
-\end{code}
+\emph{No content yet}
 
-\subsection{Data definition directives}
-
-
-Since \mono{DS} is an F8 instruction (decrement scratchpad register),
-the \mono{DS} directive isn't available anymore if \dasm assembles
-F8 code. Instead, use the \mono{RES} directive, which works just like
-the \mono{DS} directive:
-
-\begin{code}
-        ds.b    4,$33   ; Would assemble to $33 $33 $33 $33,
-                        ; but isn't available in F8 mode
-        res.b   4,$33   ; Assembles to $33 $33 $33 $33
-\end{code}
-        
-Of course \mono{RES.W} and \mono{RES.L} do exist as well.
-
-
-For source code compatibility with \mono{f8tool} (another F8 assembler), some
-additional data definition directives are available : \mono{DB}, \mono{DW} and \mono{DD}.
-These work just like \mono{DC.B}, \mono{DC.W} and \mono{DC.L}:
-
-\begin{code}
-        dc.b    $f8     ; Assembles to $f8
-        db      $f8     ; Assembles to $f8
-\end{code}
-
-\subsection{Special register names}
-
-For some of the special registers, multiple names are accepted:
-
-\begin{table}[H]
-\begin{tabularx}{\linewidth}{cl}
-\toprule
-\textbf{Register}&\textbf{Accepted Names}\\
-\hline
-
-\mono{DC0}&\mono{DC},\mono{DC0}\\
-\mono{PC0}&\mono{P0},\mono{PC0}\\
-\mono{PC1}&\mono{P}, \mono{PC1}\\
-\mono{J}&\mono{J}, Any expression that evaluates to 9\\
-&(This may seem strange, but J is really\\
-&just an alias for scratchpad register 9)\\
-\hline
-\end{tabularx}
-\end{table}                        
-                        
-The names \mono{DC}, \mono{P0}, \mono{P} and \mono{J} are standard syntax, the other forms
-have been introduced for compatibility with other assemblers.
-
-Thus, the following lines assemble all correctly:
-
-\begin{code}
-        lr      h,dc    ; Assembles to $11
-        lr      h,dc0   ; Assembles to $11
-        lr      p0,q    ; Assembles to $0d
-        lr      pc0,q   ; Assembles to $0d
-        lr      p,q     ; Assembles to $09
-        lr      pc1,q   ; Assembles to $09
-        lr      w,j     ; Assembles to $1d
-        lr      w,3*3   ; Assembles to $1d
-\end{code}
-        
-\subsection{Scratchpad register access}
-
-There are several ways to access scratchpad registers:
-
-\begin{table}[H]
-\begin{tabularx}{\linewidth}{ll}
-\toprule
-\textbf{Access Mode}&\textbf{Accepted Syntax}\\
-\hline
-\\
-Direct access to registers \mono{0..11}&Any expression that evaluates to \mono{0..11}\\
-Access via \mono{ISAR}&\mono{S}, \mono{(IS)}, any expression that evaluates to \mono{12}\\
-Access via \mono{ISAR}, \mono{ISAR} incremented&\mono{I}, \mono{(IS)+}, any expression that evaluates to \mono{13}\\
-Access via \mono{ISAR}, \mono{ISAR} decremented&\mono{D}, \mono{(IS)-}, any expression that evaluates to \mono{14}\\
-\hline
-\end{tabularx}
-\end{table}
-
-The \mono{(IS)}, \mono{(IS)+} and \mono{(IS)-} forms are not standard syntax and have
-been mainly introduced for compatibility with \mono{f8tool}.
-
-
-For some of the directly accessible scratchpad registers aliases exist:
-
-\begin{table}[H]
-\begin{tabularx}{\linewidth}{cc}
-\toprule
-\textbf{Register}&\textbf{Alias Name}\\
-\hline
-\mono{9}&\mono{J}\\
-\mono{10}&\mono{HU}\\
-\mono{11}&\mono{HL}\\
-\hline
-\end{tabularx}
-\end{table}
-        
-Originally, \mono{J} was only used with the \mono{LR} instruction when accessing the
-flags, but since \mono{J} is just an alias for register \mono{9}, \mono{J} can also be used
-in normal scratchpad register operations.
-
-The following lines assemble all correctly
-
-\begin{code}
-        xs      2+2             ; Assembles to $e4
-        xs      s               ; Assembles to $ec
-        xs      (is)            ; Assembles to $ec
-        xs      12              ; Assembles to $ec
-        xs      i               ; Assembles to $ed
-        xs      (is)+           ; Assembles to $ed
-        xs      13              ; Assembles to $ed
-        xs      d               ; Assembles to $ee
-        xs      (is)-           ; Assembles to $ee
-        xs      14              ; Assembles to $ee
-        xs      9               ; Assembles to $e9
-        xs      j               ; Assembles to $e9
-        xs      hu              ; Assembles to $ea
-        xs      hl              ; Assembles to $eb
-\end{code}
-
-
-\subsection{No instruction optimizations are done}
-
-
-The assembler doesn't optimize instructions where a smaller
-instruction could be used. It won't optimize between
-\mono{OUT/OUTS}, \mono{IN/INS} and \mono{LI/LIS}.
-
-For instance, the following line assembles to \mono{\$20 \$00}, even
-though the \mono{LIS} instruction could be used, which would need
-only one byte.
-
-\begin{code}
-        li      0       ; Assembles to $20 $00
-\end{code}
+See \nameref{processor:f8}

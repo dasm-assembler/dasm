@@ -133,7 +133,7 @@ If no \mono{sourcefile} is given, then \dasm will output a short help message, a
 \label{changelog:20200831help}
 \begin{outputx2}
 % ./dasm
-DASM 2.20.14
+DASM 2.20.14-SNAPSHOT
 Copyright (c) 1988-2020 by the DASM team.
 License GPLv2+: GNU GPL version 2 or later (see file LICENSE).
 DASM is free software: you are free to change and redistribute it.
@@ -1890,12 +1890,13 @@ Only one \nameref{pseudoop:processor} directive may be declared in the entire as
 \textbf{\mono{type}}&\textbf{Identity}&\textbf{Endian}&\textbf{Byte Order}\\
 \hline
 \\
-\mono{6502}      &MOS Technology 6502   &little-endian  &\mono{LSB}, \mono{MSB}\\
-\mono{68HC11}    &Motorola 68HC11       &big-endian     &\mono{MSB}, \mono{LSB}\\
-\mono{68705}     &Motorola 68705        &big-endian     &\mono{MSB}, \mono{LSB}\\
-\mono{6803}      &Motorola 6803         &big-endian     &\mono{MSB}, \mono{LSB}\\
-\mono{HD6303}    &Hitachi HD6303        &big-endian     &\mono{MSB}, \mono{LSB}\\
-\mono{F8}        &Fairchild F8          &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:6502}      &MOS Technology 6502   &little-endian  &\mono{LSB}, \mono{MSB}\\
+\nameref{processor:68HC11}    &Motorola 68HC11       &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:68705}     &Motorola 68705        &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:6803}      &Motorola 6803         &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:6303}    &Hitachi HD6303        &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:f8}        &Fairchild F8          &big-endian     &\mono{MSB}, \mono{LSB}\\
+\nameref{processor:MC68HC908} &Motorola MC68HC908&big-endian& \mono{MSB}, \mono{LSB}\\
 \\
 \bottomrule
 \end{tabularx}

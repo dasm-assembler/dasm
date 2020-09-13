@@ -1,0 +1,176 @@
+\chapter{F8 Processor}
+\label{processor:f8}
+\index{Processor!F8}
+\index{Machine!Channel F}
+
+The F8 processor is used by the \nameref{machine:channelF} machine.
+
+\section{Endianness}
+
+The \mono{F8} is a big-endian machine. Byte ordering in words is high, then low.
+
+\subsection{Processor selection}
+
+With DASM, the target CPU is selected with the PROCESSOR
+directive inside the source file that should be assembled.
+The F8 CPU is selected like this:
+
+\begin{usage}
+	processor f8
+	processor F8	; case insensitive
+\end{usage}
+
+\subsection{Expressions with parentheses}
+
+
+Some of DASM's backends, for instance the one for the 6502,
+don't allow parentheses in expressions that are part of a
+mnemonic's operand, because parentheses are used in the 
+6502's assembly language to denote indirect addressing.
+Instead, you have to use brackets.
+
+This is not the case with the F8 backend. Both parentheses
+and brackets can be used everywhere, so the following lines
+are parsed and assembled correctly:
+
+\begin{code}
+        as      (2+2)*2 ; Assembles to $c8
+        as      [2+2]*2 ; Assembles to $c8
+\end{code}
+
+\subsection{Data definition directives}
+
+
+Since \mono{DS} is an F8 instruction (decrement scratchpad register),
+the \mono{DS} directive isn't available anymore if \dasm assembles
+F8 code. Instead, use the \mono{RES} directive, which works just like
+the \mono{DS} directive:
+
+\begin{code}
+        ds.b    4,$33   ; Would assemble to $33 $33 $33 $33,
+                        ; but isn't available in F8 mode
+        res.b   4,$33   ; Assembles to $33 $33 $33 $33
+\end{code}
+        
+Of course \mono{RES.W} and \mono{RES.L} do exist as well.
+
+
+For source code compatibility with \mono{f8tool} (another F8 assembler), some
+additional data definition directives are available : \mono{DB}, \mono{DW} and \mono{DD}.
+These work just like \mono{DC.B}, \mono{DC.W} and \mono{DC.L}:
+
+\begin{code}
+        dc.b    $f8     ; Assembles to $f8
+        db      $f8     ; Assembles to $f8
+\end{code}
+
+\subsection{Special register names}
+
+For some of the special registers, multiple names are accepted:
+
+\begin{table}[H]
+\begin{tabularx}{\linewidth}{cl}
+\toprule
+\textbf{Register}&\textbf{Accepted Names}\\
+\hline
+
+\mono{DC0}&\mono{DC}, \mono{DC0}\\
+\mono{PC0}&\mono{P0}, \mono{PC0}\\
+\mono{PC1}&\mono{P}, \mono{PC1}\\
+\mono{J}&\mono{J}, Any expression that evaluates to \mono{9}\\
+&(This may seem strange, but \mono{J} is really\\
+&just an alias for scratchpad register \mono{9})\\
+\hline
+\end{tabularx}
+\end{table}                        
+                        
+The names \mono{DC}, \mono{P0}, \mono{P} and \mono{J} are standard syntax, the other forms
+have been introduced for compatibility with other assemblers.
+
+Thus, the following lines assemble all correctly:
+
+\begin{code}
+        lr      h,dc    ; Assembles to $11
+        lr      h,dc0   ; Assembles to $11
+        lr      p0,q    ; Assembles to $0d
+        lr      pc0,q   ; Assembles to $0d
+        lr      p,q     ; Assembles to $09
+        lr      pc1,q   ; Assembles to $09
+        lr      w,j     ; Assembles to $1d
+        lr      w,3*3   ; Assembles to $1d
+\end{code}
+        
+\subsection{Scratchpad register access}
+
+There are several ways to access scratchpad registers:
+
+\begin{table}[H]
+\begin{tabularx}{\linewidth}{ll}
+\toprule
+\textbf{Access Mode}&\textbf{Accepted Syntax}\\
+\hline
+\\
+Direct access to registers \mono{0..11}&Any expression that evaluates to \mono{0..11}\\
+Access via \mono{ISAR}&\mono{S}, \mono{(IS)}, any expression that evaluates to \mono{12}\\
+Access via \mono{ISAR}, \mono{ISAR} incremented&\mono{I}, \mono{(IS)+}, any expression that evaluates to \mono{13}\\
+Access via \mono{ISAR}, \mono{ISAR} decremented&\mono{D}, \mono{(IS)-}, any expression that evaluates to \mono{14}\\
+\hline
+\end{tabularx}
+\end{table}
+
+The \mono{(IS)}, \mono{(IS)+} and \mono{(IS)-} forms are not standard syntax and have
+been mainly introduced for compatibility with \mono{f8tool}.
+
+
+For some of the directly accessible scratchpad registers aliases exist:
+
+\begin{table}[H]
+\begin{tabularx}{\linewidth}{cc}
+\toprule
+\textbf{Register}&\textbf{Alias Name}\\
+\hline
+\mono{9}&\mono{J}\\
+\mono{10}&\mono{HU}\\
+\mono{11}&\mono{HL}\\
+\hline
+\end{tabularx}
+\end{table}
+        
+Originally, \mono{J} was only used with the \mono{LR} instruction when accessing the
+flags, but since \mono{J} is just an alias for register \mono{9}, \mono{J} can also be used
+in normal scratchpad register operations.
+
+The following lines assemble all correctly
+
+\begin{code}
+        xs      2+2             ; Assembles to $e4
+        xs      s               ; Assembles to $ec
+        xs      (is)            ; Assembles to $ec
+        xs      12              ; Assembles to $ec
+        xs      i               ; Assembles to $ed
+        xs      (is)+           ; Assembles to $ed
+        xs      13              ; Assembles to $ed
+        xs      d               ; Assembles to $ee
+        xs      (is)-           ; Assembles to $ee
+        xs      14              ; Assembles to $ee
+        xs      9               ; Assembles to $e9
+        xs      j               ; Assembles to $e9
+        xs      hu              ; Assembles to $ea
+        xs      hl              ; Assembles to $eb
+\end{code}
+
+
+\subsection{No instruction optimizations are done}
+
+
+The assembler doesn't optimize instructions where a smaller
+instruction could be used. It won't optimize between
+\mono{OUT/OUTS}, \mono{IN/INS} and \mono{LI/LIS}.
+
+For instance, the following line assembles to \mono{\$20 \$00}, even
+though the \mono{LIS} instruction could be used, which would need
+only one byte.
+
+\begin{code}
+        li      0       ; Assembles to $20 $00
+\end{code}

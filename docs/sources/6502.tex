@@ -1,0 +1,2409 @@
+\label{changelog20200901_nop3}
+
+\chapter{6502 Processor}
+\label{processor:6502}
+
+\index{Processor!6502}
+
+This chapter describes features of the \mono{6502} processor that may be relevant to the use of \dasm.
+
+\section{Endianness}
+
+The \mono{6502} is a little-endian machine. Byte ordering in words is low, then high.
+
+\label{changelog:20200904illegal}
+\section{Illegal Opcodes}
+
+The effects of the ``unused'' opcodes on the 6502 are by now relatively well documented. These are variously described as illegal, undocumented, invalid, and unspecified. Modern programs use some of these, as they provide additional capabilities (particularly speed improvements) over the use of the standard opcodes. \dasm explicitly supports some of the commonly used `stable' illegal opcodes.
+
+\url{http://www.oxyron.de/html/opcodes02.html} was used as a reference for most of the data shown in the following tables. They have been cross-referenced with the \dasm source code to determine what instructions and opcodes are supported.
+
+\iffalse
+\subsection{\texttt{ANC}}
+\begin{usage}
+ ANC 
+\end{usage}
+
+\begin{table}[H]
+\begin{tabular}{lr}
+
+\begin{tabular}{llc}
+
+\mono{\$0B}&\texttt{ANC }\emph{\#imm}&\mono{A:=A \& \#\{imm\}}\\
+
+\end{tabular}&
+
+\tabcolsep=0.1cm
+\begin{tabular}{|cccccccc|}
+\hline
+\scriptsize\mono{N}&
+\scriptsize\mono{V}&
+\scriptsize\mono{B}&
+\scriptsize\mono{D}&
+\scriptsize\mono{I}&
+\scriptsize\mono{Z}&
+\scriptsize\mono{C}&
+\scriptsize\mono{?}\\
+\hline
+\mono{1}&
+\mono{*}&
+\mono{*}&
+\mono{*}&
+\mono{*}&
+\mono{*}&
+\mono{*}&
+\mono{*}\\
+\hline
+
+\end{tabular}
+\end{tabular}
+\end{table}
+
+
+\begin{code}
+ANC	 	\$0B	 	 	 	 	 	 	 	 	 	 	A:=A\&#\{imm\}	*	 	 	 	 	*	*
+ANC	 	\$2B	 	 	 	 	 	 	 	 	 	 	A:=A\&#\{imm\}	*	 	 	 	 	*	*
+llegal opcodes:
+Opcode	imp	imm	zp	zpx	zpy	izx	izy	abs	abx	aby	ind	rel	Function	N	V	B	D	I	Z	C
+SLO	 	 	\$07	\$17	 	\$03	\$13	\$0F	\$1F	\$1B	 	 	\{adr\}:=\{adr\}*2 A:=A or \{adr\}	*	 	 	 	 	*	*
+RLA	 	 	\$27	\$37	 	\$23	\$33	\$2F	\$3F	\$3B	 	 	\{adr\}:=\{adr\}rol A:=A and \{adr\}	*	 	 	 	 	*	*
+SRE	 	 	\$47	\$57	 	\$43	\$53	\$4F	\$5F	\$5B	 	 	\{adr\}:=\{adr\}/2 A:=A exor \{adr\}	*	 	 	 	 	*	*
+RRA	 	 	\$67	\$77	 	\$63	\$73	\$6F	\$7F	\$7B	 	 	\{adr\}:=\{adr\}ror A:=A adc \{adr\}	*	*	 	 	 	*	*
+SAX	 	 	\$87	 	\$97	\$83	 	\$8F	 	 	 	 	\{adr\}:=A\&X	 	 	 	 	 	 	 
+LAX	 	 	\$A7	 	\$B7	\$A3	\$B3	\$AF	 	\$BF	 	 	A,X:=\{adr\}	*	 	 	 	 	*	 
+DCP	 	 	\$C7	\$D7	 	\$C3	\$D3	\$CF	\$DF	\$DB	 	 	\{adr\}:=\{adr\}-1 A-\{adr\}	*	 	 	 	 	*	*
+ISC	 	 	\$E7	\$F7	 	\$E3	\$F3	\$EF	\$FF	\$FB	 	 	\{adr\}:=\{adr\}+1 A:=A-\{adr\}	*	*	 	 	 	*	*
+ALR	 	\$4B	 	 	 	 	 	 	 	 	 	 	A:=(A\&#\{imm\})/2	*	 	 	 	 	*	*
+ARR	 	\$6B	 	 	 	 	 	 	 	 	 	 	A:=(A\&#\{imm\})/2	*	*	 	 	 	*	*
+XAA(2)	 	\$8B	 	 	 	 	 	 	 	 	 	 	A:=X\&#\{imm\}	*	 	 	 	 	*	 
+LAX(2)	 	\$AB	 	 	 	 	 	 	 	 	 	 	A,X:=#\{imm\}	*	 	 	 	 	*	 
+AXS	 	\$CB	 	 	 	 	 	 	 	 	 	 	X:=A\&X-#\{imm\}	*	 	 	 	 	*	*
+SBC	 	\$EB	 	 	 	 	 	 	 	 	 	 	A:=A-\#\{imm\}	*	*	 	 	 	*	*
+AHX(1) 	 	 	 	 	 	\$93	 	 	\$9F	 	 	\{adr\}:=A\&X\&H	 	 	 	 	 	 	 
+SHY(1)	 	 	 	 	 	 	 	 	\$9C	 	 	 	\{adr\}:=Y\&H	 	 	 	 	 	 	 
+SHX(1)	 	 	 	 	 	 	 	 	 	\$9E	 	 	\{adr\}:=X\&H	 	 	 	 	 	 	 
+TAS(1)	 	 	 	 	 	 	 	 	 	\$9B	 	 	S:=A\&X \{adr\}:=S\&H	 	 	 	 	 	 	 
+LAS	 	 	 	 	 	 	 	 	 	\$BB	 	 	A,X,S:=\{adr\}\&S	*	 	 	 	 	*	 
+
+
+(1) = unstable in certain matters
+(2) = highly unstable (results are not predictable on some machines)
+A = Accumulator
+X = X-Register
+Y = Y-Register
+S = Stack-Pointer
+P = Status-Register
++(S) = Stack-Pointer relative with pre-increment
+(S)- = Stack-Pointer relative with post-decrement
+
+
+Combinations of two operations with the same addressing mode:
+
+SLO {adr} = ASL {adr} + ORA {adr}
+RLA {adr} = ROL {adr} + AND {adr}
+SRE {adr} = LSR {adr} + EOR {adr}
+RRA {adr} = ROR {adr} + ADC {adr}
+SAX {adr} = store A\&X into {adr}
+LAX {adr} = LDA {adr} + LDX {adr}
+DCP {adr} = DEC {adr} + CMP {adr}
+ISC {adr} = INC {adr} + SBC {adr}
+
+note to SAX: the A&X operation is a result of A and X put onto the bus at the same time.
+
+
+Combinations of an immediate and an implied command:
+
+ANC \#{imm} = AND \#{imm} + (ASL)
+ANC \#{imm} = AND \#{imm} + (ROL)
+ALR \#{imm} = AND \#{imm} + LSR
+ARR \#{imm} = AND \#{imm} + ROR
+XAA \#{imm} = TXA + AND \#{imm}
+LAX \#{imm} = LDA \#{imm} + TAX
+AXS \#{imm} = A\&X minus #{imm} into X
+SBC \#{imm} = SBC \#{imm} + NOP
+
+note to ANC: this command performs an AND operation only, but bit 7 is put into the carry, as if the ASL/ROL would have been executed.
+note to ARR: part of this command are some ADC mechanisms. following effects appear after AND but before ROR: the V-Flag is set according to (A and \#{imm})+\#{imm}, bit 0 does NOT go into carry, but bit 7 is exchanged with the carry.
+note to XAA: DO NOT USE!!! Highly unstable!!!
+note to LAX: DO NOT USE!!! On my C128, this opcode is stable, but on my C64-II it loses bits so that the operation looks like this: ORA \#? AND \#{imm} TAX.
+note to AXS: performs CMP and DEX at the same time, so that the MINUS sets the flag like CMP, not SBC.
+
+
+Combinations of STA/STX/STY:
+
+AHX {adr} = stores A\&X\&H into {adr}
+SHX {adr} = stores X\&H into {adr}
+SHY {adr} = stores Y\&H into {adr}
+
+note: sometimes the \&H drops off. Also page boundary crossing will not work as expected (the bank where the value is stored may be equal to the value stored).
+
+
+Combinations of STA/TXS and LDA/TSX:
+
+TAS {adr} = stores A\&X into S and A\&X\&H into {adr}
+LAS {adr} = stores {adr}\&S into A, X and S
+
+note to LAS: is called as "propably unreliable" in one source.
+
+
+Bit configuration does not allow any operation on these ones:
+
+NOP = has no effects
+NOP #{imm} = fetches #{imm} but has no effects
+NOP {adr} = fetches {adr} but has no effects
+
+
+KIL = halts the CPU. the data bus will be set to \#\$FF
+
+
+Aliases used in other illegal opcode sources:
+
+SLO = ASO
+SRE = LSE
+ISC = ISB
+ALR = ASR
+SHX = A11 (A11 was a result of only having tested this one on adress \$1000)
+SHY = A11
+LAS = LAR
+KIL = JAM, HLT
+
+\end{code}
+\fi
+
+\subsection{Abbreviations and Colours used in Tables}
+\subsubsection{Addressing Modes}
+
+\begin{table}[H]
+\begin{tabularx}{\linewidth}{cll}
+\toprule
+Abbreviation&Mode&Example\\
+\hline
+\\
+\emph{abs}&Absolute&\mono{LDA \$F000}\\
+\emph{abx}&Absolute indexed by X&\mono{LDA \$F000,x}\\
+\emph{aby}&Absolute indexed by Y&\mono{LDA \$F000,y}\\
+\emph{idx}&Indexed indirect X&\mono{LDA (\$23,x)}\\
+\emph{idy}&Indirect Y&\mono{LDA (\$23),y}\\
+\emph{imm}&Immediate&\mono{LDA \#1}\\
+\emph{imp}&Implied. Operates on register or flag&\mono{LSR}\\
+\emph{ind}&Indirect absolute&\mono{JMP (\$F000)}\\
+\emph{rel}&Relative to PC&\mono{BCS addr}\\
+\emph{zp}&Zero-page&\mono{LDA 1}\\
+\emph{zpx}&Zero-page indexed by X&\mono{LDA \$23,x}\\
+\emph{zpy}&Zero-page indexed by Y&\mono{LAX 0,y}\\
+\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+
+\iffalse
+#define ASTD	AF_BYTEADR|AF_BYTEADRX|AF_WORDADR|AF_WORDADRX|\
+	AF_WORDADRY|AF_INDBYTEX|AF_INDBYTEY
+\fi
+
+\subsection{Mnemonics, and Opcodes for Addressing Modes}
+
+\subsubsection{Opcode Colour Key}
+
+\begin{table}[H]
+\begin{tabular}{ll}
+\cellcolor{illegal}&Stable. Supported by \dasm.\\
+\cellcolor{missing}&Stable. Not supported.\\
+\cellcolor{unstablecertain}&Unstable in some situations. Not supported.\\
+\cellcolor{unimplemented}&Highly unstable. Not supported.\\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+%\def\arraystretch{0.98}
+\begin{tabularx}{\linewidth}{c|cccccccccccc}
+%\toprule
+%    \multicolumn{1}{c}{} &
+
+\mono{}&
+\emph{imp}&
+\emph{imm}&
+\emph{zp}&
+\emph{zpx}&
+\emph{abs}&
+\emph{abx}&
+\emph{aby}&
+\emph{idx}&
+\emph{idy}&
+\emph{zpy}&
+\emph{rel}&
+\emph{ind}\\
+\hline
+
+\mono{ADC}&
+\mono{\color{ghost}\xmark}& % implied
+\mono{\$69}&
+\mono{\$65}&
+\mono{\$75}&
+\mono{\$6D}&
+\mono{\$7D}&
+\mono{\$79}&
+\mono{\$61}&
+\mono{\$71}&
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\cellcolor{unstablecertain}\mono{AHX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\cellcolor{unstablecertain}\mono{\$93}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+\mono{ANC}&
+\mono{\color{ghost}\xmark}& % implied
+\cellcolor{illegal}\mono{\$0B}& % immediate
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+\mono{}& %ANC#2
+\mono{}& % implied
+\cellcolor{missing}\mono{\$2B}& % immediate
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{} & %rel
+\mono{} %(abs)
+\\
+
+\mono{AND}&
+\mono{\color{ghost}\xmark}& % implied
+\mono{\$29}& % immediate
+\mono{\$25}& %zp
+\mono{\$35}& %zp,x
+\mono{\$2D}& %abs
+\mono{\$3D}& %abs,x
+\mono{\$39}& %abs,y
+\mono{\$21}& %(zp,x)
+\mono{\$31}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{ANE}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{illegal}\mono{\$8B}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{ARR}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{illegal}\mono{\$6B}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{ASL}&
+\mono{\$0A}&
+\mono{\color{ghost}\xmark}& % immediate
+\mono{\$06}&
+\mono{\$16}&
+\mono{\$0E}&
+\mono{\$1E}&
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{ASR}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{illegal}\mono{\$4B}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\cellcolor{missing}\mono{AXS}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{missing}\mono{\$CB}& %imm
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+ \mono{BCC}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$90}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BCS}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$B0}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+ \mono{BEQ}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$F0}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BIT}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\$24}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$2C}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BMI}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$30}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BNE}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$D0}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+ \mono{BPL}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$10} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BRK}&
+\mono{\$00}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BVC}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$50} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{BVS}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\$70} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CLC}&
+\mono{\$18}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CLD}&
+\mono{\$D8}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CLI}&
+\mono{\$58}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CLV}&
+\mono{\$B8}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CMP}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$C9}& %IMM
+\mono{\$C5}& %zp
+\mono{\$D5}& %zp,x
+\mono{\$CD}& %abs
+\mono{\$DD}& %abs,x
+\mono{\$D9}& %abs,y
+\mono{\$C1}& %(zp,x)
+\mono{\$D1}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CPX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$E0}& %IMM
+\mono{\$E4}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$EC}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{CPY}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$C0}& %IMM
+\mono{\$C4}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$CC}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{DCP}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %IMM
+\cellcolor{illegal}\mono{\$C7}& %zp
+\cellcolor{illegal}\mono{\$D7}& %zp,x
+\cellcolor{illegal}\mono{\$CF}& %abs
+\cellcolor{illegal}\mono{\$DF}& %abs,x
+\cellcolor{illegal}\mono{\$DB}& %abs,y
+\cellcolor{illegal}\mono{\$C3}& %(zp,x)
+\cellcolor{illegal}\mono{\$D3}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{DEC}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %IMM
+\mono{\$C6}& %zp
+\mono{\$D6}& %zp,x
+\mono{\$CE}& %abs
+\mono{\$DE}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{DEX}&
+\mono{\$CA}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+ \mono{DEY}&
+\mono{\$88}& %iMP
+\mono{\color{ghost}\xmark}&
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{EOR}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$49}& %#
+\mono{\$45}& %zp
+\mono{\$55}& %zp,x
+\mono{\$4D}& %abs
+\mono{\$5D}& %abs,x
+\mono{\$59}& %abs,y
+\mono{\$41}& %(zp,x)
+\mono{\$51}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{INC}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$E6}& %zp
+\mono{\$F6}& %zp,x
+\mono{\$EE}& %abs
+\mono{\$FE}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{INX}&
+\mono{\$E8}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{INY}&
+\mono{\$C8}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{ISB}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$E7}& %zp
+\cellcolor{illegal}\mono{\$F7}& %zp,x
+\cellcolor{illegal}\mono{\$EF}& %abs
+\cellcolor{illegal}\mono{\$FF}& %abs,x
+\cellcolor{illegal}\mono{\$FB}& %abs,y
+\cellcolor{illegal}\mono{\$E3}& %(zp,x)
+\cellcolor{illegal}\mono{\$F3}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark} & %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+%\def\arraystretch{0.98}
+\begin{tabularx}{\linewidth}{c|cccccccccccc}
+%\toprule
+
+%\cline{2-13}
+%    \multicolumn{1}{c}{} &
+
+\mono{}&
+\emph{imp}&
+\emph{imm}&
+\emph{zp}&
+\emph{zpx}&
+\emph{abs}&
+\emph{abx}&
+\emph{aby}&
+\emph{idx}&
+\emph{idy}&
+\emph{zpy}&
+\emph{rel}&
+\emph{ind}\\
+\hline
+\\
+
+
+\mono{JMP}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$4C}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\$6C} %(abs)
+\\
+
+\mono{JSR}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$20}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\cellcolor{missing}\mono{KIL}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+\mono{LAS}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\cellcolor{illegal}\mono{\$BB}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LAX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$A7}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\cellcolor{illegal}\mono{\$AF}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\cellcolor{illegal}\mono{\$BF}& %abs,y
+\cellcolor{illegal}\mono{\$A3}& %(zp,x)
+\cellcolor{illegal}\mono{\$B3}& %(zp),y
+\cellcolor{illegal}\mono{\$B7}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LDA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$A9}& %#
+\mono{\$A5}& %zp
+\mono{\$B5}& %zp,x
+\mono{\$AD}& %abs
+\mono{\$BD}& %abs,x
+\mono{\$B9}& %abs,y
+\mono{\$A1}& %(zp,x)
+\mono{\$B1}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LDX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$A2}& %#
+\mono{\$A6}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$AE}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\$BE}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\$B6}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LDY}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$A0}& %#
+\mono{\$A4}& %zp
+\mono{\$B4}& %zp,x
+\mono{\$AC}& %abs
+\mono{\$BC}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LSR}&
+\mono{\$4A}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$46}& %zp
+\mono{\$56}& %zp,x
+\mono{\$4E}& %abs
+\mono{\$5E}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{LXA}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{illegal}\mono{\$AB}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+
+\mono{NOP}&
+\mono{\$EA}& %iMP
+\cellcolor{illegal}\mono{\$80}& %#
+\cellcolor{illegal}\mono{\$04}& %zp
+\cellcolor{illegal}\mono{\$14}& %zp,x
+\cellcolor{illegal}\mono{\$0C}& %abs
+\cellcolor{illegal}\mono{\$1C}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{}& % NOP #2
+\mono{\cellcolor{missing}\cellcolor{missing}\$1A}& %iMP
+\mono{}& %#
+\mono{\cellcolor{missing}\$44}& %zp
+\mono{\cellcolor{missing}\$34}& %zp,x
+\mono{}& %abs
+\mono{\cellcolor{missing}\$3C}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #3
+\mono{\cellcolor{missing}\$3A}& %iMP
+\mono{}& %#
+\mono{\cellcolor{missing}\$64}& %zp
+\mono{\cellcolor{missing}\$54}& %zp,x
+\mono{}& %abs
+\mono{\cellcolor{missing}\$5C}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #4
+\mono{\cellcolor{missing}\$5A}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{\cellcolor{missing}\$74}& %zp,x
+\mono{}& %abs
+\mono{\cellcolor{missing}\$7C}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #5
+\mono{\cellcolor{missing}\$7A}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{\cellcolor{missing}\$D4}& %zp,x
+\mono{}& %abs
+\mono{\cellcolor{missing}\$DC}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #6
+\mono{\cellcolor{missing}\$82}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{\cellcolor{missing}\$F4}& %zp,x
+\mono{}& %abs
+\mono{\cellcolor{missing}\$FC}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #7
+\mono{\cellcolor{missing}\$89}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #8
+\mono{\cellcolor{missing}\$C2}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #9
+\mono{\cellcolor{missing}\$DA}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #10
+\mono{\cellcolor{missing}\$E2}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\mono{}& % NOP #11
+\mono{\cellcolor{missing}\$FA}& %iMP
+\mono{}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+
+
+\mono{ORA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$09}& %#
+\mono{\$05}& %zp
+\mono{\$15}& %zp,x
+\mono{\$0D}& %abs
+\mono{\$1D}& %abs,x
+\mono{\$19}& %abs,y
+\mono{\$01}& %(zp,x)
+\mono{\$11}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{PHA}&
+\mono{\$48}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{PHP}&
+\mono{\$08}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{PLA}&
+\mono{\$68}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{PLP}&
+\mono{\$28}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{RLA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$27}& %zp
+\cellcolor{illegal}\mono{\$37}& %zp,x
+\cellcolor{illegal}\mono{\$2F}& %abs
+\cellcolor{illegal}\mono{\$3F}& %abs,x
+\cellcolor{illegal}\mono{\$3B}& %abs,y
+\cellcolor{illegal}\mono{\$23}& %(zp,x)
+\cellcolor{illegal}\mono{\$33}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{ROL}&
+\mono{\$2A}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$26}& %zp
+\mono{\$36}& %zp,x
+\mono{\$2E}& %abs
+\mono{\$3E}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{ROR}&
+\mono{\$6A}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$66}& %zp
+\mono{\$76}& %zp,x
+\mono{\$6E}& %abs
+\mono{\$7E}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{RRA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$67}& %zp
+\cellcolor{illegal}\mono{\$77}& %zp,x
+\cellcolor{illegal}\mono{\$6F}& %abs
+\cellcolor{illegal}\mono{\$7F}& %abs,x
+\cellcolor{illegal}\mono{\$7B}& %abs,y
+\cellcolor{illegal}\mono{\$63}& %(zp,x)
+\cellcolor{illegal}\mono{\$73}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{RTI}&
+\mono{\$40}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{RTS}&
+\mono{\$60}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SAX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$87}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\cellcolor{illegal}\mono{\$8F}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\cellcolor{illegal}\mono{\$83}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\cellcolor{illegal}\mono{\$97}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SBC}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\$E9}& %#
+\mono{\$E5}& %zp
+\mono{\$F5}& %zp,x
+\mono{\$ED}& %abs
+\mono{\$FD}& %abs,x
+\mono{\$F9}& %abs,y
+\mono{\$E1}& %(zp,x)
+\mono{\$F1}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+\mono{}& %2
+\mono{}& %iMP
+\mono{\cellcolor{missing}\$EB}& %#
+\mono{}& %zp
+\mono{}& %zp,x
+\mono{}& %abs
+\mono{}& %abs,x
+\mono{}& %abs,y
+\mono{}& %(zp,x)
+\mono{}& %(zp),y
+\mono{}& %zp,y
+\mono{}& %rel
+\mono{} %(abs)
+\\
+
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+%\def\arraystretch{0.98}
+\begin{tabularx}{\linewidth}{c|cccccccccccc}
+%\toprule
+
+%\cline{2-13}
+%    \multicolumn{1}{c}{} &
+
+\mono{}&
+\emph{imp}&
+\emph{imm}&
+\emph{zp}&
+\emph{zpx}&
+\emph{abs}&
+\emph{abx}&
+\emph{aby}&
+\emph{idx}&
+\emph{idy}&
+\emph{zpy}&
+\emph{rel}&
+\emph{ind}\\
+\hline
+\\
+
+
+\mono{SBX}&
+\mono{\color{ghost}\xmark}& %iMP
+\cellcolor{illegal}\mono{\$CB}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SEC}&
+\mono{\$38}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SED}&
+\mono{\$F8}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SEI}&
+\mono{\$78}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SHA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\cellcolor{illegal}\mono{\$9F}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\cellcolor{illegal}\mono{\$93}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SHS}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\cellcolor{illegal}\mono{\$9B}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SHX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\cellcolor{illegal}\mono{\$9E}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SHY}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\cellcolor{illegal}\mono{\$9C}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SLO}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$07}& %zp
+\cellcolor{illegal}\mono{\$17}& %zp,x
+\cellcolor{illegal}\mono{\$0F}& %abs
+\cellcolor{illegal}\mono{\$1F}& %abs,x
+\cellcolor{illegal}\mono{\$1B}& %abs,y
+\cellcolor{illegal}\mono{\$03}& %(zp,x)
+\cellcolor{illegal}\mono{\$13}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{SRE}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\cellcolor{illegal}\mono{\$47}& %zp
+\cellcolor{illegal}\mono{\$57}& %zp,x
+\cellcolor{illegal}\mono{\$4F}& %abs
+\cellcolor{illegal}\mono{\$5F}& %abs,x
+\cellcolor{illegal}\mono{\$5B}& %abs,y
+\cellcolor{illegal}\mono{\$43}& %(zp,x)
+\cellcolor{illegal}\mono{\$53}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{STA}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$85}& %zp
+\mono{\$95}& %zp,x
+\mono{\$8D}& %abs
+\mono{\$9D}& %abs,x
+\mono{\$99}& %abs,y
+\mono{\$81}& %(zp,x)
+\mono{\$91}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{STX}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$86}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\$8E}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\$96}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{STY}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\$84}& %zp
+\mono{\$94}& %zp,x
+\mono{\$8C}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{TAX}&
+\mono{\$AA}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{TAY}&
+\mono{\$A8}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{TSX}&
+\mono{\$BA}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{TXA}&
+\mono{\$8A}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\mono{TXS}&
+\mono{\$9A}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+
+\mono{TYA}&
+\mono{\$98}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\end{tabularx}
+\end{table}
+
+
+\begin{landscape}
+
+\subsection{Opcode Mnemonics}
+\index{Processor!6502!Opcode Mnemonics}
+\def\arraystretch{0.95}
+\begin{table}[H]
+%\tabcolsep=0.085cm
+\begin{tabular}{c|ccccccccccccccccc}
+%ccc!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}}
+%\toprule
+%\cline{2-13}
+%    \multicolumn{1}{c}{} &
+\mono{}&&\mono{\${\color{ghost}x}0}&\mono{\${\color{ghost}x}1}&\mono{\${\color{ghost}x}2}&\mono{\${\color{ghost}x}3}&\mono{\${\color{ghost}x}4}&\mono{\${\color{ghost}x}5}&\mono{\${\color{ghost}x}6}&\mono{\${\color{ghost}x}7}&\mono{\${\color{ghost}x}8}&\mono{\${\color{ghost}x}9}&\mono{\${\color{ghost}x}A}&\mono{\${\color{ghost}x}B}&\mono{\${\color{ghost}x}C}&\mono{\${\color{ghost}x}D}&\mono{\${\color{ghost}x}E}&\mono{\${\color{ghost}x}F}\\
+\hline
+\\
+\mono{\$0{\color{ghost}x}}&&
+\mono{BRK}&
+\mono{ORA}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{SLO}&
+\cellcolor{illegal}\mono{NOP}&
+\mono{ORA}&
+\mono{ASL}&
+\cellcolor{illegal}\mono{SLO}&
+\mono{PHP}&
+\mono{ORA}&
+\mono{ASL}&
+\cellcolor{illegal}\mono{ANC}&
+\cellcolor{illegal}\mono{NOP}&
+\mono{ORA}&
+\mono{ASL}&
+\cellcolor{illegal}\mono{SLO}
+\\
+%\arrayrulecolor{ghost2}\hline
+
+\mono{\$1{\color{ghost}x}}&&
+\mono{BPL}&
+\mono{ORA}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{SLO}&
+\cellcolor{illegal}\mono{NOP}&
+\mono{ORA}&
+\mono{ASL}&
+\cellcolor{illegal}\mono{SLO}&
+\mono{CLC}&
+\mono{ORA}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{SLO}&
+\cellcolor{illegal}\mono{NOP}&
+\mono{ORA}&
+\mono{ASL}&
+\cellcolor{illegal}\mono{SLO}
+\\
+%\hline
+
+\mono{\$2{\color{ghost}x}}&&
+\mono{JSR}&
+\mono{AND}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{RLA}&
+\mono{BIT}&
+\mono{AND}&
+\mono{ROL}&
+\cellcolor{illegal}\mono{RLA}&
+\mono{PLP}&
+\mono{AND}&
+\mono{ROL}&
+\cellcolor{missing}\mono{ANC}&
+\mono{BIT}&
+\mono{AND}&
+\mono{ROL}&
+\cellcolor{illegal}\mono{RLA}
+\\
+%\hline
+
+\mono{\$3{\color{ghost}x}}&&
+\mono{BMI}&
+\mono{AND}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{RLA}&
+\cellcolor{missing}\mono{NOP}&
+\mono{AND}&
+\mono{ROL}&
+\cellcolor{illegal}\mono{RLA}&
+\mono{SEC}&
+\mono{AND}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{RLA}&
+\cellcolor{missing}\mono{NOP}&
+\mono{AND}&
+\mono{ROL}&
+\cellcolor{illegal}\mono{RLA}
+\\
+%\hline
+
+\mono{\$4{\color{ghost}x}}&&
+\mono{RTI}&
+\mono{EOR}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{SRE}&
+\cellcolor{missing}\mono{NOP}&
+\mono{EOR}&
+\mono{LSR}&
+\cellcolor{illegal}\mono{SRE}&
+\mono{PHA}&
+\mono{EOR}&
+\mono{LSR}&
+\cellcolor{illegal}\mono{ALR}&
+\mono{JMP}&
+\mono{EOR}&
+\mono{LSR}&
+\cellcolor{illegal}\mono{SRE}
+\\
+%\hline
+
+\mono{\$5{\color{ghost}x}}&&
+\mono{BVC}&
+\mono{EOR}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{SRE}&
+\cellcolor{missing}\mono{NOP}&
+\mono{EOR}&
+\mono{LSR}&
+\cellcolor{illegal}\mono{SRE}&
+\mono{CLI}&
+\mono{EOR}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{SRE}&
+\cellcolor{missing}\mono{NOP}&
+\mono{EOR}&
+\mono{LSR}&
+\cellcolor{illegal}\mono{SRE}
+\\
+%\hline
+
+\mono{\$6{\color{ghost}x}}&&
+\mono{RTS}&
+\mono{ADC}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{RRA}&
+\cellcolor{missing}\mono{NOP}&
+\mono{ADC}&
+\mono{ROR}&
+\cellcolor{illegal}\mono{RRA}&
+\mono{PLA}&
+\mono{ADC}&
+\mono{ROR}&
+\cellcolor{illegal}\mono{ARR}&
+\mono{JMP}&
+\mono{ADC}&
+\mono{ROR}&
+\cellcolor{illegal}\mono{RRA}
+\\
+%\hline
+
+
+\mono{\$7{\color{ghost}x}}&&
+\mono{BVS}&
+\mono{ADC}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{RRA}&
+\cellcolor{missing}\mono{NOP}&
+\mono{ADC}&
+\mono{ROR}&
+\cellcolor{illegal}\mono{RRA}&
+\mono{SEI}&
+\mono{ADC}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{RRA}&
+\cellcolor{missing}\mono{NOP}&
+\mono{ADC}&
+\mono{ROR}&
+\cellcolor{illegal}\mono{RRA}
+\\
+%\hline
+
+
+\mono{\$8{\color{ghost}x}}&&
+\cellcolor{illegal}\mono{NOP}&
+\mono{STA}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{SAX}&
+\mono{STY}&
+\mono{STA}&
+\mono{STX}&
+\cellcolor{illegal}\mono{SAX}&
+\mono{DEY}&
+\cellcolor{missing}\mono{NOP}&
+\mono{TXA}&
+\cellcolor{unimplemented}\mono{XAA}&
+\mono{STY}&
+\mono{STA}&
+\mono{STX}&
+\cellcolor{illegal}\mono{SAX}
+\\
+%\hline
+
+
+\mono{\$9{\color{ghost}x}}&&
+\mono{BCC}&
+\mono{STA}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{unstablecertain}\mono{AHX}&
+\mono{STY}&
+\mono{STA}&
+\mono{STX}&
+\cellcolor{illegal}\mono{SAX}&
+\mono{TYA}&
+\mono{STA}&
+\mono{TXS}&
+\cellcolor{unstablecertain}\mono{TAS}&
+\cellcolor{unstablecertain}\mono{SHY}&
+\mono{STA}&
+\cellcolor{unstablecertain}\mono{SHX}&
+\cellcolor{unstablecertain}\mono{AHX}
+\\
+%\hline
+
+
+\mono{\$A{\color{ghost}x}}&&
+\mono{LDY}&
+\mono{LDA}&
+\mono{LDX}&
+\cellcolor{illegal}\mono{LAX}&
+\mono{LDY}&
+\mono{LDA}&
+\mono{LDX}&
+\cellcolor{illegal}\mono{LAX}&
+\mono{TAY}&
+\mono{LDA}&
+\mono{TAX}&
+\cellcolor{unimplemented}\mono{LAX}&
+\mono{LDY}&
+\mono{LDA}&
+\mono{LDX}&
+\cellcolor{illegal}\mono{LAX}
+\\
+%\hline
+
+
+\mono{\$B{\color{ghost}x}}&&
+\mono{BCS}&
+\mono{LDA}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{LAX}&
+\mono{LDY}&
+\mono{LDA}&
+\mono{LDX}&
+\cellcolor{illegal}\mono{LAX}&
+\mono{CLV}&
+\mono{LDA}&
+\mono{TSX}&
+\cellcolor{illegal}\mono{LAS}&
+\mono{LDY}&
+\mono{LDA}&
+\mono{LDX}&
+\cellcolor{illegal}\mono{LAX}
+\\
+%\hline
+
+
+\mono{\$C{\color{ghost}x}}&&
+\mono{CPY}&
+\mono{CMP}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{DCP}&
+\mono{CPY}&
+\mono{CMP}&
+\mono{DEC}&
+\cellcolor{illegal}\mono{DCP}&
+\mono{INY}&
+\mono{CMP}&
+\mono{DEX}&
+\cellcolor{missing}\mono{AXS}&
+\mono{CPY}&
+\mono{CMP}&
+\mono{DEC}&
+\cellcolor{illegal}\mono{DCP}
+\\
+%\hline
+
+
+\mono{\$D{\color{ghost}x}}&&
+\mono{BNE}&
+\mono{CMP}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{DCP}&
+\cellcolor{missing}\mono{NOP}&
+\mono{CMP}&
+\mono{DEC}&
+\cellcolor{illegal}\mono{DCP}&
+\mono{CLD}&
+\mono{CMP}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{DCP}&
+\cellcolor{missing}\mono{NOP}&
+\mono{CMP}&
+\mono{DEC}&
+\cellcolor{illegal}\mono{DCP}
+\\
+%\hline
+
+
+\mono{\$E{\color{ghost}x}}&&
+\mono{CPX}&
+\mono{SBC}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{ISC}&
+\mono{CPX}&
+\mono{SBC}&
+\mono{INC}&
+\cellcolor{illegal}\mono{ISC}&
+\mono{INX}&
+\mono{SBC}&
+\mono{NOP}&
+\cellcolor{missing}\mono{SBC}&
+\mono{CPX}&
+\mono{SBC}&
+\mono{INC}&
+\cellcolor{illegal}\mono{ISC}
+\\
+%\hline%
+
+
+\mono{\$F{\color{ghost}x}}&&
+\mono{BEQ}&
+\mono{SBC}&
+\cellcolor{missing}\mono{KIL}&
+\cellcolor{illegal}\mono{ISC}&
+\cellcolor{missing}\mono{NOP}&
+\mono{SBC}&
+\mono{INC}&
+\cellcolor{illegal}\mono{ISC}&
+\mono{SED}&
+\mono{SBC}&
+\cellcolor{missing}\mono{NOP}&
+\cellcolor{illegal}\mono{ISC}&
+\cellcolor{missing}\mono{NOP}&
+\mono{SBC}&
+\mono{INC}&
+\cellcolor{illegal}\mono{ISC}
+\\
+
+
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\begin{tabular}{ll}
+\begin{tabular}{ll}
+\end{tabular}&
+\begin{tabular}{ll}
+\cellcolor{illegal}&Stable. Supported by \dasm.\\
+\cellcolor{missing}&Stable. Not supported.\\
+\cellcolor{unstablecertain}&Unstable in some situations. Not supported.\\
+\cellcolor{unimplemented}&Highly unstable. Not supported.\\
+\end{tabular}
+\end{tabular}
+
+\end{table}
+\end{landscape}
+
+
+\begin{landscape}
+
+\subsection{Instruction Cycle Counts}
+\index{Processor!6502!Instruction Cycle Timing}
+\def\arraystretch{0.98}
+\begin{table}[H]
+%\tabcolsep=0.085cm
+\begin{tabular}{c|ccccccccccccccccc}
+%\begin{tabular}{c|c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}c!{\color{ghost2}\vrule}}
+%\toprule
+%\cline{2-13}
+%    \multicolumn{1}{c}{} &
+\mono{}&&\mono{\${\color{ghost}x}0}&\mono{\${\color{ghost}x}1}&\mono{\${\color{ghost}x}2}&\mono{\${\color{ghost}x}3}&\mono{\${\color{ghost}x}4}&\mono{\${\color{ghost}x}5}&\mono{\${\color{ghost}x}6}&\mono{\${\color{ghost}x}7}&\mono{\${\color{ghost}x}8}&\mono{\${\color{ghost}x}9}&\mono{\${\color{ghost}x}A}&\mono{\${\color{ghost}x}B}&\mono{\${\color{ghost}x}C}&\mono{\${\color{ghost}x}D}&\mono{\${\color{ghost}x}E}&\mono{\${\color{ghost}x}F}\\
+\hline
+\\
+\mono{\$0{\color{ghost}x}}&&
+\mono{7}&
+\mono{6}&
+$\infty$&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{3}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\arrayrulecolor{ghost2}\hline
+
+\mono{\$1{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+%\hline
+
+\mono{\$2{\color{ghost}x}}&&
+\mono{6}&
+\mono{6}&
+$\infty$&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{4}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\hline
+
+\mono{\$3{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+%\hline
+
+\mono{\$4{\color{ghost}x}}&&
+\mono{6}&
+\mono{6}&
+$\infty$&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{3}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{3}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\hline
+
+\mono{\$5{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+%\hline
+
+
+\mono{\$6{\color{ghost}x}}&&
+\mono{6}&
+\mono{6}&
+$\infty$&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{4}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\hline
+
+
+\mono{\$7{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+%\hline
+
+
+\mono{\$8{\color{ghost}x}}&&
+\mono{2}&
+\mono{6}&
+\mono{2}&
+\mono{6}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{4}
+\\
+%\hline
+
+
+\mono{\$9{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono6{}&
+$\infty$&
+\mono{6}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{2}&
+\mono{5}&
+\mono{2}&
+\mono{5}&
+\mono{5}&
+\mono{5}&
+\mono{5}&
+\mono{5}
+\\
+%\hline
+
+
+\mono{\$A{\color{ghost}x}}&&
+\mono{2}&
+\mono{6}&
+\mono{2}&
+\mono{6}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{3}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{4}
+\\
+%\hline
+
+
+\mono{\$B{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{ 5+}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{4}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{ 4+}
+\\
+%\hline
+
+
+\mono{\$C{\color{ghost}x}}&&
+\mono{2}&
+\mono{6}&
+\mono{2}&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\hline
+
+
+\mono{\$D{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+%\hline
+
+
+\mono{\$E{\color{ghost}x}}&&
+\mono{2}&
+\mono{6}&
+\mono{2}&
+\mono{8}&
+\mono{3}&
+\mono{3}&
+\mono{5}&
+\mono{5}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{2}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}
+\\
+%\hline
+
+
+\mono{\$F{\color{ghost}x}}&&
+\mono{ 2+}&
+\mono{ 5+}&
+$\infty$&
+\mono{8}&
+\mono{4}&
+\mono{4}&
+\mono{6}&
+\mono{6}&
+\mono{2}&
+\mono{ 4+}&
+\mono{2}&
+\mono{7}&
+\mono{ 4+}&
+\mono{ 4+}&
+\mono{7}&
+\mono{7}
+\\
+
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\begin{tabular}{ll}
+\begin{tabular}{ll}
+%\cellcolor{illegal}&Illegal, but supported by \dasm.\\
+%\cellcolor{unimplemented}&Highly unstable. Not supported.\\
+%\cellcolor{unstable}&Unstable and/or not supported.\\
+%\cellcolor{missing}&Illegal but stable, and missing from \dasm.\\
+%&Use \mono{.byte} to insert opcode, operand(s) into code\\
+\end{tabular}&
+\begin{tabular}{l}
+(+) add 1 cycle if branch instruction performed\\
+(+) add 1 cycle if page boundary is crossed\\
+ \\
+$\infty$ = Instruction never completes\\
+\end{tabular}
+
+\\
+\end{tabular}
+\end{table}
+\end{landscape}
+
+
+
+\iffalse
+
+
+\mono{}&
+\mono{\color{ghost}\xmark}& %iMP
+\mono{\color{ghost}\xmark}& %#
+\mono{\color{ghost}\xmark}& %zp
+\mono{\color{ghost}\xmark}& %zp,x
+\mono{\color{ghost}\xmark}& %abs
+\mono{\color{ghost}\xmark}& %abs,x
+\mono{\color{ghost}\xmark}& %abs,y
+\mono{\color{ghost}\xmark}& %(zp,x)
+\mono{\color{ghost}\xmark}& %(zp),y
+\mono{\color{ghost}\xmark}& %zp,y
+\mono{\color{ghost}\xmark}& %rel
+\mono{\color{ghost}\xmark} %(abs)
+\\
+
+\fi
+
+

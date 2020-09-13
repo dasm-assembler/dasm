@@ -1,0 +1,36 @@
+\chapter{HD6303 Processor}
+\label{processor:6303}
+\index{Processor!HD6303}
+
+\section{Endianness}
+
+The \mono{HD6303} is a big-endian machine. Byte ordering in words is high, then low.
+
+\section{Broken Opcodes Bug}
+\label{changelog:20200903bug}
+The \mono{AIM}, \mono{OIM}, \mono{EIM}, and \mono{TIM} opcodes are broken. These instructions are \textbf{three} bytes long according to the data sheets, yet in \dasm they are
+treated as \textbf{two} byte instructions.
+
+These instructions are supposed
+to work as follows:
+
+\begin{code}
+	tim	#$10,$C2
+	tim	#$80,$00,x
+\end{code}
+
+So there's an immediate value \textbf{and} a zero-page address
+for these instructions! \dasm, however, only accepts these:
+
+\begin{code}
+	tim	$10
+	tim	$10,x
+\end{code}
+
+These opcodes simply don't fit into the "regular pattern" of 8-bit CPUs
+we deal with in \dasm. Fixing this will require changes to
+\dasm beyond just fixing the instruction table, and the parser code is not even remotely ready for this.
+
+The "workaround" for now is to use macros instead of the
+actual instructions, see \mono{../test/broken6303hack.asm} for macro templates.
+
