@@ -29,7 +29,7 @@ Both Windows-style (carriage-return, line-feed) and Unix-style (line-feed) line 
 \index{Source Code!Format!Unicode}
 Note that comments may contain Unicode characters, as \dasm effectively ignores the contents of comments, but assembled code cannot contain Unicode.
 
-A comment directive anywhere on a line ("\mono{;}" or "\mono{/*}" or "\mono{*/}") terminates \dasm's label/directive/instruction parser for the rest of that line.
+An open comment directive anywhere on a line ("\mono{;}" or "\mono{/*}") terminates \dasm's label/directive/instruction parser for the rest of that line.
 
 \subsection{Assembler-style Comments: ;...}
 \index{Source Code!Comments!Assembler-style}
@@ -40,6 +40,7 @@ The presence of a semicolon at any character in a line will flag the rest of tha
 There may be valid labels, directives, and/or instructions before the comment. These will be correctly assembled.
 
 \subsubsection{Examples}
+\index{Examples!Comment Styles}
 \begin{code}
 ; this is a comment
       ; and so is this
@@ -83,23 +84,6 @@ It can sometimes be useful to enable/disable multi-line comments with a semicolo
 /*
  lda #2  ;<-- comment enabled. This is NOT assembled
  */
-\end{code}
-
-
-\subsubsection{Malformed Examples}
-\begin{code}
-/* the opcode to the right will be ignored */ lda #1
-
-/* and so is the opcode
-that follows this block
-*/ lda #1
-
-*/ a closing comment directive without a starting one first
-   is flagged by dasm as an error
-
-/* This comment is missing the closing end-of-comment.
-   dasm will flag an error
-
 \end{code}
 
 \subsection{Commenting Out Large Blocks}
@@ -148,8 +132,7 @@ If no \mono{sourcefile} is given, then \dasm will output a short help message, a
 
 \label{changelog:20200831help}
 \begin{outputx2}
-> dasm
-boo@Andrews-MacBook-Pro dasm % bin/dasm
+% ./dasm
 DASM 2.20.14-SNAPSHOT
 Copyright (c) 1988-2020 by the DASM team.
 License GPLv2+: GNU GPL version 2 or later (see file LICENSE).
@@ -180,6 +163,7 @@ Usage: dasm sourcefile [options]
 
 Report bugs on https://github.com/dasm-assembler/dasm please!
 
+
 Fatal assembly error: Check command-line format.
 \end{outputx2}
 
@@ -188,9 +172,10 @@ Fatal assembly error: Check command-line format.
 
 
 \section{Format}
-
+\index{Command Line!Format}
 \subsection{Spaces in Filenames}
 \label{changelog:20200906spaces}
+\index{Command Line!Spaces in Filenames}
 
 If a filename (source, output, listing file) contains spaces, the whole filename may be surrounded with quotes, or the spaces may be escaped with a backslash character - depending on your OS support for these.
 
@@ -208,7 +193,7 @@ Options are specified on the command-line, after the source file. There may be z
 An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' prefix, and followed by the option letter and then the parameter (if there is one). There must be no whitespace between the prefix, option letter or the parameter.
 
 \subsubsection{Example}
-
+\index{Examples!Command Line}
 \begin{outputx}
 > dasm source.asm -f2 -oout.bin -llist.txt -v3 -DVER=4
 \end{outputx}
@@ -216,7 +201,7 @@ An option is prefixed by a dash ``\mono{-}'' or a slash ``\mono{/}'' prefix, and
 This example will assemble the file \mono{source.asm}, using output format \mono{2} (random access segments). The resultant binary will be saved to the file \mono{out.bin} and a listing file written to \mono{list.txt}. During the assembly, verbosity of the output is set to \mono{3} (unresolved and unreferenced symbols displayed every pass). The value of the symbol (which will be available in the source code) \mono{VER} is set to \mono{4}.
 
 \section{Options}
-
+\index{Command Line!Options}
 \subsection{\texttt{-d Debug}}
 \index{Command Line!Options!Debug}
 \begin{usage}
@@ -412,7 +397,7 @@ See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 
 \subsection{\texttt{-m Maximum Output File Size}}
 \label{flag:maximum}
-\index{Command Line!Options!Maximum File Size}
+\index{Command Line!Options!Maximum Output Size}
 \begin{usage}
 -msize
 \end{usage}
@@ -495,7 +480,7 @@ See \nameref{flag:passes}.\\
 
 \subsection{\texttt{-R Remove Output File}}
 \label{flag:remove}
-\index{Command Line!Options!Remove}
+\index{Command Line!Options!Remove Output}
 \begin{usage}
 -R
 \end{usage}
@@ -652,21 +637,25 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 \end{savequote}
 
 \chapter{Numbers, Expressions and Operators}
-
+\index{Expressions}
+\index{Numbers}
+\index{Operators}
 
 \section{Constants}
 \label{section:numberformat}
 \index{Expressions!Constants}
 \index{Number Format}
-\index{Base!2 binary}
-\index{Base!8 octal}
-\index{Base!10 decimal}
-\index{Base!16 hexadecimal}
+\index{Bases!2 binary}
+\index{Bases!8 octal}
+\index{Bases!10 decimal}
+\index{Bases!16 hexadecimal}
 
 \label{changelog:20200905range}
 \subsection{Magnitude}
+\index{Numbers!Magnitude}
 All numbers and addresses in \dasm are represented internally as signed 32-bit values.
 
+\index{Numbers!Range Checking}
 Numbers are range-checked at point of usage. Byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{255}) inclusive, as these values are the extremes of what can be represented with signed and unsigned 8-bit values. Word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{65535}) as these are the extremes of signed and unigned 16-bit values.
 
 Note that the assembler cannot tell the difference between the representation (in 8 and 16 bits) of signed/unsigned representation of negative and positive numbers, as they share the same bit patterns. 
@@ -680,6 +669,9 @@ The answer to the above question is that it depends on what the programmer does 
 It is common for programmers who want all bits set to simply use \mono{-1}.
 
 \subsection{Base Representation}
+\index{Numbers!Bases}
+\index{Bases}
+
 Values in \dasm can be specified in base 2 (binary), 8 (octal), 10 (decimal), 16 (hexadecimal), or as ASCII characters. It doesn't matter to \dasm which format you use, so use what makes the most sense in your code. The interpretation of the value is determined by the prefix and digits used, as shown in the following table.
 
 \label{changelog:20200824const}
@@ -762,16 +754,19 @@ Expressions are calculations involving symbols and numbers. These calculations a
 
 \subsection{Brackets}
 \label{changelog:20200908brackets}
+\index{Brackets}
+\index{Expressions!Brackets}
 
 The precedence of operators is the same as for the C-language in almost all respects.  
 
 Either square brackets \mono{[]} or round brackets \mono{()} may be used to group expressions and to clarify/adjust precedence, depending on which \nameref{pseudoop:processor} is in effect for the assembly. Differences are related to the use of round brackets in assembler instructions. 
 
 \subsubsection{F8 and Other Processors}
-
+\index{Expressions!Brackets!F8 and Other}
 Either bracket type may be used in all situatinos.
 
 \subsubsection{6502 Processor}
+\index{Expressions!Brackets!6502}
 
 Use square brackets \mono{[]} when you are unsure. The reason round brackets \mono{()} cannot be used to
 group expressions is due to a conflict with 6502 assembly language which use them to specifiy indirect memory access (for example, ``\mono{lda (zp),y}'').
@@ -801,6 +796,7 @@ Some operators, such as \mono{||} (logical-OR), can return a resolved value even
 one of the expressions is not resolved.
  
 \subsection{Operator Precedence}
+\index{Operators!Precedence}
 
 Operators in any expression are evaluated in order of precedence. The following tables list the various operators, their function, and precedence (PR). Operators are handled in precedence order high to low.
 
@@ -839,7 +835,7 @@ Some operations will result in non-byte values when a byte value was wanted.	For
 However, there is a special-case for negative numbers used in operands. Although internally 32-bit, numbers in the range -1 to -128 are treated as two's complement 8-bit numbers in this situation. Another way of thinking of this - it is not necessary to take the \mono{LSB} of the number if it is in the range -128 to 255, as \dasm will recognise this as a valid signed/unsigned 8-bit number and do this automatically.
 
 \label{changelog:20200824rangebug}
-{\color{bug}Bug: Currently \dasm allows values in the range \mono{-\$FF} to \mono{+\$FF}. This is incorrect. The correct range is \mono{-\$80} to \mono{+\$FF}}.
+\index{Bugs!Range}{\color{bug}Bug: Currently \dasm allows values in the range \mono{-\$FF} to \mono{+\$FF}. This is incorrect. The correct range is \mono{-\$80} to \mono{+\$FF}}.
 
 \subsubsection{Examples}
 
@@ -1928,6 +1924,7 @@ Different processor	models use different endianness (byte ordering of word value
 The expressions (which may also be strings), are echoed on the
 screen and into the list file.\\
 
+\index{Number Format!Decimal Display of}
 To output values in decimal use the format \mono{[exp]d}
 
 \subsubsection{Example}
@@ -1953,8 +1950,12 @@ Hex= $2a Decimal= 42
 
 This isn't really a subroutine, but a boundary that resets the scope of \nameref{locallabels}. Those which are defined before the \nameref{pseudoop:subroutine} directive are not visible after it.
 
+\index{Labels!Scope}
+\index{Scope!Local Labels}
 Local labels must be unique within the scope of the subroutine in which they are defined, and cannot be accessed outside of that scope. Local label names do not need to be unique, provided that they are not duplicated within a single scope. In other words, names can be re-used.
 
+\index{Macros!Scope}
+\index{Scope!Macros}
 Macros implicitly define a new subroutine scope both at their beginning, and end. Local labels defined inside a macro are not avalable outside it, and local labels defined before a macro usage instance are also no longer visible after the instantiation. Automatic new local label scope boundries occur for each macro level.
 
 
@@ -1983,6 +1984,7 @@ The above example defines two functions (\mono{Fn10}, \mono{Fn20}) which both us
 
 Note that the function name label can be on the same line as the directive, if desired.
 
+\index{Scope!Implicit}
 An implicit \nameref{pseudoop:subroutine} scope is in effect when \nameref{macros} are instantiated, so local labels cannot be accessed spanning a macro instantiation.\\
 
 \subsubsection{Example}
@@ -2064,6 +2066,12 @@ the global and local list switches must be on.\\
 \subsection{\texttt{.FORCE}}
 \label{pseudoop:force}
 \index{Directives!\texttt{[.FORCE]}}
+\index{Addressing!.0 Implied}
+\index{Addressing!.0x Implied (0,x)}
+\index{Addressing!.0y Implied, (0,y)}
+\index{Addressing!.a Absolute}
+\index{Addressing!.b Byte}
+\index{Addressing!.bx Byte Address  Indexed,  x}
 
 \begin{usage}
   mnemonic[.force]

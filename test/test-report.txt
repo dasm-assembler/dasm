@@ -39,6 +39,7 @@
  *                       same_names	binary is same,	pass
  *                 recursive_macro0	binary is same,	pass
  *                       toobigword	binary is same,	pass
+ *                       m_switch_1	binary is same,	pass
 
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
@@ -74,4 +75,7 @@
  *                      doublemacro	error_code [25] pass
  *                    recursive_eqm	error_code [38] pass
  *                    recursive_set	error_code [38] pass
-executed 73 tests, 66 OK, 7 failed, result: overall PASS
+ *                       m_switch_0	error_code [38] pass
+ *                       m_switch_2	error_code [1] pass
+ *                       m_switch_3	error_code [38] pass
+executed 77 tests, 70 OK, 7 failed, result: overall PASS
