@@ -4,6 +4,28 @@ closely related files (Makefile, test cases) only, this
 is *not* a complete record of every single change ever
 made. Check the GitHub commit history for that. :-)
 
+new in DASM version 2.20.14:
+
+    * Finally: Technical Documentation and User Guide for
+	  dasm in PDF format, written by Andrew Davie in his 
+	  engaging and witty way of writing.
+
+	* Dynamic Labels support by concatenating evaluated values
+
+	* Multiline C style /* */ comments
+
+	* Support for mc68hc908 controller family
+
+	* Cleaned up and improved Unit Tests
+
+    * new switch -R to remove output file if dasm found an
+	  error during assembly
+
+	* Small optimization in the Atari 2600 CLEAN_START macro
+
+	* SETSTR expression; typically used in a macro to be 
+	  able to use the name of an argument
+
 DASM version 2.20.13:
 
 	* longstring segfault fix
