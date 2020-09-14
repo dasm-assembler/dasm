@@ -1316,8 +1316,8 @@ This is the function name: HelloWorld
 \begin{usage}
    DC[{.B|.W|.L}] exp,...
 \end{usage}
-
-Declare data in the current segment.  No output is generated if within a uninitialised \mono{.U} segment. The byte ordering (the endian order) for the selected processor is used for each entry.
+\label{changelog:20200915endian}
+Declare data in the current segment.  No output is generated if within a uninitialised \mono{.U} segment. The byte ordering (the endian order) for the selected processor is used for each entry. It is possible to "swap endianness" (the byte order of wide-characters) using \mono{DC.s}
 
 The default size extension (\mono{.B}, \mono{.W}, \mono{.L}) is \mono{.B} (byte).
 
@@ -1337,6 +1337,7 @@ The default size extension (\mono{.B}, \mono{.W}, \mono{.L}) is \mono{.B} (byte)
   .WORD 100,1000,10000, VectorTable
   LONG 100000, 50*50*50
   dc 'a'  ; ERROR - should be 'a
+  dc.s "unicode"   ; endian-swapped character words
 \end{code}
 
 \begin{code}[caption=Data Declaration using REPEAT Loop]
