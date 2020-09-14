@@ -1314,7 +1314,7 @@ This is the function name: HelloWorld
 \index{Directives!Data!\texttt{DC}}
 
 \begin{usage}
-   DC[{.B|.W|.L}] exp,...
+   DC[{.B|.W|.L|.S}] exp,...
 \end{usage}
 \label{changelog:20200915endian}
 Declare data in the current segment.  No output is generated if within a uninitialised \mono{.U} segment. The byte ordering (the endian order) for the selected processor is used for each entry. It is possible to "swap endianness" (the byte order of wide-characters) using \mono{DC.s}
