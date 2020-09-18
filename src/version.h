@@ -8,7 +8,7 @@
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -57,7 +57,7 @@
  */
 #define DASM_PRINT_LEGAL \
   DASM_PRINT_COPYRIGHT \
-  (void) puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE)."); \
+  (void) puts("License GPLv2+: GNU GPL version 3 or later (see file LICENSE)."); \
   (void) puts("DASM is free software: you are free to change and redistribute it."); \
   (void) puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law."); \
 
