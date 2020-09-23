@@ -208,29 +208,41 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         
         //FIX: OPCODE.FORCE needs to be adjusted for x,y,sp indexing...
         switch(sym->addrmode) {
+        	case AM_INDBYTEX:
+        	case AM_INDBYTEY:
+        		// there is only INDWORD to force indirect addressing mode but not with X or Y
+        		// this must be an error
+                asmerr( ERROR_ILLEGAL_FORCED_ADDRESSING_MODE, false, mne->name );
+                FreeSymbolList(symbase);
+
+                //FIX: Cause assembly to fail when an invalid mode is used for an opcode...
+                ++Redo;
+                Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+                return;
+
         	case AM_BYTEADR_SP:
         		addrmode = AM_BYTEADR_SP;
-                if (Mnext == AM_WORDADR)
+                if ((Mnext == AM_WORDADR) || (Mnext == AM_WORDADR_SP))
                 	addrmode = AM_WORDADR_SP;
         		break;
 
         	case AM_0Y:
         		addrmode = AM_0Y;
 
-            	if(Mnext == AM_WORDADR)
+            	if ((Mnext == AM_WORDADR) || (Mnext == AM_WORDADRY))
             		addrmode = AM_WORDADRY;
 
-            	if(Mnext == AM_BYTEADR)
+            	if ((Mnext == AM_BYTEADR) || (Mnext == AM_BYTEADRY))
             		addrmode = AM_BYTEADRY;
         		break;
 
         	case AM_0X:
         		addrmode = AM_0X;
 
-                if(Mnext == AM_WORDADR)
+                if ((Mnext == AM_WORDADR) || (Mnext == AM_WORDADRX))
                 	addrmode = AM_WORDADRX;
 
-                if(Mnext == AM_BYTEADR)
+                if ((Mnext == AM_BYTEADR) || (Mnext == AM_BYTEADRX))
                 	addrmode = AM_BYTEADRX;
         		break;
         }
