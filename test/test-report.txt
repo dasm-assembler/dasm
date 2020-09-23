@@ -20,6 +20,8 @@
  *     cmdline_defs/declare_var_mac	binary is same,	pass
  *                           locals	binary is same,	pass
  *                          suitef8	binary is same,	pass
+ *                        stringify	binary is same,	pass
+ *                     lockup_macro	binary is same,	pass
  *                     suite68hc908	binary is same,	pass
  *                  forced_addrmode	binary is same,	pass
  *                         6502_16h	binary is same,	pass
@@ -40,6 +42,10 @@
  *                 recursive_macro0	binary is same,	pass
  *                       toobigword	binary is same,	pass
  *                       m_switch_1	binary is same,	pass
+ *                multiline_comment	binary is same,	pass
+ *                            stawx	binary is same,	pass
+ *            macro_same_as_include	binary is same,	pass
+ *                            jmpiw	binary is same,	pass
 
 === error test cases (strict=on)
  *                       badopcode1	error_code [5] pass
@@ -78,4 +84,13 @@
  *                       m_switch_0	error_code [38] pass
  *                       m_switch_2	error_code [1] pass
  *                       m_switch_3	error_code [38] pass
-executed 77 tests, 70 OK, 7 failed, result: overall PASS
+ *                            stabx	error_code [5] pass
+ *                   macro_included	error_code [14] pass
+ *                            staby	error_code [5] pass
+ *                           staby2	error_code [3] pass
+ *                            stawy	error_code [3] pass
+ *                           stawy2	error_code [5] pass
+ *                           staby3	error_code [3] pass
+ *                           staby4	error_code [3] pass
+ *                           stawy3	error_code [3] pass
+executed 92 tests, 85 OK, 7 failed, result: overall PASS

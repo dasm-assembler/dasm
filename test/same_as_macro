@@ -1,0 +1,6 @@
+
+
+	.MACRO ttt_macro
+	    ldx #2
+	.ENDM
+
