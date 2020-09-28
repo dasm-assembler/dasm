@@ -41,7 +41,7 @@ leadingSpace() {
     echo "$@" | awk '{ printf(" * % 32s", $0)}'
 }
 
-refFiles=`find . -type f -name '*.bin.ref'`
+refFiles=`find . -type f -name '*.bin.ref' | sort`
 
 for item in $refFiles
 do
@@ -87,7 +87,7 @@ do
     nTests="$[$nTests+1]"
 done
 
-LIST=`find . -type f -name '*.fail'`
+LIST=`find . -type f -name '*.fail' | sort`
 if [ "$LIST" != "" ]
 then
 

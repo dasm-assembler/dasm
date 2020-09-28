@@ -23,8 +23,8 @@
  *                           locals	binary is same,	pass
  *                     lockup_macro	binary is same,	pass
  *                       longstring	binary is same,	pass
- *                       m_switch_1	binary is same,	pass
  *            macro_same_as_include	binary is same,	pass
+ *                       m_switch_1	binary is same,	pass
  *                multiline_comment	binary is same,	pass
  *                 recursive_macro0	binary is same,	pass
  *                       same_names	binary is same,	pass
@@ -36,8 +36,8 @@
  *            selftest/4_finally_OK	binary is same,	pass
  *                            stawx	binary is same,	pass
  *                string_conversion	binary is same,	pass
- *                     string_table	binary is same,	pass
  *                        stringify	binary is same,	pass
+ *                     string_table	binary is same,	pass
  *                        suite6303	binary is same,	pass
  *                        suite6502	binary is same,	pass
  *                       suite68705	binary is same,	pass
@@ -53,24 +53,24 @@
  *                        6502_X16b	error_code [5] pass
  *                         6811_X16	error_code [5] pass
  *                         6811_Y16	error_code [5] pass
- *                      68908_SP16b	error_code [5] pass
  *                  68908_cbeq_SP16	error_code [5] pass
  *                  68908_dbnz_SP16	error_code [5] pass
+ *                      68908_SP16b	error_code [5] pass
  *                       badopcode1	error_code [5] pass
  *                       badopcode2	error_code [3] pass
  *              delete_empty_binary	file was deleted, pass
  *                      doublemacro	error_code [25] pass
  *                     improper_equ	error_code [5] pass
  *                        jentzsch2	error_code [3] pass
+ *                   macro_included	error_code [14] pass
+ *                     missing_endm	error_code [40] pass
  *                       m_switch_0	error_code [38] pass
  *                       m_switch_2	error_code [1] pass
  *                       m_switch_3	error_code [38] pass
- *                   macro_included	error_code [14] pass
- *                     missing_endm	error_code [40] pass
- *                     negative1024	error_code [5] pass
  *                   negative1024_2	error_code [5] pass
- *                      negative256	error_code [5] pass
+ *                     negative1024	error_code [5] pass
  *                    negative256_2	error_code [5] pass
+ *                      negative256	error_code [5] pass
  *                    recursive_eqm	error_code [38] pass
  *                    recursive_equ	error_code [3] pass
  *                 recursive_macro1	error_code [38] pass
@@ -83,13 +83,13 @@
  *   selftest/7_false_positive_fail		testcase definition incomplete, missing error_level (27), FAILED!
  *     selftest/8_false_positive_OK	error_code [27] pass
  *                            stabx	error_code [5] pass
- *                            staby	error_code [5] pass
  *                           staby2	error_code [3] pass
  *                           staby3	error_code [3] pass
  *                           staby4	error_code [3] pass
- *                            stawy	error_code [3] pass
+ *                            staby	error_code [5] pass
  *                           stawy2	error_code [5] pass
  *                           stawy3	error_code [3] pass
+ *                            stawy	error_code [3] pass
  *                         supercat	error_code [18] pass
  *                       toobigbyte	error_code [5] pass
  *                       toobigword	error_code [5] pass
