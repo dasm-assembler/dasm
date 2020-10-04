@@ -1,96 +1,96 @@
 === build test cases (strict=off)
+ *                         6502_16h	binary is same,	pass
+ *                         6502_16l	binary is same,	pass
+ *                      6502_DCswap	binary is same,	pass
+ *                     68908_DCswap	binary is same,	pass
  *                addressexpression	binary is same,	pass
+ *                    align_mod_mac	binary is same,	pass
  *                atari2600/boing26	binary is same,	pass
  *           atari7800/spritesample	binary is same,	pass
  *                   broken6303hack	binary is same,	pass
  *                 channel-f/lights	binary is same,	pass
  *                 channel-f/tetris	binary is same,	pass
+ *     cmdline_defs/declare_var_mac	binary is same,	pass
+ *            cmdline_defs/ramstart	binary is same,	pass
+ *                  declare_var_mac	binary is same,	pass
  *                      doublemacro	binary is same,	pass
  *                          example	binary is same,	pass
  *                             fill	binary is same,	pass
+ *                  forced_addrmode	binary is same,	pass
  *                          include	binary is same,	pass
+ *                            jmpiw	binary is same,	pass
  *                     labelchanges	binary is same,	pass
+ *                           locals	binary is same,	pass
+ *                     lockup_macro	binary is same,	pass
  *                       longstring	binary is same,	pass
+ *            macro_same_as_include	binary is same,	pass
+ *                       m_switch_1	binary is same,	pass
+ *                multiline_comment	binary is same,	pass
+ *                 recursive_macro0	binary is same,	pass
+ *                       same_names	binary is same,	pass
  *                           sample	binary is same,	pass
+ *           selftest/0_no_assembly		assembly	FAILED! [27]
+ *             selftest/1_no_binary		file doesn't exist or has zero size	FAILED!
+ *        selftest/2_hexref_missing		file [selftest/2_hexref_missing.hex.ref] missing	FAILED!
+ *      selftest/3_binary_different		binaries differ	FAILED!
+ *            selftest/4_finally_OK	binary is same,	pass
+ *                            stawx	binary is same,	pass
+ *                string_conversion	binary is same,	pass
+ *                        stringify	binary is same,	pass
+ *                     string_table	binary is same,	pass
  *                        suite6303	binary is same,	pass
  *                        suite6502	binary is same,	pass
  *                       suite68705	binary is same,	pass
  *                      suite68hc11	binary is same,	pass
- *            cmdline_defs/ramstart	binary is same,	pass
- *     cmdline_defs/declare_var_mac	binary is same,	pass
- *                           locals	binary is same,	pass
- *                          suitef8	binary is same,	pass
- *                        stringify	binary is same,	pass
- *                     lockup_macro	binary is same,	pass
  *                     suite68hc908	binary is same,	pass
- *                  forced_addrmode	binary is same,	pass
- *                         6502_16h	binary is same,	pass
- *                         6502_16l	binary is same,	pass
- *                string_conversion	binary is same,	pass
- *                  declare_var_mac	binary is same,	pass
- *           selftest/0_no_assembly		assembly	FAILED! [27]
- *            selftest/4_finally_OK	binary is same,	pass
- *             selftest/1_no_binary		file doesn't exist or has zero size	FAILED!
- *        selftest/2_hexref_missing		file [selftest/2_hexref_missing.hex.ref] missing	FAILED!
- *      selftest/3_binary_different		binaries differ	FAILED!
- *                     ucasm_compat	binary is same,	pass
- *                    align_mod_mac	binary is same,	pass
- *                     68908_DCswap	binary is same,	pass
- *                     string_table	binary is same,	pass
- *                      6502_DCswap	binary is same,	pass
- *                       same_names	binary is same,	pass
- *                 recursive_macro0	binary is same,	pass
+ *                          suitef8	binary is same,	pass
  *                       toobigword	binary is same,	pass
- *                       m_switch_1	binary is same,	pass
- *                multiline_comment	binary is same,	pass
- *                            stawx	binary is same,	pass
- *            macro_same_as_include	binary is same,	pass
- *                            jmpiw	binary is same,	pass
+ *                     ucasm_compat	binary is same,	pass
 
 === error test cases (strict=on)
- *                       badopcode1	error_code [5] pass
- *                       badopcode2	error_code [3] pass
- *                         segfault	error_code [38] pass
- *                       toobigbyte	error_code [5] pass
- *                     improper_equ	error_code [5] pass
- *                       toobigword	error_code [5] pass
+ *                         6502_16b	error_code [5] pass
+ *                         6502_16w	error_code [5] pass
+ *                        6502_X16b	error_code [5] pass
  *                         6811_X16	error_code [5] pass
  *                         6811_Y16	error_code [5] pass
  *                  68908_cbeq_SP16	error_code [5] pass
  *                  68908_dbnz_SP16	error_code [5] pass
- *                        6502_X16b	error_code [5] pass
- *                         6502_16b	error_code [5] pass
- *                 reverse_segfault	error_code [38] pass
- *   selftest/6_false_positive_fail		got error_level (1) but expected (15), double FAULT!
- *             selftest/5_must_fail		no error	FAILED!
- *     selftest/8_false_positive_OK	error_code [27] pass
- *   selftest/7_false_positive_fail		testcase definition incomplete, missing error_level (27), FAILED!
- *                         supercat	error_code [18] pass
- *                         6502_16w	error_code [5] pass
  *                      68908_SP16b	error_code [5] pass
- *                        jentzsch2	error_code [3] pass
- *                      negative256	error_code [5] pass
- *                   negative1024_2	error_code [5] pass
- *                    negative256_2	error_code [5] pass
- *                     negative1024	error_code [5] pass
+ *                       badopcode1	error_code [5] pass
+ *                       badopcode2	error_code [3] pass
  *              delete_empty_binary	file was deleted, pass
- *                     missing_endm	error_code [40] pass
- *                    recursive_equ	error_code [3] pass
- *                 recursive_macro1	error_code [38] pass
- *                 recursive_macro2	error_code [38] pass
  *                      doublemacro	error_code [25] pass
- *                    recursive_eqm	error_code [38] pass
- *                    recursive_set	error_code [38] pass
+ *                     improper_equ	error_code [5] pass
+ *                        jentzsch2	error_code [3] pass
+ *                   macro_included	error_code [14] pass
+ *                     missing_endm	error_code [40] pass
  *                       m_switch_0	error_code [38] pass
  *                       m_switch_2	error_code [1] pass
  *                       m_switch_3	error_code [38] pass
+ *                   negative1024_2	error_code [5] pass
+ *                     negative1024	error_code [5] pass
+ *                    negative256_2	error_code [5] pass
+ *                      negative256	error_code [5] pass
+ *                    recursive_eqm	error_code [38] pass
+ *                    recursive_equ	error_code [3] pass
+ *                 recursive_macro1	error_code [38] pass
+ *                 recursive_macro2	error_code [38] pass
+ *                    recursive_set	error_code [38] pass
+ *                 reverse_segfault	error_code [38] pass
+ *                         segfault	error_code [38] pass
+ *             selftest/5_must_fail		no error	FAILED!
+ *   selftest/6_false_positive_fail		got error_level (1) but expected (15), double FAULT!
+ *   selftest/7_false_positive_fail		testcase definition incomplete, missing error_level (27), FAILED!
+ *     selftest/8_false_positive_OK	error_code [27] pass
  *                            stabx	error_code [5] pass
- *                   macro_included	error_code [14] pass
- *                            staby	error_code [5] pass
  *                           staby2	error_code [3] pass
- *                            stawy	error_code [3] pass
- *                           stawy2	error_code [5] pass
  *                           staby3	error_code [3] pass
  *                           staby4	error_code [3] pass
+ *                            staby	error_code [5] pass
+ *                           stawy2	error_code [5] pass
  *                           stawy3	error_code [3] pass
+ *                            stawy	error_code [3] pass
+ *                         supercat	error_code [18] pass
+ *                       toobigbyte	error_code [5] pass
+ *                       toobigword	error_code [5] pass
 executed 92 tests, 85 OK, 7 failed, result: overall PASS
