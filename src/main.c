@@ -102,7 +102,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },
     { ERROR_NOT_ENOUGH_ARGS,                        true,   "Not enough arguments."   },
     { ERROR_LABEL_MISMATCH,                         false,   "Label mismatch...\n --> %s"  },
-    { ERROR_MACRO_REPEATED,                         true,   "Macro \"%s\" defintion is repeated."  },
+    { ERROR_MACRO_REPEATED,                         true,   "Macro \"%s\" definition is repeated."  },
     { ERROR_VALUE_UNDEFINED,                        true,   "Value Undefined."   },
     { ERROR_PROCESSOR_NOT_SUPPORTED,                true,   "Processor '%s' not supported."  },
     { ERROR_REPEAT_NEGATIVE,                        false,  "REPEAT parameter < 0 (ignored)."   },
