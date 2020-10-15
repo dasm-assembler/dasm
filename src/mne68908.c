@@ -81,7 +81,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "bsr", 0, AF_REL, { 0xAD } },
 
     { NULL, v_mnemonic, "cbeqa", MF_MASK, AF_REL, { 0x41 } }, 
-    { NULL, v_mnemonic, "cbeq",  MF_REL, (AF_BYTEADR | AF_INDBYTEX | /*AF_0X |*/ AF_BYTEADR_SP), { 0x31, 0x61/*,  0x71*/, 0x9E61 } }, 
+    { NULL, v_mnemonic, "cbeq",  MF_REL, (AF_BYTEADR | AF_INDBYTEX | AF_0X | AF_BYTEADR_SP), { 0x31, 0x61,  0x71, 0x9E61 } }, 
     { NULL, v_mnemonic, "cbeqx", MF_MASK, AF_REL, { 0x51 } }, 
 
     { NULL, v_mnemonic, "clc", 0, AF_IMP, { 0x98 } },
@@ -97,7 +97,7 @@ MNEMONIC Mne68908[] = {
     { NULL, v_mnemonic, "cphx", 0, AF_IMM16|AF_BYTEADR, { 0x65 , 0x75} },
     { NULL, v_mnemonic, "cpx", 0, AF_HMASK, { 0xA3, 0xB3, 0xE3, 0xC3, 0xD3, 0xF3, 0x9EE3, 0x9ED3 } },
 
-    { NULL, v_mnemonic, "dbnz",  MF_REL, (AF_BYTEADR | AF_BYTEADRX /*| AF_0X*/ | AF_BYTEADR_SP), { 0x3B, 0x6B/*, 0x7B*/, 0x9E6B } }, 
+    { NULL, v_mnemonic, "dbnz",  MF_REL, (AF_BYTEADR | AF_BYTEADRX | AF_0X | AF_BYTEADR_SP), { 0x3B, 0x6B, 0x7B, 0x9E6B } }, 
     { NULL, v_mnemonic, "dbnza",      0, AF_REL, { 0x4b } },
     { NULL, v_mnemonic, "dbnzx",      0, AF_REL, { 0x5b } },
 
