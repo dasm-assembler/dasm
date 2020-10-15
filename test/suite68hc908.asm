@@ -1,13 +1,14 @@
 ;
 ;   regression test for all opcodes for 68hc908 controller 
 ;   
-;   two opcodes with indirect X adressing are not yet implemented
-;	dbnz	(X), jumpLabel	
-;	cbeq	(X), jumpLabel
+;   two opcodes with indirect X adressing and zero offset are not cleanly supported
+;	dbnz		(X), jumpLabel	
+;	cbeq		(X), jumpLabel
 ;			
-;    one must add 0 to circumvent this problem, the code will become one (that zero) byte larger
-;	dbnz	(0,X), jumpLabel
-;	cbeq	(0,X), jumpLabel
+;    one must add forced-address-mode extension ".ix" to the mnemonic and add a dummy variable
+;    in order to get the correct opcodes 
+;	dbnz.ix		0, jumpLabel
+;	cbeq.ix		0, jumpLabel
 ;
 
 	.PROCESSOR	68hc908
@@ -128,6 +129,7 @@ subRoutine:
 	cbeq		9,frontLoop
 	cbeq		(0xA,X),	frontLoop
 	cbeq		[SP+0x0B],frontLoop
+	cbeq.ix		0, frontLoop		; must add forced-address-mode extension to get opcode 0x71
 	cbeqX		0x40,frontLoop	
 
 	clc
@@ -175,6 +177,7 @@ backLoop:
 	dbnz	4,backLoop
 	dbnz	[X+5],backLoop
 	dbnz	[SP+6],backLoop
+	dbnz.ix		0,backLoop	; must add forced-address-mode extension and dummy 0 to get opcode 0x7B
 	dbnzX	backLoop	
 
 	dec	RAM_START
