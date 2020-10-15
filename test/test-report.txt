@@ -58,6 +58,7 @@
  *                      68908_SP16b	error_code [5] pass
  *                       badopcode1	error_code [5] pass
  *                       badopcode2	error_code [3] pass
+ *                       concat_str	error_code [39] pass
  *              delete_empty_binary	file was deleted, pass
  *                      doublemacro	error_code [25] pass
  *                     improper_equ	error_code [5] pass
@@ -93,4 +94,4 @@
  *                         supercat	error_code [18] pass
  *                       toobigbyte	error_code [5] pass
  *                       toobigword	error_code [5] pass
-executed 92 tests, 85 OK, 7 failed, result: overall PASS
+executed 93 tests, 86 OK, 7 failed, result: overall PASS
