@@ -601,6 +601,12 @@ void evaltop(void)
         return;
     }
     --Opi;
+
+    if (Opdis[Opi] == NULL) {
+    	asmerr( ERROR_AVOID_SEGFAULT, true, "operator function table" );
+    	return;
+    }
+
     if (Oppri[Opi] == 128) {
         if (Argi < Argibase + 1) {
             asmerr( ERROR_SYNTAX_ERROR, false, NULL );
