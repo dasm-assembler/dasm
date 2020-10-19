@@ -1,0 +1,93 @@
+
+
+\providecommand{\samTablePB}[1]%
+{\let\samTableTemp=\\#1\let\\=\samTableTemp\hspace{0pt}}
+ \ifundefined{samTableWidthDefined}
+		\newlength{\samTableWidth}
+		\newlength{\samTableWidthComplete}
+		\global\def\samTableWidthDefined{}
+ \fi
+
+\def\samTableColAWidth{28pt}
+\def\samTableColBWidth{135pt}
+
+\setlength\samTableWidth{%
+	 \samTableColAWidth+%
+	 \samTableColBWidth+%
+0pt}
+
+\def\samTableNumCols{2}
+
+\setlength\samTableWidthComplete{\samTableWidth+%
+         \tabcolsep*\samTableNumCols*2+\arrayrulewidth*\samTableNumCols}
+         
+\ifthenelse{\lengthtest{\samTableWidthComplete > \linewidth}}%
+         {\def\samTableScale{\ratio{\linewidth-%
+                        \tabcolsep*\samTableNumCols*2-%
+                        \arrayrulewidth*\samTableNumCols}%
+{\samTableWidth}}}%
+{\def\samTableScale{1}}
+
+\ifthenelse{\isundefined{\samTableColB}}{\newlength{\samTableColB}}{}\settowidth{\samTableColB}{\begin{tabular}{@{}p{\samTableColAWidth*\samTableScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\samTableColC}}{\newlength{\samTableColC}}{}\settowidth{\samTableColC}{\begin{tabular}{@{}p{\samTableColBWidth*\samTableScale}@{}}x\end{tabular}}
+
+\def\standardAddressModesTable{
+\begin{longtable}{|p{\samTableColAWidth}|p{\samTableColBWidth}|}
+\hhline{|-|-|}
+	 \samTablePB{\centering}\gnumbox{}\ninerm{inh}%
+	 &\samTablePB{\raggedright}\gnumbox{}\ninerm{inherent}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxLG{}\ninerm{imm8}%
+	 &\samTablePB{\raggedright}\gnumbox{}\ninerm{immediate byte}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxGN{}\ninerm{imm16}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{immediate word}%
+\\	
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxLB{}\ninerm{rel}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{relative}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxLO{}\ninerm{dir}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{direct (zero page/8bit address)}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumbox{}\ninerm{ext}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{16bit address (absolute)}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumbox{}\ninerm{x16}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed + word-offset}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumbox{}\ninerm{sp16}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{SP-indexed + word-offset}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxLP{}\ninerm{x8}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed + byte-offset}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxSB{}\ninerm{sp8}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{SP-indexed + byte-offset}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxLY{}\ninerm{x}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumbox{}\ninerm{-}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{illegal opcode}%
+\\
+\hhline{|-|~|}
+	 \samTablePB{\centering}\gnumboxb{}\ninerm{*}%
+	&\samTablePB{\raggedright}\gnumbox{}\ninerm{prefix for SP-indexed address mode}%
+\\
+\hhline{--}
+\caption[\standardAddressingModesCaption68hc908]{\label{standard_address_modes_68hc908}\standardAddressingModesCaption68hc908}%
+\end{longtable}
+}
+
+

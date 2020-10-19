@@ -1,0 +1,489 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                  %%
+%%  The rest is the gnumeric table, except for the closing          %%
+%%  statement. Changes below will alter the table's appearance.     %%
+%%                                                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \providecommand{\gnumericmathit}[1]{#1} 
+
+%%  Uncomment the next line if you would like your numbers to be in %%
+%%  italics if they are italizised in the gnumeric table.           %%
+%% \renewcommand{\gnumericmathit}[1]{\mathit{#1}}
+
+\providecommand{\tableOmSevenZeroFivePB}[1]%
+{\let\tableOmSevenZeroFiveTemp=\\#1\let\\=\tableOmSevenZeroFiveTemp\hspace{0pt}}
+ \ifundefined{tableOmSevenZeroFiveWidthDefined}
+		\newlength{\tableOmSevenZeroFiveWidth}
+        \newlength{\tableOmSevenZeroFiveWidthComplete}
+		\global\def\tableOmSevenZeroFiveWidthDefined{}
+ \fi
+
+%% The following setting protects this code from babel shorthands.  %%
+
+%%  The default table format retains the relative column widths of  %%
+%%  gnumeric. They can easily be changed to c, r or l. In that case %%
+%%  you may want to comment out the next line and uncomment the one %%
+%%  thereafter                                                      %%
+
+%% to adjust positions in multirow situations                       %%
+%%\setlength{\bigstrutjot}{\jot}
+%%\setlength{\extrarowheight}{\doublerulesep}
+
+%%  The \setlongtables command keeps column widths the same across  %%
+%%  pages. Simply comment out next line for varying column widths.  %%
+%%\setlongtables
+
+\setlength\tableOmSevenZeroFiveWidth{%
+	60pt+%
+	50pt+%
+	50pt+%
+	60pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+0pt}
+
+\def\tableOmSevenZeroFiveNumCols{17}
+
+\setlength\tableOmSevenZeroFiveWidthComplete{\tableOmSevenZeroFiveWidth+%
+         \tabcolsep*\tableOmSevenZeroFiveNumCols*2+\arrayrulewidth*\tableOmSevenZeroFiveNumCols}
+         
+\ifthenelse{\lengthtest{\tableOmSevenZeroFiveWidthComplete > \linewidth}}%
+         {\def\tableOmSevenZeroFiveScale{\ratio{\linewidth-%
+                        \tabcolsep*\tableOmSevenZeroFiveNumCols*2-%
+                        \arrayrulewidth*\tableOmSevenZeroFiveNumCols}%
+						{\tableOmSevenZeroFiveWidth}}%
+		 }%
+		 {
+		 	\def\tableOmSevenZeroFiveScale{1}%
+		 }
+
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColB}}{\newlength{\tableOmSevenZeroFiveColB}}{}\settowidth{\tableOmSevenZeroFiveColB}{\begin{tabular}{@{}p{60pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColC}}{\newlength{\tableOmSevenZeroFiveColC}}{}\settowidth{\tableOmSevenZeroFiveColC}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColD}}{\newlength{\tableOmSevenZeroFiveColD}}{}\settowidth{\tableOmSevenZeroFiveColD}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColE}}{\newlength{\tableOmSevenZeroFiveColE}}{}\settowidth{\tableOmSevenZeroFiveColE}{\begin{tabular}{@{}p{60pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColF}}{\newlength{\tableOmSevenZeroFiveColF}}{}\settowidth{\tableOmSevenZeroFiveColF}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColG}}{\newlength{\tableOmSevenZeroFiveColG}}{}\settowidth{\tableOmSevenZeroFiveColG}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColH}}{\newlength{\tableOmSevenZeroFiveColH}}{}\settowidth{\tableOmSevenZeroFiveColH}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColJ}}{\newlength{\tableOmSevenZeroFiveColJ}}{}\settowidth{\tableOmSevenZeroFiveColJ}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColK}}{\newlength{\tableOmSevenZeroFiveColK}}{}\settowidth{\tableOmSevenZeroFiveColK}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColL}}{\newlength{\tableOmSevenZeroFiveColL}}{}\settowidth{\tableOmSevenZeroFiveColL}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColM}}{\newlength{\tableOmSevenZeroFiveColM}}{}\settowidth{\tableOmSevenZeroFiveColM}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColN}}{\newlength{\tableOmSevenZeroFiveColN}}{}\settowidth{\tableOmSevenZeroFiveColN}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColO}}{\newlength{\tableOmSevenZeroFiveColO}}{}\settowidth{\tableOmSevenZeroFiveColO}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColP}}{\newlength{\tableOmSevenZeroFiveColP}}{}\settowidth{\tableOmSevenZeroFiveColP}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColQ}}{\newlength{\tableOmSevenZeroFiveColQ}}{}\settowidth{\tableOmSevenZeroFiveColQ}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColS}}{\newlength{\tableOmSevenZeroFiveColS}}{}\settowidth{\tableOmSevenZeroFiveColS}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmSevenZeroFiveColU}}{\newlength{\tableOmSevenZeroFiveColU}}{}\settowidth{\tableOmSevenZeroFiveColU}{\begin{tabular}{@{}p{50pt*\tableOmSevenZeroFiveScale}@{}}x\end{tabular}}
+
+%%\def\opcodeSummaryTable{
+\begin{longtable}[c]{%
+	b{\tableOmSevenZeroFiveColB}%
+	b{\tableOmSevenZeroFiveColC}%
+	b{\tableOmSevenZeroFiveColD}%
+	b{\tableOmSevenZeroFiveColE}%
+	b{\tableOmSevenZeroFiveColF}%
+	b{\tableOmSevenZeroFiveColG}%
+	b{\tableOmSevenZeroFiveColH}%
+	b{\tableOmSevenZeroFiveColJ}%
+	b{\tableOmSevenZeroFiveColK}%
+	b{\tableOmSevenZeroFiveColL}%
+	b{\tableOmSevenZeroFiveColM}%
+	b{\tableOmSevenZeroFiveColN}%
+	b{\tableOmSevenZeroFiveColO}%
+	b{\tableOmSevenZeroFiveColP}%
+	b{\tableOmSevenZeroFiveColQ}%
+	b{\tableOmSevenZeroFiveColS}%
+	b{\tableOmSevenZeroFiveColU}%
+	}%
+\hhline{~|--|-|-----|--|------}
+	 \multicolumn{1}{p{\tableOmSevenZeroFiveColB}|}%
+	{}
+	&\multicolumn{2}{p{	\tableOmSevenZeroFiveColC+%
+	\tableOmSevenZeroFiveColD+%
+	\tabcolsep*2*1}|}%
+	{\tableOmSevenZeroFivePB{\centering}\eightrm{Bit Manipulation}}
+	&\multicolumn{1}{p{\tableOmSevenZeroFiveColE}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\eightrm{Branch}}}
+	&
+	&\tableOmSevenZeroFivePB{\raggedright}\gnumbox{\ninerm{\makebox[5pt]{}Read-Modify-Write}}
+	&
+	&
+	&\multicolumn{1}{p{\tableOmSevenZeroFiveColK}|}%
+	{}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{\makebox[5pt]{}Control}}
+	&\multicolumn{1}{p{\tableOmSevenZeroFiveColM}|}%
+	{}
+	&\tableOmSevenZeroFivePB{\raggedright}\gnumbox[l]{\ninerm{Register-Memory}}
+	&
+	&
+	&
+	&
+	&\multicolumn{1}{p{\tableOmSevenZeroFiveColU}|}%
+	{}
+\\
+\hhline{~|--|-|-----|--|------|}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{rel}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{x8}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{x}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{imm8}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{ext}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{x16}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{x8}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{x}}
+\\
+\hhline{|-|----------------|}
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}}%
+	 {\tableOmSevenZeroFivePB{\centering}\gnumbox{\diagbox[trim=lr,width=15mm,height=7mm]{\adjustbox{valign=b}{\sevenrm{LSB}}}{\adjustbox{valign=t}{\sevenrm{MSB}}}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{0{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{1{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{2{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{3{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{4{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{5{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{6{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{7{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{8{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{9{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{A{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{B{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{C{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{D{\color{ghost}x}}}%
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{E{\color{ghost}x}}}%
+	&\multicolumn{1}{p{\tableOmSevenZeroFiveColU}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{F{\color{ghost}x}}}}%
+\\
+\hhline{~|----------------|}
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{{\ninerm{\color{ghost}x}0}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 0}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 0}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bra}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{neg}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{negA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{negX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{neg}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{neg}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rti}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{sub}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{sub}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sub}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sub}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{sub}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{sub}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}1}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 0}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 0}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{brn}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rts}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{cmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{cmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{cmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{cmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{cmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{cmp}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}2}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 1}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 1}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bhi}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{mul}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{sbc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{sbc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sbc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sbc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{sbc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{sbc}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}3}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 1}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 1}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bls}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{com}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{comA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{comX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{com}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{com}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{swi}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{cpX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{cpX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{cpX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{cpX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{cpX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{cpX}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}4}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 2}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 2}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bcc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{lsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{lsrA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{lsrX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{lsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{lsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{and}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{and}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{and}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{and}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{and}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{and}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}5}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 2}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 2}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{blo\footnote{or bcs (branch if carry set)}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{bit}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bit}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{bit}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{bit}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{bit}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{bit}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}6}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 3}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 3}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bne}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{ror}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rorA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rorX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{ror}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{ror}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{ldA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{ldA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{ldA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{ldA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{ldA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{ldA}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}7}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 3}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 3}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{beq}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{asr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{asrA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{asrX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{asr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{asr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{tAX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{stA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{stA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{stA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{stA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{stA}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}8}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 4}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 4}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bhcc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{lsl}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{lslA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{lslX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{lsl}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{lsl}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{clc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{eor}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{eor}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{eor}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{eor}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{eor}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{eor}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}9}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 4}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 4}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bhcs}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{rol}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rolA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rolX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{rol}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{rol}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sec}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{adc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{adc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{adc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{adc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{adc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{adc}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}A}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 5}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 5}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bpl}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{dec}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{decA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{decX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{dec}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{dec}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{cli}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{orA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{orA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{orA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{orA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{orA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{orA}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}B}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 5}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 5}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bmi}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{sei}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{add}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{add}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{add}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{add}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{add}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{add}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}C}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 6}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 6}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bmc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{inc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{incA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{incX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{inc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{inc}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{rsp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{jmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{jmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{jmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{jmp}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{jmp}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}D}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 6}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 6}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bms}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{tst}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{tstA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{tstX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{tst}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{tst}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{nop}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{jsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{jsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{jsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{jsr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{jsr}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}E}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brset 7}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bset 7}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bil}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninermb{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{stop}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{ldX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{ldX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{ldX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{ldX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{ldX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{ldX}}
+\\
+	 \multicolumn{1}{|p{\tableOmSevenZeroFiveColB}|}%
+	{\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{{\color{ghost}x}F}}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{brclr 7}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{bclr 7}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLB{\ninerm{bih}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{clr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{clrA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{clrX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{clr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{clr}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{wait}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{tXA}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLG{\ninerm{-}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLO{\ninerm{stX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{stX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumbox{\ninerm{stX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLP{\ninerm{stX}}
+	&\tableOmSevenZeroFivePB{\centering}\gnumboxLY{\ninerm{stX}}
+\\
+\hhline{|-|~~~~~~~~~~~~~~~~}
+\caption{\label{OpcodeSummary68hc705}68hc705 opcode summary}
+\end{longtable}
+%%}
+
+
+%% \tableOmSevenZeroFiveEnd
+
+

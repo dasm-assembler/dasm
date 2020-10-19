@@ -1,0 +1,71 @@
+
+
+\providecommand{\smTablePB}[1]%
+{\let\smTableTemp=\\#1\let\\=\smTableTemp\hspace{0pt}}
+ \ifundefined{smTableWidthDefined}
+        \newlength{\smTableWidth}
+        \newlength{\smTableWidthComplete}
+        \global\def\smTableWidthDefined{}
+ \fi
+
+%% The following setting protects this code from babel shorthands.  %%
+%% \ifthenelse{\isundefined{\languageshorthands}}{}{\languageshorthands{english}}
+
+%% to adjust positions in multirow situations                       %%
+%%\setlength{\bigstrutjot}{\jot}
+%%\setlength{\extrarowheight}{\doublerulesep}
+
+%%  The \setlongtables command keeps column widths the same across  %%
+%%  pages. Simply comment out next line for varying column widths.  %%
+%%\setlongtables
+
+\def\smTableColAWidth{23pt}
+\def\smTableColBWidth{173pt}
+
+\setlength\smTableWidth{%
+	 \smTableColAWidth+%
+	 \smTableColBWidth+%
+0pt}
+
+
+\def\smTableNumCols{2}
+\setlength\smTableWidthComplete{\smTableWidth+%
+         \tabcolsep*\smTableNumCols*2+\arrayrulewidth*\smTableNumCols}
+\ifthenelse{\lengthtest{\smTableWidthComplete > \linewidth}}%
+         {\def\smTableScale{\ratio{\linewidth-%
+                        \tabcolsep*\smTableNumCols*2-%
+                        \arrayrulewidth*\smTableNumCols}%
+{\smTableWidth}}}%
+{\def\smTableScale{1}}
+
+\ifthenelse{\isundefined{\smTableColB}}{\newlength{\smTableColB}}{}\settowidth{\smTableColB}{\begin{tabular}{@{}p{\smTableColAWidth*\smTableScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\smTableColC}}{\newlength{\smTableColC}}{}\settowidth{\smTableColC}{\begin{tabular}{@{}p{\smTableColBWidth*\smTableScale}@{}}x\end{tabular}}
+
+\def\specialAddressModesTable{
+\begin{longtable}{|p{\smTableColAWidth}|p{\smTableColBWidth}|}
+\hhline{|-|-|}
+	 \smTablePB{\centering}\gnumboxY{}\ninerm{dd}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{direct to direct}
+\\
+	 \smTablePB{\centering}\gnumboxO{}\ninerm{dix+}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{direct to X-indexed and post-increment X}
+\\
+	 \smTablePB{\centering}\gnumboxP{}\ninermb{imd}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{immediate to direct}
+\\
+	 \smTablePB{\centering}\gnumboxDG{}\ninermb{ix+d}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed to direct and post-increment X}
+\\
+\hhline{|-|-|}
+	 \smTablePB{\centering}\gnumboxLR{}\ninermb{ix+}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed and post-increment X}
+\\
+	 \smTablePB{\centering}\gnumboxG{}\ninerm{ix8+}
+	&\smTablePB{\raggedright}\gnumbox{}\ninerm{X-indexed + byte-offset and post-increment X}
+\\	
+\hhline{--}
+\caption[\specialAddressingModesCaption68hc908]{\label{special_address_modes_68hc908}\specialAddressingModesCaption68hc908}%
+\end{longtable}
+}
+
+
