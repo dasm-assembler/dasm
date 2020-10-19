@@ -1,0 +1,84 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2020 the DASM team and its contributors
+.\"
+.TH DASM 1 "October 11 2020"
+.\" Please adjust this date whenever revising the manpage.
+.SH NAME
+dasm \- 8\-bit macro assembler
+.SH SYNOPSIS
+.B dasm
+.IR sourcefile " [" options ]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B dasm
+command.
+.PP
+\fBdasm\fP is a versatile macro assembler with support for several
+8\-bit microprocessors including MOS 6502 & 6507; Motorola 6803, 68705,
+and 68HC11; Hitachi HD6303 (extended Motorola 6801) and Fairchild F8.
+.SH OPTIONS
+\fBdasm\fP supports the following options, briefly described below.
+For more information see the \fBdasm\fP \fITechnical Reference Manual\fP.
+.TP
+.BI \-f #
+output format 1\-3 [default: \fI1\fP]
+.TP
+.BI \-o name
+output file name [default: \fIa.out\fP]
+.TP
+.BI \-l name
+list file name [default: \fInone generated\fP]
+.TP
+.BI \-L name
+list file, containing all passes
+.TP
+.BI \-v #
+verboseness 0\-4 [default: \fI0\fP]
+.TP
+.B \-d
+debug mode (for developers)
+.TP
+.BI \-D symbol
+define symbol, set to \fI0\fP
+.TP
+.BI \-D symbol = expression
+define symbol, set to \fIexpression\fP
+.TP
+.BI \-M symbol = expression
+define symbol using \fIEQM\fP (same as \fB-D\fP)
+.TP
+.BI \-p #
+maximum number of passes
+.TP
+.BI \-P #
+maximum number of passes, with fewer checks
+.TP
+.BI \-T #
+symbol table sorting [default: \fI0\fP]
+.RS
+.IR 0 " = \fBalphabetical\fP"
+.IR 1 " = \fBaddress/value\fP"
+.RE
+.TP
+.BI \-E #
+error format [default: \fI0\fP]
+.RS
+.IR 0 " = \fBMS\fP"
+.IR 1 " = \fBDillon\fP"
+.IR 2 " = \fBGNU\fP"
+.RE
+.TP
+.B \-S
+strict syntax checking
+.TP
+.B \-R
+remove binary \fIoutput\fP file in case of errors
+.TP
+.BI \-m #
+maximum allowed file-size in kB
+.SH SEE ALSO
+.TP
+.IR /usr/share/doc/dasm/dasm.pdf :
+.B dasm Technical Reference Manual
+.SH AUTHOR
+Written and maintained by the DASM team and its contributors.
