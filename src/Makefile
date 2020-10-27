@@ -65,7 +65,7 @@ SRCS= main.c ops.c globals.c exp.c symbols.c \
 
 ALL= dasm ftohex
 
-all:  $(info    detected_OS is $(detected_OS))
+all:  $(info    detected_OS is $(detected_OS)) \
       $(ALL)
 
 dasm: $(OBJS)
