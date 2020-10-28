@@ -47,6 +47,15 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 #CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
 #LDFLAGS= -m32 -L/usr/lib32
 
+ifeq ($(OS),Windows_NT)
+      detected_OS := Windows
+else
+      detected_OS := $(shell uname -s)
+ifeq ($(detected_OS),Darwin)
+      CFLAGS = -mmacosx-version-min=10.5
+endif
+endif
+
 #CC= gcc
 
 OBJS= main.o ops.o globals.o exp.o symbols.o \
@@ -56,10 +65,11 @@ SRCS= main.c ops.c globals.c exp.c symbols.c \
 
 ALL= dasm ftohex
 
-all: $(ALL)
+all:  $(info    detected_OS is $(detected_OS)) \
+      $(ALL)
 
 dasm: $(OBJS)
-	$(CC) $(OBJS) -o dasm $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) -o dasm $(LDFLAGS)
 
 ftohex: ftohex.o
 
