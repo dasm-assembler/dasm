@@ -4,7 +4,17 @@ closely related files (Makefile, test cases) only, this
 is *not* a complete record of every single change ever
 made. Check the GitHub commit history for that. :-)
 
-new in DASM version 2.20.14:
+new in DASM version 2.20.14.1:
+
+	* fixed support for forced word address x/y indexed (.wx / .wy)
+	
+	* man page added
+
+	* missing opcodes added for mc68hc908 controller
+
+	* Support for older macOS versions (OSX 10.5 and up)
+
+DASM version 2.20.14:
 
     * Technical Documentation / User Guide for dasm in PDF format,
       written by Andrew Davie in his engaging style.
