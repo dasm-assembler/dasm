@@ -71,7 +71,7 @@ RELEASE=unknown-version-number
 BINARY=
 
 # binaries
-BINS=bin/*
+BINS = bin/dasm bin/ftohex
 # documentation
 DOCS=AUTHORS ChangeLog LICENSE CREDITS NEWS README  doc/*
 # support files for various machines
