@@ -83,16 +83,14 @@ TSTS=test/*.asm test/*.bin.ref test/*.hex.ref test/Makefile test/run_tests.sh te
 # other files
 OTHS=Makefile
 
-ifeq ($(strip $(BINARY)),)
 # source release, no binaries
 CONTENTS=$(DOCS) $(MACS) $(SRCS) $(TSTS) $(OTHS)
 DIRNAME=dasm-$(RELEASE)
 ZIPNAME=dasm-$(RELEASE)
-else
+ifneq ($(strip $(BINARY)),)
 # binary release for specific platform
-CONTENTS=$(BINS) $(DOCS) $(MACS) $(SRCS) $(TSTS) $(OTHS)
-DIRNAME=dasm-$(RELEASE)
-ZIPNAME=dasm-$(RELEASE)-$(BINARY)
+CONTENTS += ${BINS}
+ZIPNAME := ${ZIPNAME}-${BINARY}
 endif
 
 # create a distribution archive for publication 
