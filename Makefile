@@ -29,7 +29,7 @@
 
 # just an alias for build really...
 all: build
-	echo "Build complete, use 'make test' to run tests."
+	@echo "Build complete, use 'make test' to run tests."
 
 DESTDIR =
 prefix = /usr/local
