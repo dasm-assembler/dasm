@@ -22,7 +22,7 @@
 
 # Simple hack to build everything, test everything, make a beta
 # distribution, or make a real distribution. Default is to just
-# build everything. Installation is not implemented yet.
+# build everything.
 
 # TODO: need to do documentation stuff as well; don't forget to
 # delete automatically generated documentation in clean: below
@@ -31,9 +31,14 @@
 all: build
 	echo "Build complete, use 'make test' to run tests."
 
-# install, currently not implemented
-install: build
-	echo "Installation not implemented, you're on your own, sorry."
+DESTDIR =
+prefix = /usr/local
+bindir = ${prefix}/bin
+.PHONY: install install-bin
+install: install-bin
+install-bin: build
+	install -d ${DESTDIR}${bindir}
+	install -m555 ${BINS} ${DESTDIR}${bindir}
 
 # just run all the tests
 test: build
