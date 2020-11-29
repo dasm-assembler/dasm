@@ -34,11 +34,19 @@ all: build
 DESTDIR =
 prefix = /usr/local
 bindir = ${prefix}/bin
-.PHONY: install install-bin
-install: install-bin
+mandir = ${prefix}/share/man
+man1dir = ${mandir}/man1
+
+.PHONY: install install-bin install-man
+install: install-bin install-man
 install-bin: build
 	install -d ${DESTDIR}${bindir}
 	install -m555 ${BINS} ${DESTDIR}${bindir}
+
+man1pages = docs/dasm.1
+install-man: ${man1pages}
+	install -d ${DESTDIR}${man1dir}
+	install -m444 ${man1pages} ${DESTDIR}${man1dir}
 
 # just run all the tests
 test: build
