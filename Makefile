@@ -102,6 +102,7 @@ ZIPNAME := ${ZIPNAME}-${BINARY}
 endif
 
 # create a distribution archive for publication 
+.PHONY: dist
 dist: build
 	mkdir $(DIRNAME)
 	cp -p -r --parents $(CONTENTS) $(DIRNAME)
@@ -113,6 +114,7 @@ dist: build
 # machine files are included since tests may need them;
 # nothing else is in the archive since it is not intended
 # for the public, just designated volunteers
+.PHONY: beta
 beta:
 	echo "This is an incomplete beta release of the DASM assembler." >README.BETA
 	echo "The purpose is to identify regressions, nothing more." >>README.BETA
@@ -124,6 +126,7 @@ beta:
 # remove beta archives and bin/ directory created by
 # regular build from this Makefile; don't delete the
 # "real" distribution archives
+.PHONY: clean
 clean:
 	@${MAKE} -C src $@
 	@${MAKE} -C test $@
