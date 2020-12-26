@@ -285,7 +285,7 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     	case AM_WORDADRY:
     	case AM_INDWORD:
     	case AM_WORDADR_SP:
-    		if ((sym->value > 0xFFFF) || (sym->value < -0xFFFF)) {	// isn't this our space ?
+    		if ( bStrictMode && ((sym->value > 0xFFFF) || (sym->value < -0xFFFF))) {	// isn't this our space ?
     			sprintf( sBuffer, "%s %s", mne->name, str );
     			asmerr( ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer );
     		}
