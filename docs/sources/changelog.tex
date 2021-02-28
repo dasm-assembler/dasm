@@ -16,7 +16,7 @@ This section lists recent changes to the document, with most recent entries firs
 
 \item[]\mono{2020.09.13}
 \item Added some structure (new chapters) to the document for inclusion of information about the "other" processors and machines. Started to separate the machine from the processor into separate sections. Should we do an all-in listing of opcodes for all processors, like for the 6502?
-\item Removed malformed coments examples as they are no longer applicable
+\item Removed malformed comments examples as they are no longer applicable
 \item \hyperref[changelog:20200913bugs]{Added link to bugs/issue reporting}
 
 \item[]\mono{2020.09.09}
@@ -32,7 +32,7 @@ This section lists recent changes to the document, with most recent entries firs
 \item \hyperref[changelog:20200908atari]{Fixed some errors in the Atari 2600 section. Switched to SI standard units for describing powers of 2 sizes. I suspect people may not like that!}
 
 \item[]\mono{2020.09.07}
-\item \hyperref[changelog:20200907deprecated]{Added the really unusal (and deprecated) definition for labels... "\mono{[ ]...\textasciicircum[ ]...label}". This is a suppored/valid format, but it is likely to be removed. Do not use.}
+\item \hyperref[changelog:20200907deprecated]{Added the really unusal (and deprecated) definition for labels... "\mono{[ ]...\textasciicircum[ ]...label}". This is a supported/valid format, but it is likely to be removed. Do not use.}
 
 \item[]\mono{2020.09.06}
 \item \hyperref[changelog:20200906res]{Added the RES directive for the F8 processor. Replaces DS on that architecture.}
@@ -42,7 +42,7 @@ This section lists recent changes to the document, with most recent entries firs
 \item \hyperref[changelog:20200905range]{Documented the range checking of byte and word values.}
 \item \hyperref[changelog:20200904illegal]{Much work on the illegal opcodes section of the 6502 chapter. In particular, all of the mnemonics and opcodes are now checked/cross-referenced with online sources identifying illegal, but functional opcodes. These have been checked against the \dasm source code to find out which are actually used/available. The tables section includes opcode-to-mnemonic, and also cycle timings for all instructions. The missing opcodes that \dasm doesn't support have been identified. The next step of all this will be to list the illegal opcodes that are supported and exactly what they do.}
 \item[]\mono{2020.09.03}
-\item \hyperref[changelog:20200903bug]{Added the information about the broken opcodes in HD6303, retrieved from the file BUGS in the source code. I'm starting to go throught the code itself to bring the manual up to date.}
+\item \hyperref[changelog:20200903bug]{Added the information about the broken opcodes in HD6303, retrieved from the file BUGS in the source code. I'm starting to go through the code itself to bring the manual up to date.}
 \item[]\mono{2020.09.02}
 \item \hyperref[changelog20200901_nop3]{There's a new chapter where all the special-case stuff for specific processors is going. In particular, explicit support of 6502 illegal opcodes is in the process of being documented. Did you even know \dasm explicitly supports many (but not all) of the illegal opcodes and their addressing modes? I knew about explicit support for ``nop 0'' and ``lax'' but few of the others. Note in this section how I have lifted a table from an online page, but have attributed it as I was taught when I was doing my formal research writing, so hopefully this will be OK.}
 \item \hyperref[changelog20200901_nop3]{There's a new chapter with details for each of the machines that are explicitly supported with include files, macros, etc. Of course, I only know the '2600 so that's all there is at this stage. Help needed for the others.}
@@ -57,7 +57,7 @@ This section lists recent changes to the document, with most recent entries firs
 \item[]\mono{2020.08.24}
 \item \hyperref[changelog:20200824const]{Removed 0x for hexadecimal. Apparently recently removed from the code?}
 \item \hyperref[changelog:20200824license]{Upgraded license to GPL v3 to be compatible with .STY files used for generation of this manual} \textbf{NOTE: This change has been reversed/invalidated by use of a new .STY file compatible with GPLv2}
-\item \hyperref[changelog:20200824processor]{Fixed table of processor types to explicity list PROCESSOR values}
+\item \hyperref[changelog:20200824processor]{Fixed table of processor types to explicitly list PROCESSOR values}
 \item \hyperref[changelog:20200824rangebug]{Documented dasm bug in constants signed range checking for 8-bit operands}
 \item \hyperref[changelog:20200824const]{Constants and Numbers duplicate sections merged.}
 \item \hyperref[changelog:20200824arithmetic]{Corrected error in table - || is logical-OR and \&\& is logical-AND when used in expressions. They will return 0 or 1 results.}

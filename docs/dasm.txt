@@ -174,7 +174,7 @@ VERBOSE OPTIONS:
 	    R1,R2 reason code: R3
 	    where R1 is the number of times the assembler encountered
 	    something requiring another pass to resolve.  R2 is the
-	    number of references to unknown symbols which occured in the
+	    number of references to unknown symbols which occurred in the
 	    pass (but only R1 determines the need for another pass).  R3
 	    is a BITMASK of the reasons why another pass is required.
 	    See the end of this document for bit designations.
@@ -436,7 +436,7 @@ symbol	EQM	    exp
 	    The STRING representing the expression is assigned to the
 	    symbol.  Occurances of the label in later expressions causes
 	    the string to be evaluated for each occurance.  Also used in
-	    conjuction with the DV psuedo-op.
+	    conjunction with the DV psuedo-op.
 
 symbol	SET	    exp
 
@@ -467,7 +467,7 @@ symbol	SETSTR	    exp
 
 	MEXIT
 
-	    Used in conjuction with conditionals.  Exits the current macro
+	    Used in conjunction with conditionals.  Exits the current macro
 	    level.
 
 [label] IFCONST     exp
