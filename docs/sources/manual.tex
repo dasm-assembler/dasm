@@ -453,7 +453,7 @@ Sets the maximum number of passes performed by \dasm to \mono{value}.
 \dasm will keep performing passes until all references are resolved, or until the maximum number of passes is reached (in which case it will exit with an unresolved symbol error). Typically on machines these days, \dasm is so fast that a high number of passes is acceptable.
 
 \label{changelog:20200824passes}
-The default number of pases is 3.
+The default number of passes is 3.
 
 See \nameref{flag:passes2}.\\
 
@@ -605,7 +605,7 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 &R1,R2 reason code: R3\\
 &where R1 is the number of times the assembler encountered\\
 &something requiring another pass to resolve.  R2 is the\\
-&number of references to unknown symbols which occured in the\\
+&number of references to unknown symbols which occurred in the\\
 &pass (but only R1 determines the need for another pass).  R3\\
 &is a BITMASK of the reasons why another pass is required.\\
 
@@ -769,7 +769,7 @@ Either bracket type may be used in all situatinos.
 \index{Expressions!Brackets!6502}
 
 Use square brackets \mono{[]} when you are unsure. The reason round brackets \mono{()} cannot be used to
-group expressions is due to a conflict with 6502 assembly language which use them to specifiy indirect memory access (for example, ``\mono{lda (zp),y}'').
+group expressions is due to a conflict with 6502 assembly language which use them to specify indirect memory access (for example, ``\mono{lda (zp),y}'').
 
 It is possible to use round brackets \mono{()} instead of square brackets \mono{[]} in expressions following directives, but not following mnemonics.
 
@@ -1245,7 +1245,7 @@ symbol EQM exp
 The string representing the expression is assigned to the
 symbol.  Occurrences of the label in later expressions causes
 the string to be evaluated for each occurrence.  Also used in
-conjuction with the \nameref{pseudoop:dv} psuedo-op.\\
+conjunction with the \nameref{pseudoop:dv} psuedo-op.\\
 
 \hrule
 \subsection{\texttt{SET}}
@@ -2279,7 +2279,7 @@ Paired with \nameref{pseudoop:mac}.\\
   MEXIT
 \end{usage}
 
-Used in conjuction with conditionals.  Exits the current macro level.
+Used in conjunction with conditionals.  Exits the current macro level.
 
 See \nameref{conditionals}.
 
