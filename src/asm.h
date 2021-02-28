@@ -74,7 +74,7 @@ enum FORMAT
         ERROR_FILE_ERROR,                               /* Unable to open file */
         ERROR_NOT_RESOLVABLE,                           /* Source is not resolvable */
         ERROR_TOO_MANY_PASSES,                          /* Too many passes - something wrong */
-        ERROR_NON_ABORT,                                /* one or more non-abort errors occured */
+        ERROR_NON_ABORT,                                /* one or more non-abort errors occurred */
 
         ERROR_SYNTAX_ERROR,                             /*  0 */
         ERROR_EXPRESSION_TABLE_OVERFLOW,                /*  1 */
