@@ -84,7 +84,7 @@ Compiling
           how to fix them reliably, we welcome your contributions!)
 
     DASM has been built and tested successfully on recent versions of Linux,
-    macOS, NetBSD and Windows.
+    macOS, BSD and Windows.
 
     If you have successfully built and tested DASM on a different machine
     or operating system, we would love to hear about it.
