@@ -36,22 +36,22 @@ MNEMONIC Mne65c02[] = {
     { NULL, v_mnemonic, "adc", 0, AF_IMM8|ASTD, { 0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71, 0x72 } },
     { NULL, v_mnemonic, "and", 0, AF_IMM8|ASTD, { 0x29, 0x25, 0x35, 0x2D, 0x3D, 0x39, 0x21, 0x31, 0x32 } },
     { NULL, v_mnemonic, "asl", 0, AF_IMP|AF_BYTEADR|AF_BYTEADRX|AF_WORDADR|AF_WORDADRX, { 0x0A, 0x06, 0x16, 0x0E, 0x1E } },
-    { NULL, v_mnemonic, "bbr0", 0, AF_ZPREL, { 0x0f } },  /* Branch on Bit 0 Reset */
-    { NULL, v_mnemonic, "bbr1", 0, AF_ZPREL, { 0x1f } },  /* Branch on Bit 1 Reset */
-    { NULL, v_mnemonic, "bbr2", 0, AF_ZPREL, { 0x2f } },  /* Branch on Bit 2 Reset */
-    { NULL, v_mnemonic, "bbr3", 0, AF_ZPREL, { 0x3f } },  /* Branch on Bit 3 Reset */
-    { NULL, v_mnemonic, "bbr4", 0, AF_ZPREL, { 0x4f } },  /* Branch on Bit 4 Reset */
-    { NULL, v_mnemonic, "bbr5", 0, AF_ZPREL, { 0x5f } },  /* Branch on Bit 5 Reset */
-    { NULL, v_mnemonic, "bbr6", 0, AF_ZPREL, { 0x6f } },  /* Branch on Bit 6 Reset */
-    { NULL, v_mnemonic, "bbr7", 0, AF_ZPREL, { 0x7f } },  /* Branch on Bit 7 Reset */
-    { NULL, v_mnemonic, "bbs0", 0, AF_ZPREL, { 0x8f } },  /* Branch on Bit 0 Set */
-    { NULL, v_mnemonic, "bbs1", 0, AF_ZPREL, { 0x9f } },  /* Branch on Bit 1 Set */
-    { NULL, v_mnemonic, "bbs2", 0, AF_ZPREL, { 0xaf } },  /* Branch on Bit 2 Set */
-    { NULL, v_mnemonic, "bbs3", 0, AF_ZPREL, { 0xbf } },  /* Branch on Bit 3 Set */
-    { NULL, v_mnemonic, "bbs4", 0, AF_ZPREL, { 0xcf } },  /* Branch on Bit 4 Set */
-    { NULL, v_mnemonic, "bbs5", 0, AF_ZPREL, { 0xdf } },  /* Branch on Bit 5 Set */
-    { NULL, v_mnemonic, "bbs6", 0, AF_ZPREL, { 0xef } },  /* Branch on Bit 6 Set */
-    { NULL, v_mnemonic, "bbs7", 0, AF_ZPREL, { 0xff } },  /* Branch on Bit 7 Set */
+    { NULL, v_mnemonic, "bbr0", 0, AF_BYTEREL, { 0x0f } },  /* Branch on Bit 0 Reset */
+    { NULL, v_mnemonic, "bbr1", 0, AF_BYTEREL, { 0x1f } },  /* Branch on Bit 1 Reset */
+    { NULL, v_mnemonic, "bbr2", 0, AF_BYTEREL, { 0x2f } },  /* Branch on Bit 2 Reset */
+    { NULL, v_mnemonic, "bbr3", 0, AF_BYTEREL, { 0x3f } },  /* Branch on Bit 3 Reset */
+    { NULL, v_mnemonic, "bbr4", 0, AF_BYTEREL, { 0x4f } },  /* Branch on Bit 4 Reset */
+    { NULL, v_mnemonic, "bbr5", 0, AF_BYTEREL, { 0x5f } },  /* Branch on Bit 5 Reset */
+    { NULL, v_mnemonic, "bbr6", 0, AF_BYTEREL, { 0x6f } },  /* Branch on Bit 6 Reset */
+    { NULL, v_mnemonic, "bbr7", 0, AF_BYTEREL, { 0x7f } },  /* Branch on Bit 7 Reset */
+    { NULL, v_mnemonic, "bbs0", 0, AF_BYTEREL, { 0x8f } },  /* Branch on Bit 0 Set */
+    { NULL, v_mnemonic, "bbs1", 0, AF_BYTEREL, { 0x9f } },  /* Branch on Bit 1 Set */
+    { NULL, v_mnemonic, "bbs2", 0, AF_BYTEREL, { 0xaf } },  /* Branch on Bit 2 Set */
+    { NULL, v_mnemonic, "bbs3", 0, AF_BYTEREL, { 0xbf } },  /* Branch on Bit 3 Set */
+    { NULL, v_mnemonic, "bbs4", 0, AF_BYTEREL, { 0xcf } },  /* Branch on Bit 4 Set */
+    { NULL, v_mnemonic, "bbs5", 0, AF_BYTEREL, { 0xdf } },  /* Branch on Bit 5 Set */
+    { NULL, v_mnemonic, "bbs6", 0, AF_BYTEREL, { 0xef } },  /* Branch on Bit 6 Set */
+    { NULL, v_mnemonic, "bbs7", 0, AF_BYTEREL, { 0xff } },  /* Branch on Bit 7 Set */
     { NULL, v_mnemonic, "bcc", 0, AF_REL, { 0x90 } },
     { NULL, v_mnemonic, "bcs", 0, AF_REL, { 0xB0 } },
     { NULL, v_mnemonic, "beq", 0, AF_REL, { 0xF0 } },

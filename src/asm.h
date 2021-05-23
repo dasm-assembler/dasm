@@ -102,22 +102,21 @@ enum ASM_ERROR_EQUATES
     ERROR_BADERROR,                             /* 29 */
     ERROR_ONLY_ONE_PROCESSOR_SUPPORTED,         /* 30 - Only allow one type of processor */
     ERROR_BAD_FORMAT,                           /* 31 - Bad format specifier */
-    ERROR_NON_ZP_ADDRESS,                       /* 32 */
 
     /* F8 support... */
 
-    ERROR_VALUE_MUST_BE_1_OR_4,                 /* 33 */
-    ERROR_VALUE_MUST_BE_LT_10,                  /* 34 */
-    ERROR_VALUE_MUST_BE_LT_8,                   /* 35 */
-    ERROR_VALUE_MUST_BE_LT_F,                   /* 36 */
-    ERROR_VALUE_MUST_BE_LT_10000,               /* 37 */
-    ERROR_ILLEGAL_OPERAND_COMBINATION,          /* 38 */
+    ERROR_VALUE_MUST_BE_1_OR_4,                 /* 32 */
+    ERROR_VALUE_MUST_BE_LT_10,                  /* 33 */
+    ERROR_VALUE_MUST_BE_LT_8,                   /* 34 */
+    ERROR_VALUE_MUST_BE_LT_F,                   /* 35 */
+    ERROR_VALUE_MUST_BE_LT_10000,               /* 36 */
+    ERROR_ILLEGAL_OPERAND_COMBINATION,          /* 37 */
 
-    ERROR_RECURSION_TOO_DEEP,                   /* 39 */
-    ERROR_AVOID_SEGFAULT,                       /* 40 */
-    ERROR_MISSING_ENDM,                         /* 41 */
-    ERROR_MISSING_COMMENT_END,                  /* 42 */
-    ERROR_SPURIOUS_COMMENT_CLOSE                /* 43 */
+    ERROR_RECURSION_TOO_DEEP,                   /* 38 */
+    ERROR_AVOID_SEGFAULT,                       /* 39 */
+    ERROR_MISSING_ENDM,                         /* 40 */
+    ERROR_MISSING_COMMENT_END,                  /* 41 */
+    ERROR_SPURIOUS_COMMENT_CLOSE                /* 42 */
 };
 
 typedef struct ERRORSTRUCT
@@ -185,7 +184,7 @@ typedef struct ERRORSTRUCT
 		AM_WORDADRX,			/*    8 - index x + 16 bit offset       */
 		AM_WORDADRY,			/*    9 - index y + 16 bit offset      */
 		AM_REL,					/*    10- relative 8 bits   */
-        AM_ZPREL,               /*    11- Zeropage relative    */
+        AM_BYTEREL,             /*    11- 8 bits relative    */
 		AM_INDBYTEX,			/*    12- indirect x     */
 		AM_INDBYTEY,			/*    13- indirect y     */
 		AM_INDWORD,				/*    14- indirect immediate    */
@@ -219,7 +218,7 @@ typedef struct ERRORSTRUCT
 #define AF_WORDADRX				( 1L << AM_WORDADRX )
 #define AF_WORDADRY				( 1L << AM_WORDADRY )
 #define AF_REL					( 1L << AM_REL )
-#define AF_ZPREL                ( 1L << AM_ZPREL )
+#define AF_BYTEREL              ( 1L << AM_BYTEREL )
 #define AF_INDBYTEX				( 1L << AM_INDBYTEX )
 #define AF_INDBYTEY				( 1L << AM_INDBYTEY )
 #define AF_INDWORD				( 1L << AM_INDWORD )
@@ -244,12 +243,11 @@ STRLIST {
 
 #define STRLISTSIZE    sizeof(STRLIST *)
 
-#define MF_BEGM					0x01
-#define MF_IF					0x02
-#define MF_MACRO				0x04
-#define MF_MASK					0x08    /*  has mask argument (byte)    */
-#define MF_REL					0x10    /*  has rel. address (byte)    */
-#define MF_ZPREL				0x20    /*  has zprel. address (byte)    */
+#define MF_BEGM					0x02
+#define MF_IF					0x04
+#define MF_MACRO				0x08
+#define MF_MASK					0x10    /*  has mask argument (byte)    */
+#define MF_REL					0x20    /*  has rel. address (byte)    */
 #define MF_IMOD					0x40    /*  instruction byte mod.    */
 #define MF_ENDM					0x80    /*  is v_endm            */
 

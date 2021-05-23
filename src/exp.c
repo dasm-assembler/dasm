@@ -458,7 +458,7 @@ SYMBOL *eval(const char *str, int wantmode)
             }
             else if (cur->addrmode != AM_INDWORD && scr != 'x' && scr != 'y' && (Processor == 16502))
             {
-                cur->addrmode = AM_ZPREL;
+                cur->addrmode = AM_BYTEREL;
                 SYMBOL *pNewSymbol = allocsymbol();
                 cur->next = pNewSymbol;
                 --Argi;
@@ -592,11 +592,11 @@ SYMBOL *eval(const char *str, int wantmode)
             if (Xdebug)
                 printf("STRING: %s\n", cur->string);
         }
-        if ((base->addrmode == 0) && (cur->addrmode != AM_ZPREL))
+        if ((base->addrmode == 0) && (cur->addrmode != AM_BYTEREL))
             base->addrmode = AM_BYTEADR;
 
-        if ((base->addrmode == 0) && (cur->addrmode == AM_ZPREL))
-            base->addrmode = AM_ZPREL;
+        if ((base->addrmode == 0) && (cur->addrmode == AM_BYTEREL))
+            base->addrmode = AM_BYTEREL;
     }
 
     if (Argi != Argibase || Opi != Opibase)

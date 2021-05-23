@@ -355,12 +355,8 @@ void v_mnemonic(char *str, MNEMONIC *mne)
 	    }
 
         sprintf( sBuffer, "%s %s", mne->name, str );
-        if (addrmode == AM_ZPREL) {
-            /* Incorrect address type - quit assembly */
-            asmerr( ERROR_NON_ZP_ADDRESS, true, sBuffer);   
-        } else {
-            asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
-        }
+
+        asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
         break;
         }
         addrmode = Cvt[addrmode];
@@ -457,7 +453,7 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         ++opidx;
     }
 
-    if ((mne->flags & (MF_REL | MF_ZPREL)) || addrmode == AM_REL || addrmode == AM_ZPREL)
+    if ((mne->flags & MF_REL) || addrmode == AM_REL || addrmode == AM_BYTEREL)
     {
         ++opidx;		/*  to end of instruction   */
         
