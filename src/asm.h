@@ -158,7 +158,7 @@ typedef struct ERRORSTRUCT
 #define IFSTACK     struct _IFSTACK
 #define SEGMENT     struct _SEGMENT
 #define SYMBOL      struct _SYMBOL
-#define STRLIST     struct _STRLIST
+#define STRLIST   	struct _STRLIST
 
 #define DEFORGFILL  255
 #define N_HASH_BITS	12			// 10 was in original implementation
@@ -170,13 +170,13 @@ typedef struct ERRORSTRUCT
 #define MAXMACLEVEL 32
 #define TAB        9
 
-    /* 
-     * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
-     */
+	/* 
+	 * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
+	 */
 	enum ADDRESS_MODES {
 		AM_IMP,					/*    1 - implied         */
 		AM_IMM8,				/*    2 - immediate 8  bits   */
-		AM_IMM16,		        /*    3 - immediate 16 bits   */
+		AM_IMM16,				/*    3 - immediate 16 bits   */
 		AM_BYTEADR,				/*    4 - address 8 bits        */
 		AM_BYTEADRX,			/*    5 - index x + 8 bit offset     */
 		AM_BYTEADRY,			/*    6 - index y + 8 bit offset     */
@@ -184,12 +184,12 @@ typedef struct ERRORSTRUCT
 		AM_WORDADRX,			/*    8 - index x + 16 bit offset       */
 		AM_WORDADRY,			/*    9 - index y + 16 bit offset      */
 		AM_REL,					/*    10- relative 8 bits   */
-        AM_BYTEREL,             /*    11- 8 bits relative    */
+		AM_BYTEREL,			 	/*    11- 8 bits relative    */
 		AM_INDBYTEX,			/*    12- indirect x     */
 		AM_INDBYTEY,			/*    13- indirect y     */
 		AM_INDWORD,				/*    14- indirect immediate    */
-        AM_INDWORDX,			/*    15- indirect 16 bits x-indexed  */
-        AM_INDBYTE,				/*    16- indirect 8 bits        */
+		AM_INDWORDX,			/*    15- indirect 16 bits x-indexed  */
+		AM_INDBYTE,				/*    16- indirect 8 bits        */
 		AM_0X,					/*    17- index x 0 bits        */
 		AM_0Y,					/*    18- index y 0 bits        */
 		AM_BITMOD,				/*    19- spec. bit modifcation     */
@@ -218,7 +218,7 @@ typedef struct ERRORSTRUCT
 #define AF_WORDADRX				( 1L << AM_WORDADRX )
 #define AF_WORDADRY				( 1L << AM_WORDADRY )
 #define AF_REL					( 1L << AM_REL )
-#define AF_BYTEREL              ( 1L << AM_BYTEREL )
+#define AF_BYTEREL				( 1L << AM_BYTEREL )
 #define AF_INDBYTEX				( 1L << AM_INDBYTEX )
 #define AF_INDBYTEY				( 1L << AM_INDBYTEY )
 #define AF_INDWORD				( 1L << AM_INDWORD )
@@ -228,8 +228,8 @@ typedef struct ERRORSTRUCT
 #define AF_0Y					( 1L << AM_0Y )
 #define AF_BITMOD				( 1L << AM_BITMOD )
 #define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
-#define AF_BYTEADR_SP           ( 1L << AM_BYTEADR_SP )
-#define AF_WORDADR_SP           ( 1L << AM_WORDADR_SP )
+#define AF_BYTEADR_SP			( 1L << AM_BYTEADR_SP )
+#define AF_WORDADR_SP			( 1L << AM_WORDADR_SP )
 
 #define AM_BYTE					AM_BYTEADR
 #define AM_WORD					AM_WORDADR
