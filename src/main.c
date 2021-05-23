@@ -97,6 +97,7 @@ ERROR_DEFINITION sErrorDef[] = {
     { ERROR_ERR_PSEUDO_OP_ENCOUNTERED,              true,   "ERR pseudo-op encountered."  },
     { ERROR_ORIGIN_REVERSE_INDEXED,                 false,  "Origin Reverse-indexed."   },
     { ERROR_EQU_VALUE_MISMATCH,                     false,  "EQU: Value mismatch."   },
+    { ERROR_NON_ZP_ADDRESS,                         true,   "Expected single byte address on line '%s'." },
     { ERROR_ADDRESS_MUST_BE_LT_100,                 true,   "Value in '%s' must be <$100."  },
     { ERROR_ADDRESS_MUST_BE_LT_10000,               true,   "Value in '%s' must be <$10000."  },
     { ERROR_ILLEGAL_BIT_SPECIFICATION,              true,   "Illegal bit specification."   },

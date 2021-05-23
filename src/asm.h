@@ -67,63 +67,64 @@ enum FORMAT
 #define MAXLINE 1024
 #define MAX_SYM_LEN 1024
 
-    enum ASM_ERROR_EQUATES
-    {
-        ERROR_NONE = 0,
-        ERROR_COMMAND_LINE,                             /* Check format of command-line */
-        ERROR_FILE_ERROR,                               /* Unable to open file */
-        ERROR_NOT_RESOLVABLE,                           /* Source is not resolvable */
-        ERROR_TOO_MANY_PASSES,                          /* Too many passes - something wrong */
-        ERROR_NON_ABORT,                                /* one or more non-abort errors occurred */
+enum ASM_ERROR_EQUATES
+{
+    ERROR_NONE = 0,                             /*  0 */
+    ERROR_COMMAND_LINE,                         /*  1 - Check format of command-line */
+    ERROR_FILE_ERROR,                           /*  2 - Unable to open file */
+    ERROR_NOT_RESOLVABLE,                       /*  3 - Source is not resolvable */
+    ERROR_TOO_MANY_PASSES,                      /*  4 - Too many passes - something wrong */
+    ERROR_NON_ABORT,                            /*  5 - one or more non-abort errors occurred */
 
-        ERROR_SYNTAX_ERROR,                             /*  0 */
-        ERROR_EXPRESSION_TABLE_OVERFLOW,                /*  1 */
-        ERROR_UNBALANCED_BRACES,                        /*  2 */
-        ERROR_DIVISION_BY_0,                            /*  3 */
-        ERROR_UNKNOWN_MNEMONIC,                         /*  4 */
-        ERROR_ILLEGAL_ADDRESSING_MODE,                  /*  5 */
-        ERROR_ILLEGAL_FORCED_ADDRESSING_MODE,           /*  6 */
-        ERROR_NOT_ENOUGH_ARGUMENTS_PASSED_TO_MACRO,     /*  7 */
-        ERROR_PREMATURE_EOF,                            /*  8 */
-        ERROR_ILLEGAL_CHARACTER,                        /*  9 */
-        ERROR_BRANCH_OUT_OF_RANGE,                      /* 10 */
-        ERROR_ERR_PSEUDO_OP_ENCOUNTERED,                /* 11 */
-        ERROR_ORIGIN_REVERSE_INDEXED,                   /* 12 */
-        ERROR_EQU_VALUE_MISMATCH,                       /* 13 */
-        ERROR_ADDRESS_MUST_BE_LT_100,                   /* 14 */
-	ERROR_ADDRESS_MUST_BE_LT_10000,                 /* 15 */
-        ERROR_ILLEGAL_BIT_SPECIFICATION,                /* 16 */
-        ERROR_NOT_ENOUGH_ARGS,                          /* 17 */
-        ERROR_LABEL_MISMATCH,                           /* 18 */
-        ERROR_MACRO_REPEATED,                           /* 19 */
-        ERROR_VALUE_UNDEFINED,                          /* 20 */
-        ERROR_PROCESSOR_NOT_SUPPORTED,                  /* 21 */
-        ERROR_REPEAT_NEGATIVE,                          /* 22 */
-        ERROR_BADERROR,                                 /* 23 */
-        ERROR_ONLY_ONE_PROCESSOR_SUPPORTED,             /* Only allow one type of processor */
-        ERROR_BAD_FORMAT,                               /* Bad format specifier */
+    ERROR_SYNTAX_ERROR,                         /*  6 */
+    ERROR_EXPRESSION_TABLE_OVERFLOW,            /*  7 */
+    ERROR_UNBALANCED_BRACES,                    /*  8 */
+    ERROR_DIVISION_BY_0,                        /*  9 */
+    ERROR_UNKNOWN_MNEMONIC,                     /* 10 */
+    ERROR_ILLEGAL_ADDRESSING_MODE,              /* 11 */
+    ERROR_ILLEGAL_FORCED_ADDRESSING_MODE,       /* 12 */
+    ERROR_NOT_ENOUGH_ARGUMENTS_PASSED_TO_MACRO, /* 13 */
+    ERROR_PREMATURE_EOF,                        /* 14 */
+    ERROR_ILLEGAL_CHARACTER,                    /* 15 */
+    ERROR_BRANCH_OUT_OF_RANGE,                  /* 16 */
+    ERROR_ERR_PSEUDO_OP_ENCOUNTERED,            /* 17 */
+    ERROR_ORIGIN_REVERSE_INDEXED,               /* 18 */
+    ERROR_EQU_VALUE_MISMATCH,                   /* 19 */
+    ERROR_ADDRESS_MUST_BE_LT_100,               /* 20 */
+    ERROR_ADDRESS_MUST_BE_LT_10000,             /* 21 */
+    ERROR_ILLEGAL_BIT_SPECIFICATION,            /* 22 */
+    ERROR_NOT_ENOUGH_ARGS,                      /* 23 */
+    ERROR_LABEL_MISMATCH,                       /* 24 */
+    ERROR_MACRO_REPEATED,                       /* 25 */
+    ERROR_VALUE_UNDEFINED,                      /* 26 */
+    ERROR_PROCESSOR_NOT_SUPPORTED,              /* 27 */
+    ERROR_REPEAT_NEGATIVE,                      /* 28 */
+    ERROR_BADERROR,                             /* 29 */
+    ERROR_ONLY_ONE_PROCESSOR_SUPPORTED,         /* 30 - Only allow one type of processor */
+    ERROR_BAD_FORMAT,                           /* 31 - Bad format specifier */
+    ERROR_NON_ZP_ADDRESS,                       /* 32 */
 
-		/* F8 support... */
+    /* F8 support... */
 
-        ERROR_VALUE_MUST_BE_1_OR_4,                     /* 26 */
-        ERROR_VALUE_MUST_BE_LT_10,                      /* 27 */
-        ERROR_VALUE_MUST_BE_LT_8,                       /* 28 */
-        ERROR_VALUE_MUST_BE_LT_F,                       /* 29 */
-        ERROR_VALUE_MUST_BE_LT_10000,                   /* 30 */
-        ERROR_ILLEGAL_OPERAND_COMBINATION,              /* 31 */
-	
-	ERROR_RECURSION_TOO_DEEP,			/* 32 */
-	ERROR_AVOID_SEGFAULT,				/* 33 */
-	ERROR_MISSING_ENDM,				/* 34 */
-	ERROR_MISSING_COMMENT_END,			/* 35 */
-	ERROR_SPURIOUS_COMMENT_CLOSE			/* 36 */
-	};
+    ERROR_VALUE_MUST_BE_1_OR_4,                 /* 33 */
+    ERROR_VALUE_MUST_BE_LT_10,                  /* 34 */
+    ERROR_VALUE_MUST_BE_LT_8,                   /* 35 */
+    ERROR_VALUE_MUST_BE_LT_F,                   /* 36 */
+    ERROR_VALUE_MUST_BE_LT_10000,               /* 37 */
+    ERROR_ILLEGAL_OPERAND_COMBINATION,          /* 38 */
 
-    typedef struct ERRORSTRUCT
-    {
-        int nErrorType;                                 /* ASM_ERROR_EQUATES value */
-        bool bFatal;                                    /* 0 = OK, non-zero = cannot continue compilation */
-        const char *sDescription;                             /* Error message */
+    ERROR_RECURSION_TOO_DEEP,                   /* 39 */
+    ERROR_AVOID_SEGFAULT,                       /* 40 */
+    ERROR_MISSING_ENDM,                         /* 41 */
+    ERROR_MISSING_COMMENT_END,                  /* 42 */
+    ERROR_SPURIOUS_COMMENT_CLOSE                /* 43 */
+};
+
+typedef struct ERRORSTRUCT
+{
+    int nErrorType;                             /* ASM_ERROR_EQUATES value */
+    bool bFatal;                                /* 0 = OK, non-zero = cannot continue compilation */
+    const char *sDescription;                   /* Error message */
 
     } ERROR_DEFINITION;
 
@@ -157,7 +158,7 @@ enum FORMAT
 #define REPLOOP     struct _REPLOOP
 #define IFSTACK     struct _IFSTACK
 #define SEGMENT     struct _SEGMENT
-#define SYMBOL        struct _SYMBOL
+#define SYMBOL      struct _SYMBOL
 #define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
@@ -170,27 +171,32 @@ enum FORMAT
 #define MAXMACLEVEL 32
 #define TAB        9
 
-
+    /* 
+     * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
+     */
 	enum ADDRESS_MODES {
-		AM_IMP,					/*    implied         */
-		AM_IMM8,				/*    immediate 8  bits   */
-		AM_IMM16,		        /*    immediate 16 bits   */
-		AM_BYTEADR,				/*    address 8 bits        */
-		AM_BYTEADRX,			/*    index x + 8 bit offset     */
-		AM_BYTEADRY,			/*    index y + 8 bit offset     */
-		AM_WORDADR,				/*    extended addr        */
-		AM_WORDADRX,			/*    index x + 16 bit offset       */
-		AM_WORDADRY,			/*    index y + 16 bit offset      */
-		AM_REL,					/*    relative 8 bits   */
-		AM_INDBYTEX,			/*    indirect x     */
-		AM_INDBYTEY,			/*    indirect y     */
-		AM_INDWORD,				/*    indirect immediate    */
-		AM_0X,					/*    index x 0 bits        */
-		AM_0Y,					/*    index y 0 bits        */
-		AM_BITMOD,				/*    spec. bit modifcation     */
-		AM_BITBRAMOD,			/*    spec. bit-test rel. branch    */
-		AM_BYTEADR_SP,				/*    index SP +8 bits     */
-		AM_WORDADR_SP,				/*    index SP +16 bits   */
+		AM_IMP,					/*    1 - implied         */
+		AM_IMM8,				/*    2 - immediate 8  bits   */
+		AM_IMM16,		        /*    3 - immediate 16 bits   */
+		AM_BYTEADR,				/*    4 - address 8 bits        */
+		AM_BYTEADRX,			/*    5 - index x + 8 bit offset     */
+		AM_BYTEADRY,			/*    6 - index y + 8 bit offset     */
+		AM_WORDADR,				/*    7 - extended addr        */
+		AM_WORDADRX,			/*    8 - index x + 16 bit offset       */
+		AM_WORDADRY,			/*    9 - index y + 16 bit offset      */
+		AM_REL,					/*    10- relative 8 bits   */
+        AM_ZPREL,               /*    11- Zeropage relative    */
+		AM_INDBYTEX,			/*    12- indirect x     */
+		AM_INDBYTEY,			/*    13- indirect y     */
+		AM_INDWORD,				/*    14- indirect immediate    */
+        AM_INDWORDX,			/*    15- indirect 16 bits x-indexed  */
+        AM_INDBYTE,				/*    16- indirect 8 bits        */
+		AM_0X,					/*    17- index x 0 bits        */
+		AM_0Y,					/*    18- index y 0 bits        */
+		AM_BITMOD,				/*    19- spec. bit modifcation     */
+		AM_BITBRAMOD,			/*    20- spec. bit-test rel. branch    */
+		AM_BYTEADR_SP,			/*    21- index SP +8 bits     */
+		AM_WORDADR_SP,			/*    22- index SP +16 bits   */
 
 
 		AM_SYMBOL,
@@ -213,15 +219,18 @@ enum FORMAT
 #define AF_WORDADRX				( 1L << AM_WORDADRX )
 #define AF_WORDADRY				( 1L << AM_WORDADRY )
 #define AF_REL					( 1L << AM_REL )
+#define AF_ZPREL                ( 1L << AM_ZPREL )
 #define AF_INDBYTEX				( 1L << AM_INDBYTEX )
 #define AF_INDBYTEY				( 1L << AM_INDBYTEY )
 #define AF_INDWORD				( 1L << AM_INDWORD )
+#define AF_INDWORDX				( 1L << AM_INDWORDX )
+#define AF_INDBYTE   			( 1L << AM_INDBYTE )
 #define AF_0X					( 1L << AM_0X )
 #define AF_0Y					( 1L << AM_0Y )
 #define AF_BITMOD				( 1L << AM_BITMOD )
 #define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
-#define AF_BYTEADR_SP                          ( 1L << AM_BYTEADR_SP)
-#define AF_WORDADR_SP                          ( 1L << AM_WORDADR_SP)
+#define AF_BYTEADR_SP           ( 1L << AM_BYTEADR_SP )
+#define AF_WORDADR_SP           ( 1L << AM_WORDADR_SP )
 
 #define AM_BYTE					AM_BYTEADR
 #define AM_WORD					AM_WORDADR
@@ -235,11 +244,12 @@ STRLIST {
 
 #define STRLISTSIZE    sizeof(STRLIST *)
 
-#define MF_BEGM					0x02
-#define MF_IF					0x04
-#define MF_MACRO				0x08
-#define MF_MASK					0x10    /*  has mask argument (byte)    */
-#define MF_REL					0x20    /*  has rel. address (byte)    */
+#define MF_BEGM					0x01
+#define MF_IF					0x02
+#define MF_MACRO				0x04
+#define MF_MASK					0x08    /*  has mask argument (byte)    */
+#define MF_REL					0x10    /*  has rel. address (byte)    */
+#define MF_ZPREL				0x20    /*  has zprel. address (byte)    */
 #define MF_IMOD					0x40    /*  instruction byte mod.    */
 #define MF_ENDM					0x80    /*  is v_endm            */
 

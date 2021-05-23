@@ -34,6 +34,7 @@ unsigned char OrgFill = DEFORGFILL;
 int	 Glen;
 
 extern MNEMONIC    Mne6502[];
+extern MNEMONIC    Mne65c02[];
 extern MNEMONIC    Mne6803[];
 extern MNEMONIC    MneHD6303[];
 extern MNEMONIC    Mne68705[];
@@ -66,6 +67,14 @@ void v_processor(char *str, MNEMONIC *dummy)
         Processor = 6502;
     }
 
+    if (strcmp(str,"65c02") == 0 || strcmp(str, "65C02") == 0)
+    {
+        if ( !bCalled )
+            addhashtable(Mne65c02);
+
+        MsbOrder = 0;	    /*	lsb,msb */
+        Processor = 16502;
+    }
     if (strcmp(str,"6803") == 0)
     {
         if ( !bCalled )
@@ -186,6 +195,10 @@ void v_mnemonic(char *str, MNEMONIC *mne)
     while (badcode(mne,addrmode) && Cvt[addrmode])
         addrmode = Cvt[addrmode];
 
+    if (mne->opcode[addrmode] == 0x42 && addrmode == AM_INDBYTEX && Processor == 16502)
+        addrmode = AM_INDWORDX;
+    else if (mne->opcode[addrmode] == 0x42 && addrmode == AM_INDBYTE && Processor == 16502)
+        addrmode = AM_INDWORD;
     
     if ( bTrace )
         printf("mnemask: %08lx adrmode: %d  Cvt[am]: %d   Mnext:%d   value: %ld\n", mne->okmask, addrmode, Cvt[addrmode], Mnext,  sym->value);
@@ -319,31 +332,36 @@ void v_mnemonic(char *str, MNEMONIC *mne)
             }
 
 
-	    if ((sym->value > 255) && !byteRequested) {
-	    	// automatically increasing address-mode only if user has not explicitly stated
-		if (addrmode == AM_BYTEADRX) {
-		    if (! badcode(mne, AM_WORDADRX)) {
-			addrmode = AM_WORDADRX;
-			break;
-		    }
-		}
-		if (addrmode == AM_BYTEADRY) {
-		    if (! badcode(mne, AM_WORDADRY)) {
-			addrmode = AM_WORDADRY;
-			break;
-		    }
-		}
-		if (addrmode == AM_BYTEADR_SP) {
-		    if (! badcode(mne, AM_WORDADR_SP)) {
-			addrmode = AM_WORDADR_SP;
-			break;
-		    }
-		}
+            if ((sym->value > 255) && !byteRequested) {
+                // automatically increasing address-mode only if user has not explicitly stated
+            if (addrmode == AM_BYTEADRX) {
+                if (! badcode(mne, AM_WORDADRX)) {
+                    addrmode = AM_WORDADRX;
+                    break;
+                }
+            }
+            if (addrmode == AM_BYTEADRY) {
+                if (! badcode(mne, AM_WORDADRY)) {
+                    addrmode = AM_WORDADRY;
+                    break;
+                }
+            }
+            if (addrmode == AM_BYTEADR_SP) {
+                if (! badcode(mne, AM_WORDADR_SP)) {
+                    addrmode = AM_WORDADR_SP;
+                    break;
+                }
+            }
 	    }
 
-            sprintf( sBuffer, "%s %s", mne->name, str );
+        sprintf( sBuffer, "%s %s", mne->name, str );
+        if (addrmode == AM_ZPREL) {
+            /* Incorrect address type - quit assembly */
+            asmerr( ERROR_NON_ZP_ADDRESS, true, sBuffer);   
+        } else {
             asmerr( ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer );
-            break;
+        }
+        break;
         }
         addrmode = Cvt[addrmode];
     }
@@ -438,8 +456,8 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         
         ++opidx;
     }
-    
-    if ((mne->flags & MF_REL) || addrmode == AM_REL)
+
+    if ((mne->flags & (MF_REL | MF_ZPREL)) || addrmode == AM_REL || addrmode == AM_ZPREL)
     {
         ++opidx;		/*  to end of instruction   */
         
