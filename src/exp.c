@@ -108,6 +108,7 @@ int IsAlphaNum( int c );
 *    (val)	indirect
 *    (val,x)	zero indirect x
 *    (val),y	zero indirect y
+*    val,val    zero page, relative
 *
 *    exp, exp,.. LIST of expressions
 *
@@ -372,8 +373,7 @@ SYMBOL *eval(const char *str, int wantmode)
             
             if (wantmode)
             {
-                if (cur->addrmode == AM_INDWORD &&
-                    str[1] == ',' && (str[2]|0x20) == 'y')
+                if (cur->addrmode == AM_INDWORD && str[1] == ',' && (str[2]|0x20) == 'y')
                 {
                     cur->addrmode = AM_INDBYTEY;
                     str += 2;
@@ -390,6 +390,11 @@ SYMBOL *eval(const char *str, int wantmode)
                    //we treat the opcode as valid to allow passes to continue, which should
                    //allow other errors (like phase errros) to resolve before our "++Redo"
                    //ultimately forces a failure.
+                }
+
+                if ((cur->addrmode == AM_INDWORD) && (str[1] == '\0') && (Processor == 16502))
+                {
+                    cur->addrmode = AM_INDBYTE;
                 }
                 ++str;
                 break;
@@ -450,6 +455,26 @@ SYMBOL *eval(const char *str, int wantmode)
             {
                 cur->addrmode = AM_INDBYTEX;
                 ++str;
+            }
+            else if (cur->addrmode != AM_INDWORD && scr != 'x' && scr != 'y' && (Processor == 16502))
+            {
+                cur->addrmode = AM_BYTEREL;
+                SYMBOL *pNewSymbol = allocsymbol();
+                cur->next = pNewSymbol;
+                --Argi;
+                cur->value = Argstack[Argi];
+                cur->flags = Argflags[Argi];
+
+                if ((cur->string = (void *)Argstring[Argi]) != NULL)
+                {
+                    cur->flags |= SYM_STRING;
+                    if (Xdebug)
+                        printf("STRING: %s\n", cur->string);
+                }
+                cur = pNewSymbol;
+
+                // Seems like this is not needed - not sure why
+                // ++str;
             }
             //FIX: detect illegal opc (zp,y) syntax...
             else if ((cur->addrmode == AM_INDWORD && scr == 'y' && str[2]==')')&&(wantmode))
@@ -567,8 +592,11 @@ SYMBOL *eval(const char *str, int wantmode)
             if (Xdebug)
                 printf("STRING: %s\n", cur->string);
         }
-        if (base->addrmode == 0)
+        if ((base->addrmode == 0) && (cur->addrmode != AM_BYTEREL))
             base->addrmode = AM_BYTEADR;
+
+        if ((base->addrmode == 0) && (cur->addrmode == AM_BYTEREL))
+            base->addrmode = AM_BYTEREL;
     }
 
     if (Argi != Argibase || Opi != Opibase)
