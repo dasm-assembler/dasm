@@ -1,0 +1,556 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                  %%
+%%  The rest is the gnumeric table, except for the closing          %%
+%%  statement. Changes below will alter the table's appearance.     %%
+%%                                                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% \providecommand{\gnumericmathit}[1]{#1} 
+
+%%  Uncomment the next line if you would like your numbers to be in %%
+%%  italics if they are italizised in the gnumeric table.           %%
+%% \renewcommand{\gnumericmathit}[1]{\mathit{#1}}
+
+\providecommand{\tableOmPB}[1]%
+{\let\tableOmTemp=\\#1\let\\=\tableOmTemp\hspace{0pt}}
+ \ifundefined{tableOmWidthDefined}
+		\newlength{\tableOmWidth}
+        \newlength{\tableOmWidthComplete}
+		\global\def\tableOmWidthDefined{}
+ \fi
+
+%% The following setting protects this code from babel shorthands.  %%
+
+%%  The default table format retains the relative column widths of  %%
+%%  gnumeric. They can easily be changed to c, r or l. In that case %%
+%%  you may want to comment out the next line and uncomment the one %%
+%%  thereafter                                                      %%
+
+%% to adjust positions in multirow situations                       %%
+\setlength{\bigstrutjot}{\jot}
+\setlength{\extrarowheight}{\doublerulesep}
+
+%%  The \setlongtables command keeps column widths the same across  %%
+%%  pages. Simply comment out next line for varying column widths.  %%
+%%\setlongtables
+
+\setlength\tableOmWidth{%
+	60pt+%
+	50pt+%
+	50pt+%
+	60pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+	50pt+%
+0pt}
+
+\def\tableOmNumCols{20}
+
+\setlength\tableOmWidthComplete{\tableOmWidth+%
+         \tabcolsep*\tableOmNumCols*2+\arrayrulewidth*\tableOmNumCols}
+         
+\ifthenelse{\lengthtest{\tableOmWidthComplete > \linewidth}}%
+         {\def\tableOmScale{\ratio{\linewidth-%
+                        \tabcolsep*\tableOmNumCols*2-%
+                        \arrayrulewidth*\tableOmNumCols}%
+						{\tableOmWidth}}%
+		 }%
+		 {
+		 	\def\tableOmScale{1}%
+		 }
+
+\ifthenelse{\isundefined{\tableOmColB}}{\newlength{\tableOmColB}}{}\settowidth{\tableOmColB}{\begin{tabular}{@{}p{60pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColC}}{\newlength{\tableOmColC}}{}\settowidth{\tableOmColC}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColD}}{\newlength{\tableOmColD}}{}\settowidth{\tableOmColD}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColE}}{\newlength{\tableOmColE}}{}\settowidth{\tableOmColE}{\begin{tabular}{@{}p{60pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColF}}{\newlength{\tableOmColF}}{}\settowidth{\tableOmColF}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColG}}{\newlength{\tableOmColG}}{}\settowidth{\tableOmColG}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColH}}{\newlength{\tableOmColH}}{}\settowidth{\tableOmColH}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColI}}{\newlength{\tableOmColI}}{}\settowidth{\tableOmColI}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColJ}}{\newlength{\tableOmColJ}}{}\settowidth{\tableOmColJ}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColK}}{\newlength{\tableOmColK}}{}\settowidth{\tableOmColK}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColL}}{\newlength{\tableOmColL}}{}\settowidth{\tableOmColL}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColM}}{\newlength{\tableOmColM}}{}\settowidth{\tableOmColM}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColN}}{\newlength{\tableOmColN}}{}\settowidth{\tableOmColN}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColO}}{\newlength{\tableOmColO}}{}\settowidth{\tableOmColO}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColP}}{\newlength{\tableOmColP}}{}\settowidth{\tableOmColP}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColQ}}{\newlength{\tableOmColQ}}{}\settowidth{\tableOmColQ}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColR}}{\newlength{\tableOmColR}}{}\settowidth{\tableOmColR}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColS}}{\newlength{\tableOmColS}}{}\settowidth{\tableOmColS}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColT}}{\newlength{\tableOmColT}}{}\settowidth{\tableOmColT}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+\ifthenelse{\isundefined{\tableOmColU}}{\newlength{\tableOmColU}}{}\settowidth{\tableOmColU}{\begin{tabular}{@{}p{50pt*\tableOmScale}@{}}x\end{tabular}}
+
+%%\def\opcodeSummaryTable{
+\begin{longtable}[c]{%
+	b{\tableOmColB}%
+	b{\tableOmColC}%
+	b{\tableOmColD}%
+	b{\tableOmColE}%
+	b{\tableOmColF}%
+	b{\tableOmColG}%
+	b{\tableOmColH}%
+	b{\tableOmColI}%
+	b{\tableOmColJ}%
+	b{\tableOmColK}%
+	b{\tableOmColL}%
+	b{\tableOmColM}%
+	b{\tableOmColN}%
+	b{\tableOmColO}%
+	b{\tableOmColP}%
+	b{\tableOmColQ}%
+	b{\tableOmColR}%
+	b{\tableOmColS}%
+	b{\tableOmColT}%
+	b{\tableOmColU}%
+	}%
+\hhline{~|--|-|------|--|--------}
+	 \multicolumn{1}{p{\tableOmColB}|}%
+	{}
+	&\multicolumn{2}{p{	\tableOmColC+%
+	\tableOmColD+%
+	\tabcolsep*2*1}|}%
+	{\tableOmPB{\centering}\eightrm{Bit Manipulation}}
+	&\multicolumn{1}{p{\tableOmColE}|}%
+	{\tableOmPB{\centering}\gnumbox{\eightrm{Branch}}}
+	&
+	&\tableOmPB{\raggedright}\gnumbox{\ninerm{\makebox[5pt]{}Read-Modify-Write}}
+	&
+	&
+	&
+	&\multicolumn{1}{p{\tableOmColK}|}%
+	{}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{\makebox[5pt]{}Control}}
+	&\multicolumn{1}{p{\tableOmColM}|}%
+	{}
+	&\tableOmPB{\raggedright}\gnumbox[l]{\ninerm{Register-Memory}}
+	&
+	&
+	&
+	&
+	&
+	&
+	&\multicolumn{1}{p{\tableOmColU}|}%
+	{}
+\\
+\hhline{~|--|-|------|--|--------|}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{rel}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{x8}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{sp8}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{x}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{inh}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{imm8}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dir}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ext}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{x16}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sp16}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{x8}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{sp8}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{x}}
+\\
+\hhline{|-|-------------------|}
+	 \multicolumn{1}{|p{\tableOmColB}}%
+%%	 {\tableOmPB{\centering}\gnumbox{\diagbox[trim=lr,width=13mm,height=10mm]{\adjustbox{valign=b}{\sevenrm{LSB}}}{\adjustbox{valign=t}{\sevenrm{MSB}}}}}%
+	 {\tableOmPB{\centering}\gnumbox{\diagbox[trim=lr,width=12.75mm,height=7mm]{\adjustbox{valign=b}{\sevenrm{LSB}}}{\adjustbox{valign=t}{\sevenrm{MSB}}}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{0{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{1{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{2{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{3{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{4{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{5{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{6{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{9e6{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{7{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{8{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{9{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{A{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{B{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{C{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{D{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{9eD{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{E{\color{ghost}x}}}%
+	&\tableOmPB{\centering}\gnumbox{\ninerm{9eE{\color{ghost}x}}}%
+	&\multicolumn{1}{p{\tableOmColU}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{F{\color{ghost}x}}}}%
+\\
+\hhline{~|-------------------|}
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{{\ninerm{\color{ghost}x}0}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 0}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 0}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bra}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{neg}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{negA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{negX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{neg}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{neg}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{neg}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rti}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bge}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{sub}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{sub}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}1}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 0}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 0}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{brn}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{cbeq}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{cbeqA}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{cbeqX}}
+	&\tableOmPB{\centering}\gnumboxLR{\ninermb{cbeq}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{cbeq}}
+	&\tableOmPB{\centering}\gnumboxG{\ninerm{cbeq.ix}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rts}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{blt}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{cmp}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{cmp}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}2}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 1}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 1}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bhi}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{mul}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{div}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{nsa}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{daa}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bgt}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{sbc}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{sbc}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}3}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 1}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 1}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bls}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{com}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{comA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{comX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{com}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{com}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{com}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{swi}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{ble}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{cpX}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{cpX}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}4}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 2}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 2}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bcc}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{lsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{lsrA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{lsrX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{lsr}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{lsr}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{lsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tAP}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tHXS}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{and}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{and}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}5}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 2}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 2}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{blo\footnote{or bcs (branch if carry set)}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{stHX}}
+	&\tableOmPB{\centering}\gnumboxGN{\ninerm{ldHX}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{ldHX}}
+	&\tableOmPB{\centering}\gnumboxGN{\ninerm{cpHX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{cpHX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tPA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tSHX}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{bit}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{bit}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}6}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 3}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 3}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bne}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{ror}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rorA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rorX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{ror}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{ror}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{ror}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pulA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{ldA}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{ldA}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}7}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 3}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 3}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{beq}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{asr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{asrA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{asrX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{asr}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{asr}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{asr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pshA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tAX}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{aiS}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{stA}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{stA}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}8}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 4}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 4}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bhcc}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{lsl}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{lslA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{lslX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{lsl}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{lsl}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{lsl}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pulX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{clc}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{eor}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{eor}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}9}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 4}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 4}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bhcs}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{rol}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rolA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rolX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{rol}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{rol}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{rol}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pshX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sec}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{adc}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{adc}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}A}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 5}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 5}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bpl}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dec}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{decA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{decX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{dec}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{dec}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{dec}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pulH}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{cli}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{orA}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{orA}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}B}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 5}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 5}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bmi}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{dbnz}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{dbnzA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{dbnzX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{dbnz}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{dbnz}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{dbnz.ix}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{pshH}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{sei}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{add}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{add}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}C}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 6}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 6}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bmc}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{inc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{incA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{incX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{inc}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{inc}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{inc}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{clrH}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{rsp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{jmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{jmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{jmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{jmp}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{jmp}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}D}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 6}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 6}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bms}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{tst}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tstA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tstX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{tst}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{tst}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{ts}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{nop}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bsr}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{jsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{jsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{jsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{jsr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{jsr}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}E}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brset 7}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bset 7}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bil}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxY{\ninerm{mov}}
+	&\tableOmPB{\centering}\gnumboxO{\ninerm{movp}}
+	&\tableOmPB{\centering}\gnumboxP{\ninermb{mov}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{-}}
+	&\tableOmPB{\centering}\gnumboxDG{\ninermb{xmov}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stop}}
+	&\tableOmPB{\centering}\gnumbox{\ninermb{*}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{ldX}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{ldX}}
+\\
+	 \multicolumn{1}{|p{\tableOmColB}|}%
+	{\tableOmPB{\centering}\gnumbox{\ninerm{{\color{ghost}x}F}}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{brclr 7}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{bclr 7}}
+	&\tableOmPB{\centering}\gnumboxLB{\ninerm{bih}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{clr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{clrA}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{clrX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{clr}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{clr}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{clr}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{wait}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{tXA}}
+	&\tableOmPB{\centering}\gnumboxLG{\ninerm{aiX}}
+	&\tableOmPB{\centering}\gnumboxLO{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumbox{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumboxLP{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumboxSB{\ninerm{stX}}
+	&\tableOmPB{\centering}\gnumboxLY{\ninerm{stX}}
+\\
+\hhline{|-|~~~~~~~~~~~~~~~~~~~}
+\caption{\label{OpcodeSummary68hc908}68hc908 opcode summary}
+\end{longtable}
+%%}
+
+
+%% \tableOmEnd
+
+
