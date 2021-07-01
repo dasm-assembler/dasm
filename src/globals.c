@@ -87,8 +87,9 @@ unsigned char	 Fisclear;
 unsigned long	 Plab, Pflags;
 
 /*unsigned int	Adrbytes[]  = { 1, 2, 3, 2, 2, 2, 3, 3, 3, 2, 2, 2, 3, 1, 1, 2, 3 };*/
-unsigned int	Cvt[]	    = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0 };
-unsigned int	Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 0, 0, 1, 1, 1, 2 };
+/*                              1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22*/
+unsigned int    Cvt[]       = { 0, 2, 0, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0, 0, 2, 0, 4, 5, 0, 0, 0, 0 };
+unsigned int    Opsize[]    = { 0, 1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 1, 0, 0, 1, 1, 1, 2 };
 
 MNEMONIC Ops[] = {
     { NULL, v_list    , "list",           0,      0, {0,} },
