@@ -128,7 +128,7 @@ dasm sourcefile [option ...]
 \end{usage}
 
 \label{changelog:20200824sourcefile}
-If no \mono{sourcefile} is given, then \dasm will output a short help message, and exit with an assembly error. Otherise, the \mono{sourcefile} becomes the file that \dasm will assemble, and any further parameters are parsed as options.
+If no \mono{sourcefile} is given, then \dasm will output a short help message, and exit with an assembly error. Otherwise, the \mono{sourcefile} becomes the file that \dasm will assemble, and any further parameters are parsed as options.
 
 \label{changelog:20200831help}
 \begin{outputx2}
@@ -389,7 +389,7 @@ See alternate: \nameref{flag:listing}.
 
 Deprecated.
 
-Defines a symbol and sets it to the expression \mono{exp]}.
+Defines a symbol and sets it to the expression \mono{exp}.
 
 See similar: \nameref{flag:definesymbol}, \nameref{flag:definesymbolF}.\\
 
@@ -589,7 +589,7 @@ See \nameref{flag:symboltable} to enable symbol table output.
 -vvalue
 \end{usage}
 
-The \mono{-v} option controls the amount of information output by \dasm while it is assembling your code. This information includes warnings, errors, a segement table, a symbol table, unresolved and unreferenced symbols, and reasons for performing extra passes. Use of the \mono{-v} option can assist with diagnosing anomalous behaviour.
+The \mono{-v} option controls the amount of information output by \dasm while it is assembling your code. This information includes warnings, errors, a segment table, a symbol table, unresolved and unreferenced symbols, and reasons for performing extra passes. Use of the \mono{-v} option can assist with diagnosing anomalous behaviour.
 
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{cl}
@@ -656,7 +656,7 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 All numbers and addresses in \dasm are represented internally as signed 32-bit values.
 
 \index{Numbers!Range Checking}
-Numbers are range-checked at point of usage. Byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{255}) inclusive, as these values are the extremes of what can be represented with signed and unsigned 8-bit values. Word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{65535}) as these are the extremes of signed and unigned 16-bit values.
+Numbers are range-checked at point of usage. Byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{255}) inclusive, as these values are the extremes of what can be represented with signed and unsigned 8-bit values. Word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{65535}) as these are the extremes of signed and unsigned 16-bit values.
 
 Note that the assembler cannot tell the difference between the representation (in 8 and 16 bits) of signed/unsigned representation of negative and positive numbers, as they share the same bit patterns. 
 
@@ -750,7 +750,7 @@ PIDIGITS = 1000000 * 355/113
 
 \section{Expressions}
 
-Expressions are calculations involving symbols and numbers. These calculations are performed by \dasm during the assembly process. Often, symbols will have unkonwn values during an assembly pass, and thus an expression cannot be evaluated. \dasm will, in these cases, perform another assembly pass - often, unknown values are resolved later in the assembly.  A successful assembly is one where no errors have been detected, and all referenced symbols have been resolved.
+Expressions are calculations involving symbols and numbers. These calculations are performed by \dasm during the assembly process. Often, symbols will have unknown values during an assembly pass, and thus an expression cannot be evaluated. \dasm will, in these cases, perform another assembly pass - often, unknown values are resolved later in the assembly. A successful assembly is one where no errors have been detected, and all referenced symbols have been resolved.
 
 \subsection{Brackets}
 \label{changelog:20200908brackets}
@@ -763,7 +763,7 @@ Either square brackets \mono{[]} or round brackets \mono{()} may be used to grou
 
 \subsubsection{F8 and Other Processors}
 \index{Expressions!Brackets!F8 and Other}
-Either bracket type may be used in all situatinos.
+Either bracket type may be used in all situations.
 
 \subsubsection{6502 Processor}
 \index{Expressions!Brackets!6502}
@@ -870,7 +870,7 @@ However, there is a special-case for negative numbers used in operands. Although
 \mono{\%}&	    Modulus &19\\
 \mono{+}&	    Addition &18\\
 \mono{-}&	    Subtraction &18\\
-\mono{\textgreater\,\textgreater}&   Aritmetic shift right & 17\\
+\mono{\textgreater\,\textgreater}&   Arithmetic shift right & 17\\
 \mono{<\,<}& Arithmetic shift left &17\\
 \mono{>}& Greater than & 16\\
 \mono{>=}& Greater than or equal to &16\\
@@ -1204,7 +1204,7 @@ Effectively inserts the contents of another file at the point of the \nameref{ps
 \hrule
 %-------------------------------------------------------------------------------
 
-\section{Assigments}
+\section{Assignments}
 
 \subsection{\texttt{EQU}, \texttt{=}}
 \label{pseudoop:equ}
@@ -1262,7 +1262,7 @@ Same as \nameref{pseudoop:equ}, but the symbol may be reassigned later.\\
 \subsubsection{Example}
 
 \begin{code}
-; Using SET to do calcualtions
+; Using SET to do calculations
 N SET 1 
 SUM SET 0
   REPEAT 10
@@ -1363,7 +1363,7 @@ VAL SET VAL + 1
   DS[{.B|.W|.L}] exp[,fillvalue]
 \end{usage}
 
-Declare space and fill with a fillvalue (if specificed, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables).  The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
+Declare space and fill with a fillvalue (if specified, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables). The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
 
 The default size extension is a byte.
 
@@ -1421,7 +1421,7 @@ See \nameref{pseudoop:eqm}.\\
 This sets down raw hexadecimal data.  Whitespace is optional between each \mono{hh} byte.
 No expressions are allowed.  Note that you do NOT place a ``\$''
 in front of the hexadecimal digits.  This is a short form for creating
-tables compactly.  Data is always layed down on a byte-by-byte
+tables compactly.  Data is always laid down on a byte-by-byte
 basis.
 
 \subsubsection{Example}
@@ -1454,7 +1454,7 @@ F8 code, and this \mono{RES} directive is provided as an alternative.
   RES[{.B|.W|.L}] exp[,fillvalue]
 \end{usage}
 
-Declare space and fill with a fillvalue (if specificed, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables).  The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
+Declare space and fill with a fillvalue (if specified, otherwise default is 0). The optional size extender (\mono{.B}, \mono{.W}, \mono{.L}) defines the data size (1, 2 or 4) bytes. Data is not generated if within an uninitialized segment, but the origin still changes accordingly (this is very useful for defining variables). The number of bytes generated is \mono{exp} $\times$ data size (1, 2, or 4)
 
 The default size extension is a byte.
 
@@ -1661,7 +1661,7 @@ The above example generates the following code, which is then assembled:
  .byte 5, 3, 15
 \end{code}
 
-Labels within a \nameref{pseudoop:repeat} block should be local labels, preceeded by a
+Labels within a \nameref{pseudoop:repeat} block should be local labels, preceded by a
 \nameref{pseudoop:subroutine} directive to keep them unique.
 
 \subsubsection{Example}
@@ -1758,7 +1758,7 @@ are updated.
 The relocatable origin can skip around (no limitations).  The
 relocatable origin is a function of the segment.  That is, you
 can still \nameref{pseudoop:seg} to another segment that does not have a
-relocatable origin activated, do other (independant) stuff
+relocatable origin activated, do other (independent) stuff
 there, and then switch back to the current segment and continue
 where you left off.
 
@@ -1791,11 +1791,11 @@ Any label on the \nameref{pseudoop:rend} line will be allocated its value after 
   SEG[.U] [name]
 \end{usage}
 
-This switches to a new segment, creating it if neccessary.  If the optional \mono{.U} extension is present, the segment is an \textbf{uninitialised} segment. Segments may be defined in parts; the \mono{.U} is not needed when going back to an already created uninitialized segment, though it makes the code more readable.
+This switches to a new segment, creating it if necessary. If the optional \mono{.U} extension is present, the segment is an \textbf{uninitialised} segment. Segments may be defined in parts; the \mono{.U} is not needed when going back to an already created uninitialized segment, though it makes the code more readable.
 
-Unitialised segments are particularly useful for declaring variable locations without writing data to the binary output. They have no origin restrictions. This is useful for determining the size of a certain assembly sequence without generating code, and for assigning RAM addresses to labels.
+Uninitialised segments are particularly useful for declaring variable locations without writing data to the binary output. They have no origin restrictions. This is useful for determining the size of a certain assembly sequence without generating code, and for assigning RAM addresses to labels.
 
-An uninitialised segment with a \mono{name} will result in the generation of a warning for a \mono{reference to an unkonwn symbol}. This is harmless, but a good reason not to name uninitialised segments.
+An uninitialised segment with a \mono{name} will result in the generation of a warning for a \mono{reference to an unknown symbol}. This is harmless, but a good reason not to name uninitialised segments.
 
 For segments which are not uninitialised, the segment name is used when producing the diagnostic output at the end of each pass to indicate the memory usage of the named segments. For uninitialised segments, use of a segment name will generate a ``reference to undefined symbol'' warning that can be ignored.
 
@@ -1820,7 +1820,7 @@ bar2          ds 10
 varn          ds 2
 \end{code}
 
-In the example shown above, the \mono{variables} segment is unitialised. The zero-page variables (starting at location \mono{\$80}) \mono{foo1}, \mono{bar2}, and \mono{varn} are declared using \mono{DS} directive to ``reserve/allocate'' appropriate amounts of memory. Their addresses are automatically calculated by \dasm. The relevant part of the symbol table is shown below, to make clear that although the segment is unitialised, the labels/variables have correct values.
+In the example shown above, the \mono{variables} segment is uninitialised. The zero-page variables (starting at location \mono{\$80}) \mono{foo1}, \mono{bar2}, and \mono{varn} are declared using \mono{DS} directive to ``reserve/allocate'' appropriate amounts of memory. Their addresses are automatically calculated by \dasm. The relevant part of the symbol table is shown below, to make clear that although the segment is uninitialised, the labels/variables have correct values.
 
 \begin{outputx}
 foo1                     0080                  
@@ -1838,7 +1838,7 @@ varn                     008b
   ALIGN n[,fill]
 \end{usage}
 
-Align the current program counter to an n-byte boundry.	If the \mono{fill} option is present, then that value will be used to fill the space generated. The default fill value is \mono{0}. The \nameref{pseudoop:align} default value should not be confused with the \nameref{pseudoop:org} 
+Align the current program counter to an n-byte boundary. If the \mono{fill} option is present, then that value will be used to fill the space generated. The default fill value is \mono{0}. The \nameref{pseudoop:align} default value should not be confused with the \nameref{pseudoop:org}
 directive's default fill value.
 
 Any label on the \nameref{pseudoop:align} line will be associated its value after the directive is processed.
@@ -1911,7 +1911,7 @@ Only one \nameref{pseudoop:processor} directive may be declared in the entire as
 \index{Processor!Atari 2600}
 For the \mono{6507} microprocessor (as used in the Atari 2600 machine), use ``\nameref{pseudoop:processor} \mono{6502}'' as these two microprocessors are identical except for their addressing range.
 	
-Different processor	models use different endianness (byte ordering of word values, being little-endian or big-endian). The processor's endiannessdoes not affect the header in the output files (\mono{-f1} and \mono{-f2}), which are always little-endian (\mono{LSB}, \mono{MSB}).  The processor byte ordering affects all address, word, andlong values.\\
+Different processor models use different endianness (byte ordering of word values, being little-endian or big-endian). The processor's endianness does not affect the header in the output files (\mono{-f1} and \mono{-f2}), which are always little-endian (\mono{LSB}, \mono{MSB}). The processor byte ordering affects all address, word, and long values.\\
 
 \hrule
 
@@ -1958,7 +1958,7 @@ Local labels must be unique within the scope of the subroutine in which they are
 
 \index{Macros!Scope}
 \index{Scope!Macros}
-Macros implicitly define a new subroutine scope both at their beginning, and end. Local labels defined inside a macro are not avalable outside it, and local labels defined before a macro usage instance are also no longer visible after the instantiation. Automatic new local label scope boundries occur for each macro level.
+Macros implicitly define a new subroutine scope both at their beginning, and end. Local labels defined inside a macro are not available outside it, and local labels defined before a macro usage instance are also no longer visible after the instantiation. Automatic new local label scope boundaries occur for each macro level.
 
 
 \subsubsection{Example}
@@ -2016,7 +2016,7 @@ See \nameref{pseudoop:mac}.
   ERR
 \end{usage}
 
-Abort assembly. Useful in conjunction with \nameref{conditionals} to end an essembly if required.
+Abort assembly. Useful in conjunction with \nameref{conditionals} to end an assembly if required.
 
 \subsubsection{Example}
 
@@ -2215,7 +2215,7 @@ LoTable VECTORS <
 HiTable VECTORS > 
 \end{code}
 	
-In the above example, a list of pointers to functions is generated in two tables (one containing the low addresses of the functions, and the other the high addresses). These two tables are always in-synch (no extra or missing entries) through the single-point definitino in the macro itself.
+In the above example, a list of pointers to functions is generated in two tables (one containing the low addresses of the functions, and the other the high addresses). These two tables are always in-synch (no extra or missing entries) through the single-point definition in the macro itself.
 
 The two calls to the macro generate the low bytes and the high bytes into two separate tables. This will result in the following code being generated, and then inserted into the source code in place of the macro calls...
 	
