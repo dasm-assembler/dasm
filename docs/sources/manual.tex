@@ -656,7 +656,7 @@ The \mono{-v} option controls the amount of information output by \dasm while it
 All numbers and addresses in \dasm are represented internally as signed 32-bit values.
 
 \index{Numbers!Range Checking}
-Numbers are range-checked at point of usage. Byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{255}) inclusive, as these values are the extremes of what can be represented with signed and unsigned 8-bit values. Word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{65535}) as these are the extremes of signed and unsigned 16-bit values.
+Numbers are range-checked at point of usage. Signed byte values should be between \mono{\$80} (\mono{-128}) and \mono{\$FF} (\mono{+127}) inclusive, as these values are the extremes of what can be represented with signed 8-bit values. Unsigned byte values should be between \mono{0} and \mono{\$FF} (\mono{255}). Signed  word values should be between \mono{\$8000} (\mono{-32768}) and \mono{\$FFFF} (\mono{+32767}) as these are the extremes of signed 16-bit values. Unsigned word values should be between \mono{0} and \mono{\$FFFF} (\mono{65535}).
 
 Note that the assembler cannot tell the difference between the representation (in 8 and 16 bits) of signed/unsigned representation of negative and positive numbers, as they share the same bit patterns. 
 
