@@ -1,7 +1,7 @@
 ; MACRO.H
 ; Version 1.09, 05/SEP/2020
 
-VERSION_MACRO         = 109
+VERSION_MACRO         = 110
 
 ;
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
@@ -17,8 +17,10 @@ VERSION_MACRO         = 109
 
 
 ; Latest Revisions...
+; 1.10  09/MAY/2022     - ("nop 0") should be changed to "nop VSYNC", to ensure that
+;                         the instruction will access a "safe" memory location even
+;                         when a different TIA_BASE_ADDRESS is defined - ale_79
 ; 1.09  05/SEP/2020     - updated license/links
-
 ; 1.08  13/JUL/2020     - added use of LXA to CLEAN_START
 ; 1.07  19/JAN/2020     - correction to comment VERTICAL_SYNC
 ; 1.06  03/SEP/2004     - nice revision of VERTICAL_SYNC (Edwin Blink)
@@ -66,7 +68,7 @@ VERSION_MACRO         = 109
 
                 IF .CYCLES & 1
                     IFNCONST NO_ILLEGAL_OPCODES
-                        nop 0
+                        nop VSYNC
                     ELSE
                         bit VSYNC
                     ENDIF
