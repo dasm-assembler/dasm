@@ -575,11 +575,27 @@ void
 v_incbin(char *str, MNEMONIC *dummy)
 {
     char    *buf;
+    char    *fname;
     FILE    *binfile;
-    
+
     programlabel();
-    buf = getfilename(str);
+
+    SYMBOL *sym = eval(str, 0);
+    if ((sym->flags & SYM_STRING) == 0) {
+        asmerr(ERROR_TYPE_MISMATCH, true, NULL);
+    } else {
+        fname = sym->string;
+    }
+    buf = getfilename(fname);
     
+    long skip_bytes = 0;
+    if (sym->next) {
+        if (sym->next->flags & SYM_UNKNOWN) {
+            asmerr(ERROR_VALUE_UNDEFINED, true, NULL);
+        }
+        skip_bytes = sym->next->value;
+    }
+
     binfile = pfopen(buf, "rb");
     if (binfile) {
         if (Redo) {
@@ -590,6 +606,7 @@ v_incbin(char *str, MNEMONIC *dummy)
         }
         else
         {
+            fseek(binfile, skip_bytes, SEEK_SET);
             for (;;) {
                 Glen = fread(Gen, 1, sizeof(Gen), binfile);
                 if (Glen <= 0)

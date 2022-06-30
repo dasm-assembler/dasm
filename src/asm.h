@@ -116,7 +116,8 @@ enum ASM_ERROR_EQUATES
     ERROR_AVOID_SEGFAULT,                       /* 39 */
     ERROR_MISSING_ENDM,                         /* 40 */
     ERROR_MISSING_COMMENT_END,                  /* 41 */
-    ERROR_SPURIOUS_COMMENT_CLOSE                /* 42 */
+    ERROR_SPURIOUS_COMMENT_CLOSE,               /* 42 */
+    ERROR_TYPE_MISMATCH                         /* 43 */
 };
 
 typedef struct ERRORSTRUCT
