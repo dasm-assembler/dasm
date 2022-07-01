@@ -259,9 +259,14 @@ PSEUDOPS:
 
 	    Include another assembly file.
 
-[label] INCBIN	    "name"
+[label] INCBIN	    "name" [,SkipBytes]
 
 	    Include another file literally in the output.
+
+		If provided with the second argument, the first <SkipBytes>
+		bytes of the file will be excluded. This can be useful for
+		skiping unwanted headers, e. g. load address indicators,
+		SID tune headers, etc.
 
 	INCDIR	    "directory name"
 
