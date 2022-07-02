@@ -1154,10 +1154,12 @@ All directives (and incidentally also the mnemonics) can be prefixed with a dot 
 \index{Directives!Includes!\texttt{INCBIN}}
 
 \begin{usage}
-  INCBIN "filename"
+  INCBIN "filename" [,SkipBytes]
 \end{usage}
 
-Include the binary contents of another file literally in the output.\\
+Include the binary contents of another file literally in the output.
+
+If provided with the second argument, the first <SkipBytes> bytes of the file will be excluded. This can be useful for skiping unwanted headers, e. g. load address indicators, SID tune headers, etc.\\
 \hrule
 
 \subsection{\texttt{INCDIR}}

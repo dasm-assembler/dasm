@@ -120,6 +120,7 @@ ERROR_DEFINITION sErrorDef[] = {
 	{ ERROR_MISSING_ENDM,				true, "Unbalanced macro %s" },
 	{ ERROR_MISSING_COMMENT_END,			true, "Multi-line comment not closed." },
 	{ ERROR_SPURIOUS_COMMENT_CLOSE,			true, "Multi-line comment closed without open." },
+    { ERROR_TYPE_MISMATCH,                          true,   "Type mismatch" },
     {-1, true, "Doh! Internal end-of-table marker, report the bug!"}
 };
 

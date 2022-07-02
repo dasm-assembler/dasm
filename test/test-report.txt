@@ -17,6 +17,7 @@
  *                          example	binary is same,	pass
  *                             fill	binary is same,	pass
  *                  forced_addrmode	binary is same,	pass
+ *                           incbin	binary is same,	pass
  *                          include	binary is same,	pass
  *                            jmpiw	binary is same,	pass
  *                     labelchanges	binary is same,	pass
@@ -95,4 +96,4 @@
  *                         supercat	error_code [18] pass
  *                       toobigbyte	error_code [5] pass
  *                       toobigword	error_code [5] pass
-executed 94 tests, 87 OK, 7 failed, result: overall PASS
+executed 95 tests, 88 OK, 7 failed, result: overall PASS
