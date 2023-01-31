@@ -1100,7 +1100,11 @@ N SET N+1
 
   dynm fna
   jmp fna_1     ; OK
-  
+
+I = 1
+TMP SET fna_,I 
+  jmp TMP       ; the same as `jmp fna_1`
+
   dynm fnb
   jmp fnb_2     ; OK
   jmp fnb_0     ; ERROR - does not exist
