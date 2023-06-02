@@ -282,7 +282,7 @@ static void ShowSymbols( FILE *file, int sortMode )
                  sftos( symArray[ i ]->value, symArray[ i ]->flags ) );
              if ( symArray[ i ]->flags & SYM_STRING )
                  fprintf( file, " \"%s\"", symArray[ i ]->string );                  /* If a string, display actual string */
-				 fprintf( file, " %i", symArray[ i ]->order );
+			 //fprintf( file, " %i", symArray[ i ]->order ); // enable for debugging -T2
              fprintf( file, "\n" );
          }
 

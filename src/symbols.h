@@ -34,7 +34,7 @@
 
 #include <stdbool.h>
 
-void programlabel(bool addToOrder = true);
+void programlabel();
 void ShowSymbols(FILE *file);
 size_t ShowUnresolvedSymbols(void);
 void DumpSymbolTable(void);
