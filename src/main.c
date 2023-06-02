@@ -65,7 +65,7 @@ void passbuffer_update(int,char *);
 void passbuffer_output(int);
 void passbuffer_cleanup(void);
 
-int mlflag = 0; // multi-line comments 
+int mlflag = 0; // multi-line comments
 
 static char erroradd1[500]; // temp error holders
 static char erroradd2[500];
@@ -74,9 +74,9 @@ static char erroradd3[500];
 /* Table encapsulates errors, descriptions, and fatality flags. */
 
 ERROR_DEFINITION sErrorDef[] = {
-    
+
     /* Error #, STOPEND, Description */
-    
+
     { ERROR_NONE,                                   true,   "OK"   },
     { ERROR_COMMAND_LINE,                           true,   "Check command-line format."   },
     { ERROR_FILE_ERROR,                             true,   "Unable to open file."   },
@@ -143,13 +143,13 @@ static int CountUnresolvedSymbols(void)
     SYMBOL *sym;
     int nUnresolved = 0;
     int i;
-    
+
     /* Pre-count unresolved symbols */
     for (i = 0; i < SHASHSIZE; ++i)
         for (sym = SHash[i]; sym; sym = sym->next)
             if ( sym->flags & SYM_UNKNOWN )
                 nUnresolved++;
-            
+
     return nUnresolved;
 }
 
@@ -158,21 +158,21 @@ static int ShowUnresolvedSymbols(void)
 {
     SYMBOL *sym;
     int i;
-    
+
     int nUnresolved = CountUnresolvedSymbols();
     if ( nUnresolved )
     {
         printf( "--- Unresolved Symbol List\n" );
-        
+
         /* Display unresolved symbols */
         for (i = 0; i < SHASHSIZE; ++i)
             for (sym = SHash[i]; sym; sym = sym->next)
                 if ( sym->flags & SYM_UNKNOWN )
                     printf( "%-24s %s\n", sym->name, sftos( sym->value, sym->flags ) );
-                
+
         printf( "--- %d Unresolved Symbol%c\n\n", nUnresolved, ( nUnresolved == 1 ) ? ' ' : 's' );
     }
-    
+
     return nUnresolved;
 }
 
@@ -183,7 +183,7 @@ static int CompareAlpha( const void *arg1, const void *arg2 )
 
     const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
     const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
-    
+
     /*
        The cast above is wild, thank goodness the Linux man page
        for qsort(3) has an example explaining it... :-) [phf]
@@ -201,39 +201,48 @@ static int CompareAlpha( const void *arg1, const void *arg2 )
 static int CompareAddress( const void *arg1, const void *arg2 )
 {
     /* Simple numeric ordering comparison function for quicksort */
-    
+
     const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
     const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
-    
+
     return sym1->value - sym2->value;
 }
 
-/* bTableSort true -> by address, false -> by name [phf] */
-static void ShowSymbols( FILE *file, bool bTableSort )
+static int CompareOrder( const void *arg1, const void *arg2 )
+{
+    /* Simple numeric ordering comparison function for quicksort */
+
+    const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
+    const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
+
+    return sym1->order - sym2->order;
+}
+
+static void ShowSymbols( FILE *file, int sortMode )
 {
     /* Display sorted (!) symbol table - if it runs out of memory, table will be displayed unsorted */
-    
+
     SYMBOL **symArray;
     SYMBOL *sym;
     int i;
     int nSymbols = 0;
-    
+
     fprintf( file, "--- Symbol List");
-    
-    /* Sort the symbol list either via name, or by value */
-    
+
+    /* Sort the symbol list either via name, by value or by order in code */
+
     /* First count the number of symbols */
     for (i = 0; i < SHASHSIZE; ++i)
         for (sym = SHash[i]; sym; sym = sym->next)
             nSymbols++;
-        
+
     /* Malloc an array of pointers to data */
-        
+
     symArray = (SYMBOL **)ckmalloc( sizeof( SYMBOL * ) * nSymbols );
     if ( !symArray )
     {
         fprintf( file, " (unsorted - not enough memory to sort!)\n" );
-            
+
         /* Display complete symbol table */
         for (i = 0; i < SHASHSIZE; ++i)
             for (sym = SHash[i]; sym; sym = sym->next)
@@ -242,41 +251,46 @@ static void ShowSymbols( FILE *file, bool bTableSort )
     else
     {
          /* Copy the element pointers into the symbol array */
-            
+
          int nPtr = 0;
-            
+
          for (i = 0; i < SHASHSIZE; ++i)
              for (sym = SHash[i]; sym; sym = sym->next)
                  symArray[ nPtr++ ] = sym;
-                
-         if ( bTableSort )
+
+         if ( sortMode == SORTMODE_ADDRESS )
          {
              fprintf( file, " (sorted by address)\n" );
              qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAddress );           /* Sort via address */
          }
-         else
+         else if ( sortMode == SORTMODE_ALPHA )
          {
              fprintf( file, " (sorted by symbol)\n" );
              qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareAlpha );              /* Sort via name */
          }
-                
-                
+		 else
+         {
+             fprintf( file, " (sorted by order)\n" );
+             qsort( symArray, nPtr, sizeof( SYMBOL * ), CompareOrder );              /* Sort via name */
+         }
+
          /* now display sorted list */
-                
+
          for ( i = 0; i < nPtr; i++ )
          {
              fprintf( file, "%-24s %-12s", symArray[ i ]->name,
                  sftos( symArray[ i ]->value, symArray[ i ]->flags ) );
              if ( symArray[ i ]->flags & SYM_STRING )
                  fprintf( file, " \"%s\"", symArray[ i ]->string );                  /* If a string, display actual string */
+				 fprintf( file, " %i", symArray[ i ]->order );
              fprintf( file, "\n" );
          }
-                
+
          free( symArray );
     }
-        
+
     fputs( "--- End of Symbol List.\n", file );
-        
+
 }
 
 
@@ -286,90 +300,90 @@ static void ShowSegments(void)
     SEGMENT *seg;
     const char *bss;
     const char *sFormat = "%-24s %-3s %-8s %-8s %-8s %-8s\n\0";
-    
-    
-    
+
+
+
     printf("\n----------------------------------------------------------------------\n");
     printf( sFormat, "SEGMENT NAME", "", "INIT PC", "INIT RPC", "FINAL PC", "FINAL RPC" );
-    
+
     for (seg = Seglist; seg; seg = seg->next)
     {
         bss = (seg->flags & SF_BSS) ? "[u]" : "   ";
-        
+
         printf( sFormat, seg->name, bss,
             sftos(seg->initorg, seg->initflags), sftos(seg->initrorg, seg->initrflags),
             sftos(seg->org, seg->flags), sftos(seg->rorg, seg->rflags) );
     }
     puts("----------------------------------------------------------------------");
-    
+
     printf( "%d references to unknown symbols.\n", Redo_eval );
     printf( "%d events requiring another assembler pass.\n", Redo );
-    
+
     if ( Redo_why )
     {
         if ( Redo_why & REASON_MNEMONIC_NOT_RESOLVED )
             printf( " - Expression in mnemonic not resolved.\n" );
-        
+
         if ( Redo_why & REASON_OBSCURE )
             printf( " - Obscure reason - to be documented :)\n" );
-        
+
         if ( Redo_why & REASON_DC_NOT_RESOVED )
             printf( " - Expression in a DC not resolved.\n" );
-        
+
         if ( Redo_why & REASON_DV_NOT_RESOLVED_PROBABLY )
             printf( " - Expression in a DV not resolved (probably in DV's EQM symbol).\n" );
-        
+
         if ( Redo_why & REASON_DV_NOT_RESOLVED_COULD )
             printf( " - Expression in a DV not resolved (could be in DV's EQM symbol).\n" );
-        
+
         if ( Redo_why & REASON_DS_NOT_RESOLVED )
             printf( " - Expression in a DS not resolved.\n" );
-        
+
         if ( Redo_why & REASON_ALIGN_NOT_RESOLVED )
             printf( " - Expression in an ALIGN not resolved.\n" );
-        
+
         if ( Redo_why & REASON_ALIGN_RELOCATABLE_ORIGIN_NOT_KNOWN )
             printf( " - ALIGN: Relocatable origin not known (if in RORG at the time).\n" );
-        
+
         if ( Redo_why & REASON_ALIGN_NORMAL_ORIGIN_NOT_KNOWN )
             printf( " - ALIGN: Normal origin not known	(if in ORG at the time).\n" );
-        
+
         if ( Redo_why & REASON_EQU_NOT_RESOLVED )
             printf( " - EQU: Expression not resolved.\n" );
-        
+
         if ( Redo_why & REASON_EQU_VALUE_MISMATCH )
             printf( " - EQU: Value mismatch from previous pass (phase error).\n" );
-        
+
         if ( Redo_why & REASON_IF_NOT_RESOLVED )
             printf( " - IF: Expression not resolved.\n" );
-        
+
         if ( Redo_why & REASON_REPEAT_NOT_RESOLVED )
             printf( " - REPEAT: Expression not resolved.\n" );
-        
+
         if ( Redo_why & REASON_FORWARD_REFERENCE )
             printf( " - Label defined after it has been referenced (forward reference).\n" );
-        
+
         if ( Redo_why & REASON_PHASE_ERROR )
             printf( " - Label value is different from that of the previous pass (phase error).\n" );
 
         if ( Redo_why & REASON_BRANCH_OUT_OF_RANGE )
             printf( " - Branch was out of range.\n" );
     }
-    
+
     printf( "\n" );
-    
+
 }
 
 
 
-static void DumpSymbolTable( bool bTableSort )
+static void DumpSymbolTable( int sortMode )
 {
     if (F_symfile)
     {
         FILE *fi = fopen(F_symfile, "w");
         if (fi)
         {
-            ShowSymbols( fi, bTableSort );
+            ShowSymbols( fi, sortMode );
             fclose(fi);
         }
         else
@@ -377,27 +391,24 @@ static void DumpSymbolTable( bool bTableSort )
             printf("Warning: Unable to open Symbol Dump file '%s'\n", F_symfile);
         }
     }
-    
+
 }
 
 
-static int MainShadow(int ac, char **av, bool *pbTableSort )
+static int MainShadow(int ac, char **av, int *pSortMode )
 {
-    
-    
-    
     int nError = ERROR_NONE;
     bool bDoAllPasses = false;
-    
+
     char buf[MAXLINE];
     int i;
     int argVal;
     MNEMONIC *mne;
-    
+
     int oldredo = -1;
     unsigned long oldwhy = 0;
     int oldeval = 0;
-    
+
     addhashtable(Ops);
     pass = 1;
 
@@ -426,7 +437,7 @@ fail:
     puts("-Idir    search directory for INCLUDE and INCBIN");
     puts("-p#      maximum number of passes");
     puts("-P#      maximum number of passes, with fewer checks");
-    puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value)");
+    puts("-T#      symbol table sorting (default 0 = alphabetical, 1 = address/value, 2 = order in code)");
     puts("-E#      error format (default 0 = MS, 1 = Dillon, 2 = GNU)");
     puts("-S       strict syntax checking");
     puts("-R       remove binary output-file in case of errors");
@@ -436,7 +447,7 @@ fail:
 
     return ERROR_COMMAND_LINE;
     }
-    
+
     for (i = 2; i < ac; ++i)
     {
         if ( ( av[i][0] == '-' ) || ( av[i][0] == '/' ) )
@@ -459,12 +470,12 @@ fail:
                 if (F_sortmode < SORTMODE_DEFAULT
                    || F_sortmode >= SORTMODE_MAX )
                 {
-                    panic("Invalid sorting mode for -T option, must be 0 or 1");
+                    panic("Invalid sorting mode for -T option, must be 0, 1, 2");
                 }
                 /* TODO: refactor into regular configuration [phf] */
-                *pbTableSort = (F_sortmode != SORTMODE_DEFAULT);
+                *pSortMode = F_sortmode;
                 break;
-                
+
             case 'd':
                 Xdebug = atoi(str) != 0;
                 printf( "Debug trace %s\n", Xdebug ? "ON" : "OFF" );
@@ -484,19 +495,19 @@ fail:
                     str = "0";
                 }
                 Av[0] = av[i]+2;
-                
+
                 if (av[i][1] == 'M')
                     v_eqm(str, NULL);
                 else
                     v_set(str, NULL);
                 break;
-                
+
             case 'f':   /*  F_format    */
                 F_format = atoi(str);
                 if (F_format < FORMAT_DEFAULT || F_format >= FORMAT_MAX )
                     panic("Illegal format specification");
                 break;
-                
+
             case 'o':   /*  F_outfile   */
                 F_outfile = str;
 nofile:
@@ -511,22 +522,22 @@ nofile:
             case 'l':   /*  F_listfile  */
                 F_listfile = str;
                 goto nofile;
-                
+
             case 'P':   /*  F_Passes   */
                 bDoAllPasses = true;
-                
+
                 /* fall through to 'p' */
             case 'p':   /*  F_passes   */
                 nMaxPasses = atoi(str);
                 break;
-                
+
             case 's':   /*  F_symfile   */
                 F_symfile = str;
                 goto nofile;
             case 'v':   /*  F_verbose   */
                 F_verbose = atoi(str);
                 break;
-                
+
             case 'I':
                 v_incdir(str, NULL);
                 break;
@@ -538,7 +549,7 @@ nofile:
             case 'R':
             	bRemoveOutBin = true;
                 break;
-                
+
             case 'm':   /*  F_passes   */
             	argVal = atol(str);
             	if (argVal <= 64) {
@@ -555,12 +566,12 @@ nofile:
         }
         goto fail;
     }
-     
+
     bStopAtEnd = malloc((nMaxPasses+1) * sizeof(bool));
     memset(bStopAtEnd, 0, nMaxPasses+1);	// we dont count from zero ! (for fewer code changes)
 
     /*    INITIAL SEGMENT */
-    
+
     {
         SEGMENT *seg = (SEGMENT *)permalloc(sizeof(SEGMENT));
         seg->name = strcpy(permalloc(sizeof(ISEGNAME)), ISEGNAME);
@@ -576,25 +587,26 @@ nofile:
         ifs->xtrue  = 1;
         Ifstack = ifs;
     }
-    
+
     // ready error and message buffer...
     passbuffer_clear(ERRORBUF);
     passbuffer_clear(MSGBUF);
-    
-    
+
+
 nextpass:
-    
-    
+
+
     if ( F_verbose )
     {
         puts("");
         printf("START OF PASS: %d\n", pass);
     }
-    
+
     Localindex = Lastlocalindex = 0;
-    
+
     Localdollarindex = Lastlocaldollarindex = 0;
-    
+	SymbolCount = 0;
+
     /*_fmode = 0x8000;*/
     FI_temp = fopen(F_outfile, "wb");
     /*_fmode = 0;*/
@@ -615,7 +627,7 @@ nextpass:
         }
     }
     pushinclude(av[1]);
-    
+
     while ( pIncfile )
     {
         for (;;) {
@@ -634,14 +646,14 @@ nextpass:
                 if (fgets(buf, MAXLINE, pIncfile->fi) == NULL)
                     break;
             }
-            
+
             if (Xdebug)
                 printf("%08lx %s\n", (unsigned long) pIncfile, buf);
-            
+
             comment = cleanup(buf, false);
             ++pIncfile->lineno;
             mne = parse(buf);
-            
+
             if (Av[1][0])
             {
                 if (mne)
@@ -654,29 +666,29 @@ nextpass:
                     if (Ifstack->xtrue && Ifstack->acctrue)
                         asmerr( ERROR_UNKNOWN_MNEMONIC, false, Av[1] );
                 }
-                
+
             }
             else
             {
                 if (Ifstack->xtrue && Ifstack->acctrue)
                     programlabel();
             }
-            
+
             if (F_listfile && ListMode)
                 outlistfile(comment);
         }
-        
+
         while (Reploop && Reploop->file == pIncfile)
             rmnode((void **)&Reploop, sizeof(REPLOOP));
-        
+
         while (Ifstack->file == pIncfile)
             rmnode((void **)&Ifstack, sizeof(IFSTACK));
-        
+
         fclose( pIncfile->fi );
         free( pIncfile->name );
         --Inclevel;
         rmnode((void **)&pIncfile, sizeof(INCFILE));
-        
+
         if ( pIncfile )
         {
         	if (F_verbose > 3)
@@ -686,20 +698,20 @@ nextpass:
                 fprintf(FI_listfile, "------- FILE %s\n", pIncfile->name);
         }
     }
-    
-    
-    
+
+
+
     if ( F_verbose >= 1 )
         ShowSegments();
-    
+
     if ( F_verbose >= 3 )
     {
         if ( !Redo || ( F_verbose == 4 ) )
-            ShowSymbols( stdout, *pbTableSort );
-        
+            ShowSymbols( stdout, *pSortMode );
+
         ShowUnresolvedSymbols();
     }
-    
+
     closegenerate();
     fclose(FI_temp);
     if (FI_listfile)
@@ -707,7 +719,7 @@ nextpass:
 
     if (mlflag) // check if a multi-line comment is missing a terminator
         return ERROR_MISSING_COMMENT_END;
-    
+
     if (Redo)
     {
         if ( !bDoAllPasses )
@@ -716,7 +728,7 @@ nextpass:
                 ShowUnresolvedSymbols();
                 return ERROR_NOT_RESOLVABLE;
             }
-            
+
         oldredo = Redo;
         oldwhy = Redo_why;
         oldeval = Redo_eval;
@@ -727,13 +739,13 @@ nextpass:
         Redo_if <<= 1;
         ++pass;
 
-            
+
         if ( pass > nMaxPasses )
         {
             char sBuffer[64];
             sprintf( sBuffer, "%d", pass );
             return asmerr( ERROR_TOO_MANY_PASSES, false, sBuffer );
-                
+
         }
         else
         {
@@ -783,7 +795,7 @@ static int tabit(char *buf1, char *buf2)
 {
     char *bp, *ptr;
     int j, k;
-    
+
     bp = buf2;
     ptr= buf1;
     for (j = 0; *ptr && *ptr != '\n'; ++ptr, ++bp, j = (j+1)&7) {
@@ -820,11 +832,11 @@ static void outlistfile(const char *comment)
     const char *ptr;
     const char *dot;
     int i, j;
-    
+
 
     if ( pIncfile->flags & INF_NOLIST )
         return;
-    
+
     xtrue = (Ifstack->xtrue && Ifstack->acctrue) ? ' ' : '-';
     c = (Pflags & SF_BSS) ? 'U' : ' ';
     ptr = Extstr;
@@ -833,7 +845,7 @@ static void outlistfile(const char *comment)
         dot = ".";
     else
         ptr = "";
-    
+
     sprintf(buf1, "%7ld %c%s", pIncfile->lineno, c, sftos(Plab, Pflags & 7));
     j = strlen(buf1);
     for (i = 0; i < Glen && i < 4; ++i, j += 3)
@@ -860,62 +872,62 @@ char *sftos(long val, int flags)
     static char buf[ MAX_SYM_LEN + 14 ];
     static char c;
     char *ptr = (c) ? buf : buf + sizeof(buf) / 2;
-    
+
     memset( buf, 0, sizeof( buf ) );
-    
+
     c = 1 - c;
-    
+
     sprintf(ptr, "%04lx ", val);
-    
+
     if (flags & SYM_UNKNOWN)
         strcat( ptr, "???? ");
     else
         strcat( ptr, "     " );
-    
+
     if (flags & SYM_STRING)
         strcat( ptr, "str ");
     else
         strcat( ptr, "    " );
-    
+
     if (flags & SYM_MACRO)
         strcat( ptr, "eqm ");
     else
         strcat( ptr, "    " );
-    
-    
+
+
     if (flags & (SYM_MASREF|SYM_SET))
     {
         strcat( ptr, "(" );
     }
     else
         strcat( ptr, " " );
-    
+
     if (flags & (SYM_MASREF))
         strcat( ptr, "R" );
     else
         strcat( ptr, " " );
-    
-    
+
+
     if (flags & (SYM_SET))
         strcat( ptr, "S" );
     else
         strcat( ptr, " " );
-    
+
     if (flags & (SYM_MASREF|SYM_SET))
     {
         strcat( ptr, ")" );
     }
     else
         strcat( ptr, " " );
-    
-    
+
+
     return ptr;
 }
 
 void clearsegs(void)
 {
     SEGMENT *seg;
-    
+
     for (seg = Seglist; seg; seg = seg->next) {
         seg->flags = (seg->flags & SF_BSS) | SF_UNKNOWN;
         seg->rflags= seg->initflags = seg->initrflags = SF_UNKNOWN;
@@ -927,7 +939,7 @@ void clearrefs(void)
 {
     SYMBOL *sym;
     short i;
-    
+
     for (i = 0; i < SHASHSIZE; ++i)
         for (sym = SHash[i]; sym; sym = sym->next)
             sym->flags &= ~SYM_REF;
@@ -984,7 +996,7 @@ static const char *cleanup(char *buf, bool bDisable)
             {
 	        char tempbuf[MAXLINE];
                 char *tmpc;
-                *mlstart = 0; 
+                *mlstart = 0;
                 *(mlend+1)=0;
                 tmpc = mlend+2;
                 while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
@@ -1045,10 +1057,10 @@ static const char *cleanup(char *buf, bool bDisable)
         case '{':
             if ( bDisable )
                 break;
-            
+
             if (Xdebug)
                 printf("macro tail: '%s'\n", str);
-            
+
             arg = atoi(str+1);
             for (add = 0; *str && *str != '}'; ++str)
                 --add;
@@ -1060,24 +1072,24 @@ static const char *cleanup(char *buf, bool bDisable)
             }
             --add;
             ++str;
-            
-            
+
+
             if (Xdebug)
                 printf("add/str: %d '%s'\n", add, str);
-            
+
             for (strlist = pIncfile->args; arg && strlist;)
             {
                 --arg;
                 strlist = strlist->next;
             }
-            
+
             if (strlist)
             {
                 add += strlen(strlist->buf);
-                
+
                 if (Xdebug)
                     printf("strlist: '%s' %zu\n", strlist->buf, strlen(strlist->buf));
-                
+
                 if (str + add + strlen(str) + 1 > buf + MAXLINE)
                 {
                     if (Xdebug)
@@ -1085,7 +1097,7 @@ static const char *cleanup(char *buf, bool bDisable)
                         (unsigned long)str, (unsigned long)buf, add, (long)strlen(str));
                     panic("failure1");
                 }
-                
+
                 memmove(str + add, str, strlen(str)+1);
                 str += add;
                 if (str - strlen(strlist->buf) < buf)
@@ -1104,12 +1116,12 @@ static const char *cleanup(char *buf, bool bDisable)
             break;
         }
     }
-    
+
 br2:
     while(str != buf && *(str-1) == ' ')
         --str;
     *str = 0;
-    
+
     return comment;
 }
 
@@ -1231,7 +1243,7 @@ void findext(char *str)
 void rmnode(void **base, int bytes)
 {
     void *node;
-    
+
     if ((node = *base) != NULL) {
         *base = *(void **)node;
         free(node);
@@ -1246,7 +1258,7 @@ MNEMONIC *parse(char *buf)
     int i, j;
     MNEMONIC *mne = NULL;
     int labelundefined = 0;
-    
+
     i = 0;
     j = 1;
 
@@ -1283,12 +1295,12 @@ MNEMONIC *parse(char *buf)
                 {
                     Avbuf[j++] = buf[i++];
                 }
-                if (buf[i] && buf[i]=='"') 
+                if (buf[i] && buf[i]=='"')
                 {
                     i++;
                     continue;
                 }
-                else 
+                else
                 {
                     labelundefined++;
                     asmerr( ERROR_SYNTAX_ERROR, false, buf );
@@ -1321,7 +1333,7 @@ MNEMONIC *parse(char *buf)
                     }
                 }
                 i++;
-                while (buf[i] && buf[i] != ' ' && buf[i] != '=' && buf[i] != ','&& buf[i] != ':') 
+                while (buf[i] && buf[i] != ' ' && buf[i] != '=' && buf[i] != ','&& buf[i] != ':')
                     i++;
             }
             continue;
@@ -1372,7 +1384,7 @@ MNEMONIC *parse(char *buf)
         Avbuf[j++] = buf[i++];
     }
     Avbuf[j] = 0;
-    
+
     if (mne != NULL) {
     	if (mne->flags & MF_BEGM) {
     		nMacroDeclarations++;
@@ -1393,7 +1405,7 @@ MNEMONIC *findmne(char *str)
     char c;
     MNEMONIC *mne;
     char buf[64];
-    
+
 
     if (str[0] == '.') {    /* Allow .OP for OP */
         str++;
@@ -1471,15 +1483,15 @@ void v_macro(char *str, MNEMONIC *dummy)
     }
     while (fgets(buf, MAXLINE, pIncfile->fi)) {
         const char *comment;
-        
+
         if (Xdebug)
             printf("%08lx %s\n", (unsigned long) pIncfile, buf);
-        
+
         ++pIncfile->lineno;
-        
-        
+
+
         comment = cleanup(buf, true);
-        
+
         mne = parse(buf);
         if (Av[1][0]) {
             if (mne != NULL) {	// for some reason I got a segfault while accessing mne->flags, should not happen but gdb said it was here
@@ -1507,7 +1519,7 @@ void addhashtable(MNEMONIC *mne)
 {
     int i, j;
     unsigned int opcode[NUMOC];
-    
+
     for (; mne->vect; ++mne) {
         memcpy(opcode, mne->opcode, sizeof(mne->opcode));
         for (i = j = 0; i < NUMOC; ++i) {
@@ -1537,15 +1549,15 @@ void pushinclude(char *str)
 {
     INCFILE *inf;
     FILE *fi;
-    
+
     if ((fi = pfopen(str, "rb")) != NULL) {
         if (F_verbose > 1 && F_verbose != 5 )
             printf("%.*s Including file \"%s\"\n", Inclevel*4, "", str);
         ++Inclevel;
-        
+
         if (F_listfile)
             fprintf(FI_listfile, "------- FILE %s LEVEL %d PASS %d\n", str, Inclevel, pass);
-        
+
         inf = (INCFILE *)zmalloc(sizeof(INCFILE));
         inf->next    = pIncfile;
         inf->name    = strcpy(ckmalloc(strlen(str)+1), str);
@@ -1567,17 +1579,17 @@ int asmerr(int err, bool bAbort, const char *sText )
     INCFILE *pincfile;
     /* file pointer we print error messages to */
     FILE *error_file = NULL;
-    
+
     if ( err >= MAX_ERROR || err < 0 )
     {
         return asmerr( ERROR_BADERROR, true, "Bad error ERROR!" );
     }
     else
     {
-        
+
         if (sErrorDef[err].bFatal)
             bStopAtEnd[pass] = true;
-        
+
 	pincfile = pIncfile;
 	while(1) {
 		if (pincfile == NULL) {
@@ -1666,7 +1678,7 @@ int asmerr(int err, bool bAbort, const char *sText )
 	passbuffer_update(ERRORBUF,erroradd1);
 	passbuffer_update(ERRORBUF,erroradd2);
 	passbuffer_update(ERRORBUF,erroradd3);
-        
+
         if ( bAbort )
         {
             passbuffer_output(MSGBUF); // dump messages from this pass
@@ -1675,7 +1687,7 @@ int asmerr(int err, bool bAbort, const char *sText )
             exit(err);
         }
     }
-    
+
     return err;
 }
 
@@ -1703,16 +1715,16 @@ char *permalloc(int bytes)
     static char *buf;
     static int left;
     char *ptr;
-    
+
     /* Assume sizeof(union align) is a power of 2 */
-    
+
     union align
     {
         long l;
         void *p;
         void (*fp)(void);
     };
-    
+
     bytes = (bytes + sizeof(union align)-1) & ~(sizeof(union align)-1);
     if (bytes > left)
     {
@@ -1733,7 +1745,7 @@ char *strlower(char *str)
 {
     char c;
     char *ptr;
-    
+
     for (ptr = str; (c = *ptr); ++ptr)
     {
         if (c >= 'A' && c <= 'Z')
@@ -1744,10 +1756,10 @@ char *strlower(char *str)
 
 int main(int ac, char **av)
 {
-    bool bTableSort = false;
-    int nError = MainShadow( ac, av, &bTableSort );
+	int sortMode = SORTMODE_DEFAULT;
+    int nError = MainShadow( ac, av, &sortMode);
 
-    if ( nError && (nError != ERROR_NON_ABORT) ) 
+    if ( nError && (nError != ERROR_NON_ABORT) )
     {
 	// dump messages when aborting due to errors
         passbuffer_output(MSGBUF);
@@ -1757,11 +1769,11 @@ int main(int ac, char **av)
 
         printf( "Fatal assembly error: %s\n", sErrorDef[nError].sDescription );
     }
-    
-    DumpSymbolTable( bTableSort );
+
+    DumpSymbolTable( sortMode );
 
     passbuffer_cleanup();
-    
+
     if (nError != 0) {
     	if (bRemoveOutBin) {
     		unlink(F_outfile);
@@ -1772,7 +1784,7 @@ int main(int ac, char **av)
 
 void passbuffer_clear(int mbindex)
 {
-    // ensure the buffer is initialized before we attempt to clear it, 
+    // ensure the buffer is initialized before we attempt to clear it,
     // just in case no messages have been stored prior to this clear.
     if(passbuffer[mbindex] == NULL)
         passbuffer_update(mbindex,"");
@@ -1785,7 +1797,7 @@ void passbuffer_update(int mbindex,char *message)
     int newsizerequired;
 
     // allocate 16k buffers to start...
-    static int passbuffersize[2] = {16384,16384}; 
+    static int passbuffersize[2] = {16384,16384};
 
 
     // check if the buffer we're working with needs initialization
@@ -1811,14 +1823,14 @@ void passbuffer_update(int mbindex,char *message)
             panic("couldn't grow memory for message buffer.");
         passbuffersize[mbindex]=newsizerequired;
     }
-	
+
     // update the buffer with the message...
     strcat(passbuffer[mbindex],message);
 }
 
 void passbuffer_output(int mbindex)
 {
-    // ensure the buffer is initialized before we attempt to clear it, 
+    // ensure the buffer is initialized before we attempt to clear it,
     // just in case no messages have been stored yet.
     if(passbuffer[mbindex] == NULL)
         passbuffer_update(mbindex,"");
