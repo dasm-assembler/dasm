@@ -223,7 +223,7 @@ PROCESSOR MODEL:
 SEGMENTS:
     The SEG pseudo-op creates/sets the current segment.  Each segment has
     it's own origin and is optionally an 'uninitialized' segment.
-    Unitialized segments produce no output and have no restrictions.  This
+    Uninitialized segments produce no output and have no restrictions.  This
     is useful for determining the size of a certain assembly sequence
     without generating code, and for assigning RAM to labels.
 
@@ -234,7 +234,7 @@ SEGMENTS:
 	skip forward is 00.  This is a GLOBAL default and effects all
 	segments.  See ORG.
 
-    (2) The default fill character for DS is 00 and is independant of
+    (2) The default fill character for DS is 00 and is independent of
 	the default fill character for ORG (see DS).
 
 GENERAL:
@@ -265,7 +265,7 @@ PSEUDOPS:
 
 		If provided with the second argument, the first <SkipBytes>
 		bytes of the file will be excluded. This can be useful for
-		skiping unwanted headers, e. g. load address indicators,
+		skipping unwanted headers, e. g. load address indicators,
 		SID tune headers, etc.
 
 	INCDIR	    "directory name"
@@ -288,7 +288,7 @@ PSEUDOPS:
 
 [label] SEG[.U]     name
 
-	    This sets the current segment, creating it if neccessary.  If
+	    This sets the current segment, creating it if necessary.  If
 	    a .U extension is specified on segment creation, the segment
 	    is an UNINITIALIZED segment.  The .U is not needed when going
 	    back to an already created uninitialized segment, though it
@@ -329,7 +329,7 @@ PSEUDOPS:
 	    This sets down raw HEX data.  Spaces are optional between bytes.
 	    NO EXPRESSIONS are allowed.  Note that you do NOT place a $
 	    in front of the digits.  This is a short form for creating
-	    tables compactly.  Data is always layed down on a byte-by-byte
+	    tables compactly.  Data is always laid down on a byte-by-byte
 	    basis.
 
 	    Example:	    HEX 1A45 45 13254F 3E12
@@ -354,7 +354,7 @@ PSEUDOPS:
 	    will result in 200 zero's and a 23. This allows you to specify
 	    some ORG, then change your mind and specify some other (lower
 	    address) ORG without causing an error (assuming nothing is
-	    generated inbetween).
+	    generated in between).
 
 	    Normally, DS and ALIGN are used to generate specific filler
 	    values.
@@ -370,7 +370,7 @@ PSEUDOPS:
 	    The relocatable origin can skip around (no limitations).  The
 	    relocatable origin is a function of the segment.  That is, you
 	    can still SEG to another segment that does not have a
-	    relocatable origin activated, do other (independant) stuff
+	    relocatable origin activated, do other (independent) stuff
 	    there, and then switch back to the current segment and continue
 	    where you left off.
 
@@ -392,13 +392,13 @@ PSEUDOPS:
 
 [label] ALIGN	    N[,fill]
 
-	    Align the current PC to an N byte boundry.	The default
+	    Align the current PC to an N byte boundary.	The default
 	    fill character is always 0, and has nothing to do with
 	    the default fill character specifiable in an ORG.
 
 [label] SUBROUTINE  name
 
-	    This isn't really a subroutine, but a boundry between sets of
+	    This isn't really a subroutine, but a boundary between sets of
 	    temporary labels (which begin with a dot).	Temporary label
 	    names are unique within segments of code bounded by SUBROUTINE:
 
@@ -411,7 +411,7 @@ PSEUDOPS:
 		.qq	dex
 			bne .qq
 
-	    Automatic temporary label boundries occur for each macro level.
+	    Automatic temporary label boundaries occur for each macro level.
 	    Usually temporary labels are used in macros and within actual
 	    subroutines (so you don't have to think up a thousand different
 	    names)
@@ -439,8 +439,8 @@ symbol	=	    exp
 symbol	EQM	    exp
 
 	    The STRING representing the expression is assigned to the
-	    symbol.  Occurances of the label in later expressions causes
-	    the string to be evaluated for each occurance.  Also used in
+	    symbol.  Occurrences of the label in later expressions causes
+	    the string to be evaluated for each occurrence.  Also used in
 	    conjunction with the DV psuedo-op.
 
 symbol	SET	    exp
