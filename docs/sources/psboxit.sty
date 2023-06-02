@@ -3,7 +3,7 @@
 % This package enables to put a PostScript drawing behind a TeX box.
 % The drawing is parametrized by the position and the size of the
 % TeX box. To put a gray [rounded] box behind a word use
-%       \PScommands % Once at the begining
+%       \PScommands % Once at the beginning
 %
 %       ... text text \psboxit{25 cartouche}{THE WORD} text text
 %       \psboxit{box 0.5 setgray fill}{\spbox{ANOTHER WORD}}
@@ -21,7 +21,7 @@
 %
 %
 % A Few PostScript definitions to use with \psboxit
-% Call \PScommands once at the begining of your program, this will
+% Call \PScommands once at the beginning of your program, this will
 % define : box roundedbox rectcartouche and cartouche. They are 4
 % PostScript programs. Change the values before setlinewidth end
 % setgray to customize your boxes
@@ -71,7 +71,7 @@ box gsave  .95 setgray fill grestore 1 setlinewidth stroke }bind def
 %                       Needs : x0 y0 x1 y1 radius
 roundedbox gsave .95 setgray fill grestore 1 setlinewidth stroke }bind def
 %
-end }%                  Closes dictionnary
+end }%                  Closes dictionary
 }\PScommands%
 %%
 %% PSBOXIT
