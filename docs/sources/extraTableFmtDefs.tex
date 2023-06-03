@@ -1,0 +1,52 @@
+
+\def\ifundefined#1{\expandafter\ifx\csname#1\endcsname\relax}
+
+%% The following setting protects this code from babel shorthands.
+\ifthenelse{\isundefined{\languageshorthands}}{}{\languageshorthands{english}}
+
+%% background colors for selected fields of the big table
+\definecolor{lightorange}{rgb}{1.00,0.80,0.60}
+\definecolor{lightblue}{rgb}{0.00,1.00,1.00}
+\definecolor{lightpink}{rgb}{1.00,0.65,0.90}
+\definecolor{skyblue}{rgb}{0.60,0.80,1.00}
+\definecolor{lightgreen}{rgb}{0.80,1.00,0.80}
+\definecolor{lightyellow}{rgb}{1.00,1.00,0.60}
+\definecolor{darkgray}{rgb}{0.50,0.50,0.50}
+\definecolor{lightgray}{rgb}{0.85,0.85,0.85}
+\definecolor{lightred}{rgb}{1.00,0.30,0.00}
+\definecolor{yellow}{rgb}{1.00,1.00,0.00}
+\definecolor{pink}{rgb}{1.00,0.00,0.90}
+\definecolor{orange}{rgb}{0.90,0.90,0.00}
+\definecolor{green}{rgb}{0.60,1.00,0.60}
+
+%% some tiny fonts to fit into the fields of the big table
+\newfont{\ninerm}{cmr8 scaled 1000}
+\newfont{\ninermb}{cmbx8 scaled 1000}
+\newfont{\eightrm}{cmr7 scaled 1000}
+\newfont{\sevenrm}{cmr6 scaled 1000}
+\newfont{\sixrm}{cmr5 scaled 1000}
+
+%% macros for boxes/fields in the big table
+\providecommand\gnumbox{\makebox[2pt]}%
+\providecommand\gnumboxLO{\cellcolor{lightorange}\makebox[2pt]}%
+\providecommand\gnumboxLB{\cellcolor{lightblue}\makebox[2pt]}%
+\providecommand\gnumboxLP{\cellcolor{lightpink}\makebox[2pt]}%
+\providecommand\gnumboxSB{\cellcolor{skyblue}\makebox[2pt]}%
+\providecommand\gnumboxLY{\cellcolor{lightyellow}\makebox[2pt]}%
+\providecommand\gnumboxLG{\cellcolor{lightgreen}\makebox[2pt]}%
+\providecommand\gnumboxDG{\cellcolor{darkgray}\color[rgb]{1.00,1.00,1.00}\makebox[2pt]}%
+\providecommand\gnumboxLR{\cellcolor{lightred}\color[rgb]{1.00,1.00,1.00}\makebox[2pt]}%
+\providecommand\gnumboxG{\cellcolor{lightgray}\makebox[2pt]}%
+\providecommand\gnumboxY{\cellcolor{yellow}\makebox[2pt]}%
+\providecommand\gnumboxP{\cellcolor{pink}\color[rgb]{1.00,1.00,1.00}\makebox[2pt]}%
+\providecommand\gnumboxO{\cellcolor{orange}\makebox[2pt]}%
+\providecommand\gnumboxGN{\cellcolor{green}\makebox[2pt]}%
+
+%% to adjust positions in multirow situations
+\setlength{\bigstrutjot}{\jot}
+\setlength{\extrarowheight}{\doublerulesep}
+
+%%  The \setlongtables command keeps column widths the same across
+%%  pages. Simply comment out next line for varying column widths.
+%\setlongtables
+

@@ -6,4 +6,22 @@
 
 The \mono{68705} is a big-endian machine. Byte ordering in words is high, then low.
 
-\emph{No content yet}
+
+\section{Adressing modes}
+
+The \mono{68705} processor has a subset of the \mono{68hc908}\footnote{see chapter \ref{processor:MC68HC908}} instruction set. 
+For addressing modes please refer to table \ref{special_address_modes_68hc908}. As a quick 
+rule of thumb for comparison one can state the \mono{68705} processor is lacking all stack-pointer related 
+and some few special instructions from the \mono{mc68hc908} processor.
+
+\section{Opcode Map}
+
+\newgeometry{top=30mm, bottom=30mm, left=25mm, right=15mm}%
+\begin{landscape}%
+{%
+	\input{68hc705_opcode_summary.tex}%
+}%
+\end{landscape}%
+\restoregeometry     %so it does not affect the rest of the pages.
+
+% \emph{No further content yet}
