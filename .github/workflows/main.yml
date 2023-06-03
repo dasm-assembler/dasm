@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     name: Build for Windows
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Make
       run: make test # build + test
       env:
@@ -20,7 +20,7 @@ jobs:
     - run: |
         mkdir -p artifacts/windows
         cp bin/dasm.exe artifacts/windows/dasm.exe
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with :
         name: dasm snapshot builds
         path: artifacts
@@ -29,7 +29,7 @@ jobs:
     runs-on: macos-latest
     name: Build for Mac
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Make
       run: make test # build + test
       env:
@@ -37,7 +37,7 @@ jobs:
     - run: |
         mkdir -p artifacts/macos
         cp bin/dasm artifacts/macos/dasm
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with :
         name: dasm snapshot builds
         path: artifacts
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build for Linux
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Make
       run: make test # build + test
       env:
@@ -54,7 +54,7 @@ jobs:
     - run: |
         mkdir -p artifacts/linux
         cp bin/dasm artifacts/linux/dasm
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with :
         name: dasm snapshot builds
         path: artifacts
