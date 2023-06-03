@@ -142,20 +142,20 @@ SYMBOL *eval(const char *str, int wantmode)
     int oldargibase = Argibase;
     int oldopibase = Opibase;
     int scr;
-    
+
     const char *pLine = str;
 
     Argibase = Argi;
     Opibase = Opi;
     Lastwasop = 1;
     base = cur = allocsymbol();
-    
+
 
     while (*str)
     {
         if (Xdebug)
             printf("char '%c'\n", *str);
-        
+
         switch(*str)
         {
         case ' ':
@@ -213,7 +213,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '>':   /*  18: >> <<  17: > >= <= <    */
-            
+
             if (Lastwasop)
             {
                 doop((opfunc_t)op_takemsb, 128);
@@ -240,7 +240,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '<':
-            
+
             if (Lastwasop)
             {
                 doop((opfunc_t)op_takelsb, 128);
@@ -266,7 +266,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '=':   /*  16: ==  (= same as ==)      */
-            
+
             if (str[1] == '=')
                 ++str;
             doop((opfunc_t)op_eqeq, 16);
@@ -274,7 +274,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '!':   /*  16: !=                      */
-            
+
             if (Lastwasop)
             {
                 doop((opfunc_t)op_not, 128);
@@ -288,7 +288,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '&':   /*  15: &   12: &&              */
-            
+
             if (str[1] == '&')
             {
                 doop((opfunc_t)op_andand, 12);
@@ -302,13 +302,13 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '^':   /*  14: ^                       */
-            
+
             doop((opfunc_t)op_xor, 14);
             ++str;
             break;
 
         case '|':   /*  13: |   11: ||              */
-            
+
             if (str[1] == '|')
             {
                 doop((opfunc_t)op_oror, 11);
@@ -321,21 +321,21 @@ SYMBOL *eval(const char *str, int wantmode)
             ++str;
             break;
 
-            
+
         case '(':
-            
+
             if (wantmode)
             {
                 cur->addrmode = AM_INDWORD;
                 ++str;
                 break;
             }
-            
+
             /* fall thru OK */
-            
+
         case '[':   /*  eventually an argument      */
 	    ucasm_indexed_notation = false;
-            
+
 	    if ((((((str[1]|0x20) == 'x') || ((str[1]|0x20) == 'y')) && (str[2] == '+')) ||     // X- or Y-indexed address mode
 	        (((str[1]|0x20) == 's') && ((str[2]|0x20) == 'p') && (str[3] == '+'))) &&	// SP-indexed address mode
 		((Processor == 68705) || (Processor == 6811) || (Processor == 68908)))
@@ -343,14 +343,14 @@ SYMBOL *eval(const char *str, int wantmode)
 		ucasm_indexed_notation = true;
 		// UCASM compatibility, allow notations [X+255], [Y+3], [SP+5]
 		switch(str[1]|0x20) {
-		    case 'x': 
-			cur->addrmode = AM_BYTEADRX; 
+		    case 'x':
+			cur->addrmode = AM_BYTEADRX;
 			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
 			break;
 
 		    case 'y': cur->addrmode = AM_BYTEADRY; break;
 
-		    case 's': 
+		    case 's':
 			cur->addrmode = AM_BYTEADR_SP;
 			//FIX: OPCODE.FORCE / Mnext adaption moved to ops.c
 			break;
@@ -368,9 +368,9 @@ SYMBOL *eval(const char *str, int wantmode)
             ++str;
 	    }
             break;
-            
+
         case ')':
-            
+
             if (wantmode)
             {
                 if (cur->addrmode == AM_INDWORD && str[1] == ',' && (str[2]|0x20) == 'y')
@@ -399,11 +399,11 @@ SYMBOL *eval(const char *str, int wantmode)
                 ++str;
                 break;
             }
-            
+
             /* fall thru OK */
-            
+
         case ']':
-            
+
             while(Opi != Opibase && Oppri[Opi-1])
                 evaltop();
             if (Opi != Opibase)
@@ -419,7 +419,7 @@ SYMBOL *eval(const char *str, int wantmode)
                 break;
             }
             }
-            
+
             if (*str == 'd')
             {  /*  STRING CONVERSION   */
                 char buf[32];
@@ -434,7 +434,7 @@ SYMBOL *eval(const char *str, int wantmode)
             break;
 
         case '#':
-            
+
             cur->addrmode = AM_IMM8;
             ++str;
             /*
@@ -443,14 +443,14 @@ SYMBOL *eval(const char *str, int wantmode)
             */
             wantmode = 0;
             break;
-            
+
         case ',':
-            
+
             while(Opi != Opibase)
                 evaltop();
             Lastwasop = 1;
             scr = str[1]|0x20;	  /* to lower case */
-            
+
             if (cur->addrmode == AM_INDWORD && scr == 'x' && !IsAlphaNum( str[2] ))
             {
                 cur->addrmode = AM_INDBYTEX;
@@ -488,7 +488,7 @@ SYMBOL *eval(const char *str, int wantmode)
                    //we treat the opcode as valid to allow passes to continue, which should
                    //allow other errors (like phase errros) to resolve before our "++Redo"
                    //ultimately forces a failure.
-                   cur->addrmode = AM_0Y; 
+                   cur->addrmode = AM_0Y;
                    ++str;
 
             }
@@ -522,7 +522,7 @@ SYMBOL *eval(const char *str, int wantmode)
                     asmerr( ERROR_SYNTAX_ERROR, false, pLine );
                 cur->value = Argstack[Argi];
                 cur->flags = Argflags[Argi];
-                
+
                 if ((cur->string = (void *)Argstring[Argi]) != NULL)
                 {
                     cur->flags |= SYM_STRING;
@@ -580,7 +580,7 @@ SYMBOL *eval(const char *str, int wantmode)
 
     while(Opi != Opibase)
         evaltop();
-    
+
     if (Argi != Argibase)
     {
         --Argi;
@@ -622,7 +622,7 @@ void evaltop(void)
 {
     if (Xdebug)
         printf("evaltop @(A,O) %d %d\n", Argi, Opi);
-    
+
     if (Opi <= Opibase) {
         asmerr( ERROR_SYNTAX_ERROR, false, NULL );
         Opi = Opibase;
@@ -662,10 +662,10 @@ void evaltop(void)
 static void stackarg(long val, int flags, const char *ptr1)
 {
     char *str = NULL;
-    
+
     if (Xdebug)
         printf("stackarg %ld (@%d)\n", val, Argi);
-    
+
     Lastwasop = 0;
     if (flags & SYM_STRING)
     {
@@ -704,9 +704,9 @@ void doop(opfunc_t func, int pri)
 {
     if (Xdebug)
         puts("doop");
-    
+
     Lastwasop = 1;
-    
+
     if (Opi == Opibase || pri == 128)
     {
         if (Xdebug)
@@ -722,17 +722,17 @@ void doop(opfunc_t func, int pri)
         ++Opi;
         return;
     }
-    
+
     while (Opi != Opibase && Oppri[Opi-1] && pri <= Oppri[Opi-1])
         evaltop();
-    
+
     if (Xdebug)
         printf("doop @ %d\n", Opi);
-    
+
     Opdis[Opi] = func;
     Oppri[Opi] = pri;
     ++Opi;
-    
+
     if (Opi == MAXOPS)
     {
         puts("doop: too many operators");
@@ -1013,28 +1013,28 @@ const char *pushsymbol(const char *str)
     {
         if (sym->flags & SYM_UNKNOWN)
             ++Redo_eval;
-        
+
         if (sym->flags & SYM_MACRO)
         {
             macro = 1;
             sym = eval(sym->string, 0);
         }
-        
+
         if (sym->flags & SYM_STRING)
             stackarg(0, SYM_STRING, sym->string);
-        
+
         else
             stackarg(sym->value, sym->flags & SYM_UNKNOWN, NULL);
-        
+
         sym->flags |= SYM_REF|SYM_MASREF;
-        
+
         if (macro)
             FreeSymbolList(sym);
     }
     else
     {
         stackarg(0L, SYM_UNKNOWN, NULL);
-        sym = CreateSymbol( str, ptr - str );
+        sym = CreateSymbol( str, ptr - str, false );
         sym->flags = SYM_REF|SYM_MASREF|SYM_UNKNOWN;
         ++Redo_eval;
     }

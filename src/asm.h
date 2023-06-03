@@ -39,6 +39,7 @@ typedef enum
   SORTMODE_DEFAULT,
   SORTMODE_ALPHA = SORTMODE_DEFAULT,
   SORTMODE_ADDRESS,
+  SORTMODE_ORDER,
   SORTMODE_MAX
 } sortmode_t;
 
@@ -159,10 +160,10 @@ typedef struct ERRORSTRUCT
 #define IFSTACK     struct _IFSTACK
 #define SEGMENT     struct _SEGMENT
 #define SYMBOL      struct _SYMBOL
-#define STRLIST   	struct _STRLIST
+#define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
-#define N_HASH_BITS	12			// 10 was in original implementation
+#define N_HASH_BITS 12          // 10 was in original implementation
 #define SHASHSIZE   (1 << N_HASH_BITS)
 #define MHASHSIZE   (1 << N_HASH_BITS)
 #define SHASHAND    (SHASHSIZE -1)
@@ -171,69 +172,69 @@ typedef struct ERRORSTRUCT
 #define MAXMACLEVEL 32
 #define TAB        9
 
-	/* 
-	 * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
-	 */
-	enum ADDRESS_MODES {
-		AM_IMP,					/*    1 - implied         */
-		AM_IMM8,				/*    2 - immediate 8  bits   */
-		AM_IMM16,				/*    3 - immediate 16 bits   */
-		AM_BYTEADR,				/*    4 - address 8 bits        */
-		AM_BYTEADRX,			/*    5 - index x + 8 bit offset     */
-		AM_BYTEADRY,			/*    6 - index y + 8 bit offset     */
-		AM_WORDADR,				/*    7 - extended addr        */
-		AM_WORDADRX,			/*    8 - index x + 16 bit offset       */
-		AM_WORDADRY,			/*    9 - index y + 16 bit offset      */
-		AM_REL,					/*    10- relative 8 bits   */
-		AM_BYTEREL,			 	/*    11- 8 bits relative    */
-		AM_INDBYTEX,			/*    12- indirect x     */
-		AM_INDBYTEY,			/*    13- indirect y     */
-		AM_INDWORD,				/*    14- indirect immediate    */
-		AM_INDWORDX,			/*    15- indirect 16 bits x-indexed  */
-		AM_INDBYTE,				/*    16- indirect 8 bits        */
-		AM_0X,					/*    17- index x 0 bits        */
-		AM_0Y,					/*    18- index y 0 bits        */
-		AM_BITMOD,				/*    19- spec. bit modifcation     */
-		AM_BITBRAMOD,			/*    20- spec. bit-test rel. branch    */
-		AM_BYTEADR_SP,			/*    21- index SP +8 bits     */
-		AM_WORDADR_SP,			/*    22- index SP +16 bits   */
+    /* 
+     * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
+     */
+    enum ADDRESS_MODES {
+        AM_IMP,                 /*    1 - implied         */
+        AM_IMM8,                /*    2 - immediate 8  bits   */
+        AM_IMM16,               /*    3 - immediate 16 bits   */
+        AM_BYTEADR,             /*    4 - address 8 bits        */
+        AM_BYTEADRX,            /*    5 - index x + 8 bit offset     */
+        AM_BYTEADRY,            /*    6 - index y + 8 bit offset     */
+        AM_WORDADR,             /*    7 - extended addr        */
+        AM_WORDADRX,            /*    8 - index x + 16 bit offset       */
+        AM_WORDADRY,            /*    9 - index y + 16 bit offset      */
+        AM_REL,                 /*    10- relative 8 bits   */
+        AM_BYTEREL,             /*    11- 8 bits relative    */
+        AM_INDBYTEX,            /*    12- indirect x     */
+        AM_INDBYTEY,            /*    13- indirect y     */
+        AM_INDWORD,             /*    14- indirect immediate    */
+        AM_INDWORDX,            /*    15- indirect 16 bits x-indexed  */
+        AM_INDBYTE,             /*    16- indirect 8 bits        */
+        AM_0X,                  /*    17- index x 0 bits        */
+        AM_0Y,                  /*    18- index y 0 bits        */
+        AM_BITMOD,              /*    19- spec. bit modifcation     */
+        AM_BITBRAMOD,           /*    20- spec. bit-test rel. branch    */
+        AM_BYTEADR_SP,          /*    21- index SP +8 bits     */
+        AM_WORDADR_SP,          /*    22- index SP +16 bits   */
 
 
-		AM_SYMBOL,
-		AM_EXPLIST,
-		AM_LONG,
-		AM_BSS,
+        AM_SYMBOL,
+        AM_EXPLIST,
+        AM_LONG,
+        AM_BSS,
 
-		AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
+        AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
 
-		NUMOC
-	};
+        NUMOC
+    };
 
-#define AF_IMP					( 1L << AM_IMP )
-#define AF_IMM8					( 1L << AM_IMM8 )
-#define AF_IMM16				( 1L << AM_IMM16 )
-#define AF_BYTEADR				( 1L << AM_BYTEADR )
-#define AF_BYTEADRX				( 1L << AM_BYTEADRX )
-#define AF_BYTEADRY				( 1L << AM_BYTEADRY )
-#define AF_WORDADR				( 1L << AM_WORDADR )
-#define AF_WORDADRX				( 1L << AM_WORDADRX )
-#define AF_WORDADRY				( 1L << AM_WORDADRY )
-#define AF_REL					( 1L << AM_REL )
-#define AF_BYTEREL				( 1L << AM_BYTEREL )
-#define AF_INDBYTEX				( 1L << AM_INDBYTEX )
-#define AF_INDBYTEY				( 1L << AM_INDBYTEY )
-#define AF_INDWORD				( 1L << AM_INDWORD )
-#define AF_INDWORDX				( 1L << AM_INDWORDX )
-#define AF_INDBYTE   			( 1L << AM_INDBYTE )
-#define AF_0X					( 1L << AM_0X )
-#define AF_0Y					( 1L << AM_0Y )
-#define AF_BITMOD				( 1L << AM_BITMOD )
-#define AF_BITBRAMOD			( 1L << AM_BITBRAMOD )
-#define AF_BYTEADR_SP			( 1L << AM_BYTEADR_SP )
-#define AF_WORDADR_SP			( 1L << AM_WORDADR_SP )
+#define AF_IMP                  ( 1L << AM_IMP )
+#define AF_IMM8                 ( 1L << AM_IMM8 )
+#define AF_IMM16                ( 1L << AM_IMM16 )
+#define AF_BYTEADR              ( 1L << AM_BYTEADR )
+#define AF_BYTEADRX             ( 1L << AM_BYTEADRX )
+#define AF_BYTEADRY             ( 1L << AM_BYTEADRY )
+#define AF_WORDADR              ( 1L << AM_WORDADR )
+#define AF_WORDADRX             ( 1L << AM_WORDADRX )
+#define AF_WORDADRY             ( 1L << AM_WORDADRY )
+#define AF_REL                  ( 1L << AM_REL )
+#define AF_BYTEREL              ( 1L << AM_BYTEREL )
+#define AF_INDBYTEX             ( 1L << AM_INDBYTEX )
+#define AF_INDBYTEY             ( 1L << AM_INDBYTEY )
+#define AF_INDWORD              ( 1L << AM_INDWORD )
+#define AF_INDWORDX             ( 1L << AM_INDWORDX )
+#define AF_INDBYTE              ( 1L << AM_INDBYTE )
+#define AF_0X                   ( 1L << AM_0X )
+#define AF_0Y                   ( 1L << AM_0Y )
+#define AF_BITMOD               ( 1L << AM_BITMOD )
+#define AF_BITBRAMOD            ( 1L << AM_BITBRAMOD )
+#define AF_BYTEADR_SP           ( 1L << AM_BYTEADR_SP )
+#define AF_WORDADR_SP           ( 1L << AM_WORDADR_SP )
 
-#define AM_BYTE					AM_BYTEADR
-#define AM_WORD					AM_WORDADR
+#define AM_BYTE                 AM_BYTEADR
+#define AM_WORD                 AM_WORDADR
 
 
 
@@ -244,13 +245,13 @@ STRLIST {
 
 #define STRLISTSIZE    sizeof(STRLIST *)
 
-#define MF_BEGM					0x02
-#define MF_IF					0x04
-#define MF_MACRO				0x08
-#define MF_MASK					0x10    /*  has mask argument (byte)    */
-#define MF_REL					0x20    /*  has rel. address (byte)    */
-#define MF_IMOD					0x40    /*  instruction byte mod.    */
-#define MF_ENDM					0x80    /*  is v_endm            */
+#define MF_BEGM                 0x02
+#define MF_IF                   0x04
+#define MF_MACRO                0x08
+#define MF_MASK                 0x10    /*  has mask argument (byte)    */
+#define MF_REL                  0x20    /*  has rel. address (byte)    */
+#define MF_IMOD                 0x40    /*  instruction byte mod.    */
+#define MF_ENDM                 0x80    /*  is v_endm            */
 
 MNEMONIC {
     MNEMONIC     *next;        /*    hash        */
@@ -347,6 +348,7 @@ SYMBOL {
     unsigned char   addrmode;    /*  addressing mode (expressions)   */
     long value; /* current value, never EVER change this to unsigned! */
     unsigned int namelen;    /*  name length             */
+    long order;
 };
 
 extern SYMBOL    *SHash[];
@@ -373,7 +375,7 @@ extern unsigned char    MsbOrder;
 extern unsigned char    Outputformat;
 extern unsigned long    Redo_why;
 
-extern unsigned long	maxFileSize;
+extern unsigned long    maxFileSize;
 
 extern int Redo;
 extern int Redo_eval;
@@ -397,6 +399,7 @@ extern char    ListMode;
 extern unsigned long    Processor;
 
 /*extern unsigned int _fmode;*/
+extern unsigned long  SymbolCount;
 extern unsigned long  CheckSum;
 
 extern int nMacroDeclarations;
@@ -420,9 +423,9 @@ void addmsg(char *message);
 void    setspecial(int value, int flags);
 SYMBOL *allocsymbol(void);
 SYMBOL *findsymbol(const char *str, int len);
-SYMBOL *CreateSymbol( const char *str, int len );
+SYMBOL *CreateSymbol( const char *str, int len, bool addToOrder );
 void    FreeSymbolList(SYMBOL *sym);
-void    programlabel(void);
+void    programlabel();
 
 /* ops.c */
 extern    unsigned char Gen[];

@@ -45,10 +45,10 @@ SYMBOL *findsymbol(const char *str, int len)
     unsigned int h1;
     SYMBOL *sym;
     char buf[MAX_SYM_LEN + 14];     /* historical */
-    
+
     if ( len > MAX_SYM_LEN )
         len = MAX_SYM_LEN;
-    
+
     if (str[0] == '.')
     {
         if (len == 1)
@@ -77,14 +77,14 @@ SYMBOL *findsymbol(const char *str, int len)
         len = strlen(buf);
         str = buf;
     }
-    
+
     else if (str[len - 1] == '$')
     {
         sprintf(buf, "%ld$%.*s", Localdollarindex, len, str);
         len = strlen(buf);
         str = buf;
     }
-    
+
     h1 = hash1(str, len);
     for (sym = SHash[h1]; sym; sym = sym->next)
     {
@@ -94,30 +94,30 @@ SYMBOL *findsymbol(const char *str, int len)
     return sym;
 }
 
-SYMBOL *CreateSymbol( const char *str, int len )
+SYMBOL *CreateSymbol( const char *str, int len, bool addToOrder )
 {
     SYMBOL *sym;
     unsigned int h1;
     char buf[ MAX_SYM_LEN + 14 ];           /* historical */
-    
+
     if (len > MAX_SYM_LEN )
         len = MAX_SYM_LEN;
-    
+
     if (str[0] == '.')
     {
         sprintf(buf, "%ld%.*s", Localindex, len, str);
         len = strlen(buf);
         str = buf;
     }
-    
-    
+
+
     else if (str[len - 1] == '$')
     {
         sprintf(buf, "%ld$%.*s", Localdollarindex, len, str);
         len = strlen(buf);
         str = buf;
     }
-    
+
     sym = allocsymbol();
     sym->name = permalloc(len+1);
     memcpy(sym->name, str, len);    /*	permalloc zeros the array for us */
@@ -125,6 +125,10 @@ SYMBOL *CreateSymbol( const char *str, int len )
     h1 = hash1(str, len);
     sym->next = SHash[h1];
     sym->flags= SYM_UNKNOWN;
+	if (addToOrder)
+	    sym->order = ++SymbolCount;
+ 	else
+		sym->order = 0;
     SHash[h1] = sym;
     return sym;
 }
@@ -144,7 +148,7 @@ static unsigned int hash1(const char *str, int len)
 *  Label Support Routines
 */
 
-void programlabel(void)
+void programlabel()
 {
     int len;
     SYMBOL *sym;
@@ -153,7 +157,7 @@ void programlabel(void)
     unsigned char rorg = cseg->flags & SF_RORG;
     unsigned char cflags = (rorg) ? cseg->rflags : cseg->flags;
     unsigned long   pc = (rorg) ? cseg->rorg : cseg->org;
-    
+
     Plab = cseg->org;
     Pflags = cseg->flags;
     str = Av[0];
@@ -164,21 +168,23 @@ void programlabel(void)
 
     if (str[len-1] == ':')
         --len;
-    
+
     if (str[0] != '.' && str[len-1] != '$')
     {
         Lastlocaldollarindex++;
         Localdollarindex = Lastlocaldollarindex;
     }
-    
+
     /*
     *	Redo:	unknown and referenced
     *		referenced and origin not known
     *		known and phase error	 (origin known)
     */
-    
+
     if ((sym = findsymbol(str, len)) != NULL)
     {
+		if (!sym->order)
+		  sym->order = ++SymbolCount; // was a forwarded, referenced label
         if ((sym->flags & (SYM_UNKNOWN|SYM_REF)) == (SYM_UNKNOWN|SYM_REF))
         {
             ++Redo;
@@ -207,7 +213,7 @@ void programlabel(void)
                 //     phase errors were the result of unevaluated IF expressions in
                 //     the previous pass.
 
-                //if (F_verbose >= 1 || !(Redo_if & (REASON_OBSCURE))) 
+                //if (F_verbose >= 1 || !(Redo_if & (REASON_OBSCURE)))
 
                 if (!(Redo_if & (REASON_OBSCURE)))
                 {
@@ -222,7 +228,7 @@ void programlabel(void)
     }
     else
     {
-        sym = CreateSymbol( str, len );
+        sym = CreateSymbol( str, len, true );
     }
     sym->value = pc;
     sym->flags = (sym->flags & ~SYM_UNKNOWN) | (cflags & SYM_UNKNOWN);
@@ -233,7 +239,7 @@ SYMBOL *SymAlloc;
 SYMBOL *allocsymbol(void)
 {
     SYMBOL *sym;
-    
+
     if (SymAlloc)
     {
         sym = SymAlloc;
@@ -261,7 +267,7 @@ static void freesymbol(SYMBOL *sym)
 void FreeSymbolList(SYMBOL *sym)
 {
     SYMBOL *next;
-    
+
     while (sym)
     {
         next = sym->next;

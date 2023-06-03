@@ -34,7 +34,7 @@
 
 #include <stdbool.h>
 
-void programlabel(void);
+void programlabel();
 void ShowSymbols(FILE *file);
 size_t ShowUnresolvedSymbols(void);
 void DumpSymbolTable(void);
@@ -62,7 +62,7 @@ void set_special_dv_symbol(int value, dasm_flag_t flags);
  * created symbol is SYM_UNKNOWN.
  * @pre str != NULL && len > 0
  */
-SYMBOL *create_symbol(const char *str, size_t len);
+SYMBOL *create_symbol(const char *str, size_t len, bool addToOrder);
 
 /**
  * @brief Find symbol with given name in hash table.
@@ -104,6 +104,7 @@ typedef enum
     /* actual sort modes */
     SORTMODE_ALPHA,
     SORTMODE_ADDRESS,
+    SORTMODE_ORDER,
 
     /* meta data */
     SORTMODE_MIN = SORTMODE_ALPHA,

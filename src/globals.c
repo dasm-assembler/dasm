@@ -69,6 +69,7 @@ unsigned long	Redo_if = 0;
 
 char	ListMode = 1;
 unsigned long	CheckSum;	    /*	output data checksum		*/
+unsigned long	SymbolCount;    /*	symbol order counter        */
 
 int F_format = FORMAT_DEFAULT;
 
