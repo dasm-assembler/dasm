@@ -1813,15 +1813,18 @@ void passbuffer_update(int mbindex,char *message)
     newsizerequired=strlen(passbuffer[mbindex])+strlen(message);
     if( newsizerequired > passbuffersize[mbindex])
     {
+        char *tmpalloc;
         // double the current buffer size, if sufficient, so we don't continually reallocate memory...
         newsizerequired = ( newsizerequired < (passbuffersize[mbindex]*2) ) ? passbuffersize[mbindex]*2 : newsizerequired;
 
-        //fprintf(stderr,"DEBUG: growing buffer %d to %d bytes\n", mbindex, newsizerequired);
-
-        passbuffer[mbindex] = realloc(passbuffer[mbindex], newsizerequired);
-        if(passbuffer[mbindex] == NULL)
-            panic("couldn't grow memory for message buffer.");
-        passbuffersize[mbindex]=newsizerequired;
+        tmpalloc = realloc(passbuffer[mbindex], newsizerequired);
+        if(tmpalloc == NULL)
+           strcpy(passbuffer[0],"Insufficient memeory to extend the pass buffer. Some output was lost.\n");
+        else
+        {
+            passbuffer[mbindex] = tmpalloc;
+            passbuffersize[mbindex]=newsizerequired;
+        }
     }
 
     // update the buffer with the message...
