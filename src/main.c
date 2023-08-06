@@ -1566,7 +1566,7 @@ void pushinclude(char *str)
         pIncfile = inf;
         return;
     }
-    printf("Warning: Unable to open '%s'\n", str);
+    asmerr( ERROR_FILE_ERROR, false, NULL );
     return;
 }
 
