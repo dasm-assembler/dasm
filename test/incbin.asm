@@ -1,11 +1,11 @@
 ; Test case for the INCBIN pseudo-op
 
-fname = "incbinexample1.bin"
+fname = "incbinexample1.txt"
 
     PROCESSOR 6502
     ORG $C000
     ; Regression test - see if it works as it used to
-    INCBIN "incbinexample1.bin"
+    INCBIN "incbinexample1.txt"
     DC.B 0
     ; Skip first two bytes
     INCBIN fname, 2
