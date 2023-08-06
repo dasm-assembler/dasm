@@ -582,7 +582,10 @@ v_incbin(char *str, MNEMONIC *dummy)
 
     SYMBOL *sym = eval(str, 0);
     if ((sym->flags & SYM_STRING) == 0) {
-        asmerr(ERROR_TYPE_MISMATCH, true, NULL);
+        asmerr(ERROR_TYPE_MISMATCH, false, NULL);
+        ++Redo;
+        Redo_why |= REASON_INCBIN_NOT_RESOLVED;
+        return;
     } else {
         fname = sym->string;
     }
@@ -618,7 +621,7 @@ v_incbin(char *str, MNEMONIC *dummy)
     }
     else
     {
-        printf("unable to open %s\n", buf);
+        asmerr( ERROR_FILE_ERROR, true, NULL );
     }
 
     if (buf != str)

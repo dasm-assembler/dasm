@@ -368,6 +368,12 @@ static void ShowSegments(void)
 
         if ( Redo_why & REASON_BRANCH_OUT_OF_RANGE )
             printf( " - Branch was out of range.\n" );
+
+        if ( Redo_why & REASON_INCLUDE_FAILED )
+            printf( " - INCLUDE: File not found or expression not resolved.\n" );
+
+        if ( Redo_why & REASON_INCBIN_NOT_RESOLVED )
+            printf( " - INCBIN: Expression not resolved.\n" );
     }
 
     printf( "\n" );
@@ -1567,6 +1573,8 @@ void pushinclude(char *str)
         return;
     }
     asmerr( ERROR_FILE_ERROR, false, NULL );
+    ++Redo;
+    Redo_why |= REASON_INCLUDE_FAILED;
     return;
 }
 
