@@ -994,6 +994,8 @@ const char *pushsymbol(const char *str)
         *ptr == '.' ||
         (*ptr >= 'a' && *ptr <= 'z') ||
         (*ptr == '@') ||                         // UCASM compatibility, allow at-sign to apear in label names
+        (*ptr == '{') || // allow dynamic labels to use macro arguments
+        (*ptr == '}') ||
         (*ptr >= 'A' && *ptr <= 'Z') ||
         (*ptr >= '0' && *ptr <= '9');
     ++ptr
