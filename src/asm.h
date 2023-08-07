@@ -434,6 +434,7 @@ extern    unsigned char Gen[];
 extern    int Glen;
 void    v_set(char *str, MNEMONIC *);
 void    v_setstr(char *str, MNEMONIC *);
+void    v_setsym(char *str, MNEMONIC *);
 void    v_mexit(char *str, MNEMONIC *);
 void    closegenerate(void);
 void    generate(void);

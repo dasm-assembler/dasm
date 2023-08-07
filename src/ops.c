@@ -1282,6 +1282,25 @@ void v_setstr(char *symstr, MNEMONIC *dummy)
     v_set(str,dummy);
 }
 
+void v_setsym(char *symstr, MNEMONIC *dummy)
+{
+    char str[1024];
+    SYMBOL *sym;
+    sym = eval(symstr,0);
+    if (sym->flags & SYM_UNKNOWN)
+    {
+        FreeSymbolList(sym);
+        return;
+    }
+
+    if (sym->flags & SYM_STRING)
+        strcpy(str,sym->string);
+
+    FreeSymbolList(sym);
+
+    v_set(str,dummy);
+}
+
 void
 v_execmac(char *str, MACRO *mac)
 {

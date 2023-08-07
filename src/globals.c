@@ -116,6 +116,7 @@ MNEMONIC Ops[] = {
     { NULL, v_eqm     , "eqm",            0,      0, {0,} },
     { NULL, v_set     , "set",            0,      0, {0,} },
     { NULL, v_setstr  , "setstr",         0,      0, {0,} },
+    { NULL, v_setsym  , "setsym",         0,      0, {0,} },
     { NULL, v_macro   , "mac",            MF_IF|MF_BEGM,  0, {0,} },
     { NULL, v_macro   , "macro",          MF_IF|MF_BEGM,  0, {0,} },
     { NULL, v_endm    , "endm",           MF_ENDM,0, {0,} },
