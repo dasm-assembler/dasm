@@ -13,7 +13,7 @@ VERSION_VCS         = 107
 ; available at at https://dasm-assembler.github.io/
 ;
 ; Many thanks to the people who have contributed. If you find an issue with the
-; contents, or would like ot add something, please report as an issue at...
+; contents, or would like to add something, please report as an issue at...
 ; https://github.com/dasm-assembler/dasm/issues
 
 ;
