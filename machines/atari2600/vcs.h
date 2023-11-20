@@ -13,7 +13,7 @@ VERSION_VCS         = 107
 ; available at at https://dasm-assembler.github.io/
 ;
 ; Many thanks to the people who have contributed. If you find an issue with the
-; contents, or would like ot add something, please report as an issue at...
+; contents, or would like to add something, please report as an issue at...
 ; https://github.com/dasm-assembler/dasm/issues
 
 ;
@@ -90,8 +90,8 @@ VSYNC       ds 1    ; $00   0000 00x0   Vertical Sync Set-Clear
 VBLANK      ds 1    ; $01   xx00 00x0   Vertical Blank Set-Clear
 WSYNC       ds 1    ; $02   ---- ----   Wait for Horizontal Blank
 RSYNC       ds 1    ; $03   ---- ----   Reset Horizontal Sync Counter
-NUSIZ0      ds 1    ; $04   00xx 0xxx   Number-Size player/missle 0
-NUSIZ1      ds 1    ; $05   00xx 0xxx   Number-Size player/missle 1
+NUSIZ0      ds 1    ; $04   00xx 0xxx   Number-Size player/missile 0
+NUSIZ1      ds 1    ; $05   00xx 0xxx   Number-Size player/missile 1
 COLUP0      ds 1    ; $06   xxxx xxx0   Color-Luminance Player 0
 COLUP1      ds 1    ; $07   xxxx xxx0   Color-Luminance Player 1
 COLUPF      ds 1    ; $08   xxxx xxx0   Color-Luminance Playfield
@@ -104,8 +104,8 @@ PF1         ds 1    ; $0E   xxxx xxxx   Playfield Register Byte 1
 PF2         ds 1    ; $0F   xxxx xxxx   Playfield Register Byte 2
 RESP0       ds 1    ; $10   ---- ----   Reset Player 0
 RESP1       ds 1    ; $11   ---- ----   Reset Player 1
-RESM0       ds 1    ; $12   ---- ----   Reset Missle 0
-RESM1       ds 1    ; $13   ---- ----   Reset Missle 1
+RESM0       ds 1    ; $12   ---- ----   Reset Missile 0
+RESM1       ds 1    ; $13   ---- ----   Reset Missile 1
 RESBL       ds 1    ; $14   ---- ----   Reset Ball
 AUDC0       ds 1    ; $15   0000 xxxx   Audio Control 0
 AUDC1       ds 1    ; $16   0000 xxxx   Audio Control 1
@@ -115,19 +115,19 @@ AUDV0       ds 1    ; $19   0000 xxxx   Audio Volume 0
 AUDV1       ds 1    ; $1A   0000 xxxx   Audio Volume 1
 GRP0        ds 1    ; $1B   xxxx xxxx   Graphics Register Player 0
 GRP1        ds 1    ; $1C   xxxx xxxx   Graphics Register Player 1
-ENAM0       ds 1    ; $1D   0000 00x0   Graphics Enable Missle 0
-ENAM1       ds 1    ; $1E   0000 00x0   Graphics Enable Missle 1
+ENAM0       ds 1    ; $1D   0000 00x0   Graphics Enable Missile 0
+ENAM1       ds 1    ; $1E   0000 00x0   Graphics Enable Missile 1
 ENABL       ds 1    ; $1F   0000 00x0   Graphics Enable Ball
 HMP0        ds 1    ; $20   xxxx 0000   Horizontal Motion Player 0
 HMP1        ds 1    ; $21   xxxx 0000   Horizontal Motion Player 1
-HMM0        ds 1    ; $22   xxxx 0000   Horizontal Motion Missle 0
-HMM1        ds 1    ; $23   xxxx 0000   Horizontal Motion Missle 1
+HMM0        ds 1    ; $22   xxxx 0000   Horizontal Motion Missile 0
+HMM1        ds 1    ; $23   xxxx 0000   Horizontal Motion Missile 1
 HMBL        ds 1    ; $24   xxxx 0000   Horizontal Motion Ball
 VDELP0      ds 1    ; $25   0000 000x   Vertical Delay Player 0
 VDELP1      ds 1    ; $26   0000 000x   Vertical Delay Player 1
 VDELBL      ds 1    ; $27   0000 000x   Vertical Delay Ball
-RESMP0      ds 1    ; $28   0000 00x0   Reset Missle 0 to Player 0
-RESMP1      ds 1    ; $29   0000 00x0   Reset Missle 1 to Player 1
+RESMP0      ds 1    ; $28   0000 00x0   Reset Missile 0 to Player 0
+RESMP1      ds 1    ; $29   0000 00x0   Reset Missile 1 to Player 1
 HMOVE       ds 1    ; $2A   ---- ----   Apply Horizontal Motion
 HMCLR       ds 1    ; $2B   ---- ----   Clear Horizontal Move Registers
 CXCLR       ds 1    ; $2C   ---- ----   Clear Collision Latches
