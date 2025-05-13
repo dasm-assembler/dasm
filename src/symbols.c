@@ -148,7 +148,7 @@ static unsigned int hash1(const char *str, int len)
 *  Label Support Routines
 */
 
-void programlabel()
+void programlabel(void)
 {
     int len;
     SYMBOL *sym;
