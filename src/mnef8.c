@@ -369,7 +369,7 @@ static void v_lisu_lisl(char *str, MNEMONIC *mne) {
  */
 static void v_sreg_op(char *str, MNEMONIC *mne) {
 
-    unsigned char reg;
+    unsigned char reg = 0;
 
     programlabel();
     parse_scratchpad_register(str, &reg);
