@@ -59,40 +59,40 @@ static void stackarg(long val, int flags, const char *ptr1);
 
 void doop(opfunc_t, int pri);
 void evaltop(void);
-void	op_mult(long v1, long v2, int f1, int f2),
-op_div(long v1, long v2, int f1, int f2),
-op_mod(long v1, long v2, int f1, int f2),
-op_add(long v1, long v2, int f1, int f2),
-op_sub(long v1, long v2, int f1, int f2),
-op_shiftleft(long v1, long v2, int f1, int f2),
-op_shiftright(long v1, long v2, int f1, int f2),
-op_greater(long v1, long v2, int f1, int f2),
-op_greatereq(long v1, long v2, int f1, int f2),
-op_smaller(long v1, long v2, int f1, int f2),
-op_smallereq(long v1, long v2, int f1, int f2),
-op_eqeq(long v1, long v2, int f1, int f2),
-op_noteq(long v1, long v2, int f1, int f2),
-op_andand(long v1, long v2, int f1, int f2),
-op_oror(long v1, long v2, int f1, int f2),
-op_xor(long v1, long v2, int f1, int f2),
-op_and(long v1, long v2, int f1, int f2),
-op_or(long v1, long v2, int f1, int f2),
-op_question(long v1, long v2, int f1, int f2);
+void	op_mult(      long v1, long v2, int f1, int f2),
+	op_div(       long v1, long v2, int f1, int f2),
+	op_mod(       long v1, long v2, int f1, int f2),
+	op_add(       long v1, long v2, int f1, int f2),
+	op_sub(       long v1, long v2, int f1, int f2),
+	op_shiftleft( long v1, long v2, int f1, int f2),
+	op_shiftright(long v1, long v2, int f1, int f2),
+	op_greater(   long v1, long v2, int f1, int f2),
+	op_greatereq( long v1, long v2, int f1, int f2),
+	op_smaller(   long v1, long v2, int f1, int f2),
+	op_smallereq( long v1, long v2, int f1, int f2),
+	op_eqeq(      long v1, long v2, int f1, int f2),
+	op_noteq(     long v1, long v2, int f1, int f2),
+	op_andand(    long v1, long v2, int f1, int f2),
+	op_oror(      long v1, long v2, int f1, int f2),
+	op_xor(       long v1, long v2, int f1, int f2),
+	op_and(       long v1, long v2, int f1, int f2),
+	op_or(        long v1, long v2, int f1, int f2),
+	op_question(  long v1, long v2, int f1, int f2);
 
 void	op_takelsb(long v1, int f1),
-op_takemsb(long v1, int f1),
-op_negate(long v1, int f1),
-op_invert(long v1, int f1),
-op_not(long v1, int f1);
+	op_takemsb(long v1, int f1),
+	op_negate( long v1, int f1),
+	op_invert( long v1, int f1),
+	op_not(    long v1, int f1);
 
 
 const char *pushsymbol(const char *str);
-const char *pushstr(const char *str);
-const char *pushbin(const char *str);
-const char *pushoct(const char *str);
-const char *pushdec(const char *str);
-const char *pushhex(const char *str);
-const char *pushchar(const char *str);
+const char *pushstr(   const char *str);
+const char *pushbin(   const char *str);
+const char *pushoct(   const char *str);
+const char *pushdec(   const char *str);
+const char *pushhex(   const char *str);
+const char *pushchar(  const char *str);
 
 int IsAlphaNum( int c );
 
@@ -562,7 +562,7 @@ SYMBOL *eval(const char *str, int wantmode)
             {
                 if (str[1] == 'x') {                   // allow also '0xAA' notation for '$AA'
                     ++str;
-                    str = (char *)pushhex(str+1);
+                    str = (const char *)pushhex(str+1);
                 } else {
                 str = pushoct(str);
                 }
