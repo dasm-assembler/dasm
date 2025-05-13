@@ -43,8 +43,7 @@ void convert(int format, FILE *in, FILE *out);
 unsigned int getwlh(FILE *in);
 void puth(unsigned char c, FILE *out);
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
     int format;
     FILE *infile;
@@ -72,8 +71,7 @@ main(int ac, char **av)
     return 0;
 }
 
-void
-exiterr(const char *str)
+void exiterr(const char *str)
 {
     fputs(str, stderr);
     fputs("\n", stderr);
@@ -94,11 +92,9 @@ exiterr(const char *str)
  *			cc=invert of checksum all codes
  */
 
-void
-convert(int format, FILE *in, FILE *out)
+void convert(int format, FILE *in, FILE *out)
 {
     unsigned int org = 0;
-    unsigned int idx;
     long len;
     unsigned char buf[256];
 
@@ -116,9 +112,17 @@ convert(int format, FILE *in, FILE *out)
 	while (len > 0) {
 	    register unsigned char chk;
 	    register unsigned int i;
+	    size_t  idx;
+            size_t  items;
 
 	    idx = (len > PERLINE) ? PERLINE : len;
-	    fread(buf, idx, 1, in);
+	    items = fread(buf, idx, 1, in);	/* size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream); */
+	    if( 1 != items ) {			/* fread() return number of items */
+		char ebuf[256];
+		snprintf(ebuf, sizeof(ebuf),
+			" fread(buf, %u, 1, in) return only %u", idx, items);
+		exiterr(ebuf);
+	    }
 	    putc(':', out);
 	    puth(idx, out);
 	    puth(org >> 8, out);
@@ -157,8 +161,7 @@ unsigned int getwlh(FILE *in)
     return result;
 }
 
-void
-puth(unsigned char c, FILE *out)
+void puth(unsigned char c, FILE *out)
 {
     static char dig[] = { "0123456789ABCDEF" };
     putc(dig[c>>4], out);
