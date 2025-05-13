@@ -1848,7 +1848,7 @@ void passbuffer_output(int mbindex)
     printf("%s\n",passbuffer[mbindex]); // ...do we really still need to put this through stdout, instead stderr?
 }
 
-void passbuffer_cleanup()
+void passbuffer_cleanup(void)
 {
     int t;
     for(t=0;t<2;t++)

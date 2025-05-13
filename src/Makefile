@@ -26,26 +26,50 @@
 # trunk/ Makefile!
 
 
-#GOPTI= -O -m32 # -O for more warnings; use -O0 for debugging, use -O3 for speed
+M32BIT = -m32
 
-GWARN= -ansi -std=c99 -pedantic -Wall \
-       -Wstrict-prototypes -Wdeclaration-after-statement \
-       -Wold-style-definition -Wmissing-declarations -Wmissing-prototypes \
-       -Wshadow -Wwrite-strings -Wcast-qual -Wnested-externs \
-       -Wcast-align -Wpointer-arith -Wbad-function-cast \
-       -Wformat-y2k -Wformat-nonliteral -Wformat-security \
-       -Wfloat-equal -Wundef -Winline \
-       # -Wfour-char-constants # Apple OS X only option, not needed anyway?
-       # -Wunused # definition is weird in man gcc, effect is weird too
-       # -Wextra -Wno-unused-parameter # no-unused tames extra a little
-       # -Wunreachable-code # seems to create 4 spurious warnings?
-       # -Wconversion # too many right now
-       # -Wtraditional # too many, not sure if it's worth it anyway
+#GOPTI = -O -m32 # -O for more warnings; use -O0 for debugging, use -O3 for speed
+GOPTI  = -O2 # -O for more warnings; use -O0 for debugging, use -O3 for speed
+GOPTI += $(M32BIT)
 
-#GDEBG= -g # -fprofile-arcs -ftest-coverage -pg # -D_FORTIFY_SOURCE=2
+#GWARN= -ansi -std=c18 -pedantic -Wall
+GWARN =  -ansi -std=c99 -pedantic -Wall
+GWARN += -Wmissing-declarations
+GWARN += -Wmissing-prototypes
+GWARN += -Wold-style-definition
+GWARN += -Wshadow
+GWARN += -Wcast-qual
+GWARN += -Wnested-externs
+GWARN += -Wunused 	# definition is weird in man gcc, effect is weird too
+GWARN += -Wundef
+GWARN += -Winline
+GWARN += -Wfloat-equal
+GWARN += -Wunreachable-code # seems to create 4 spurious warnings?
+GWARN += -Wno-unused-parameter # no-unused tames extra a little
+GWARN += -Wformat-y2k
+GWARN += -Wformat-security
+GWARN += -Wcast-align
+GWARN += -Wpointer-arith
+GWARN += -Wbad-function-cast
+GWARN += -Wmisleading-indentation
+#GWARN += -Wstrict-prototypes
+#GWARN += -Wdeclaration-after-statement
+#GWARN += -Wwrite-strings
+#GWARN += -Wconversion # too many right now
+#GWARN += -Wtraditional # too many, not sure if it's worth it anyway
+#GWARN += -Wextra
+#GWARN += -Wformat-nonliteral
+#GWARN += -Wfour-char-constants # Apple OS X only option, not needed anyway?
 
-#CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
-#LDFLAGS= -m32 -L/usr/lib32
+GDEBG  = -g # -fprofile-arcs -ftest-coverage -pg # -D_FORTIFY_SOURCE=2
+#GDEBG += -fprofile-arcs
+GDEBG += -ftest-coverage
+#GDEBG += -pg
+#GDEBG += -D_FORTIFY_SOURCE=2
+
+CFLAGS   = $(GOPTI) $(GWARN) $(GDEBG)
+LDFLAGS  = -L/usr/lib32
+LDFLAGS += $(M32BIT)
 
 ifeq ($(OS),Windows_NT)
       detected_OS := Windows
@@ -56,7 +80,7 @@ ifeq ($(detected_OS),Darwin)
 endif
 endif
 
-#CC= gcc
+CC= gcc
 
 OBJS= main.o ops.o globals.o exp.o symbols.o \
       mne6303.o mne6502.o mne65c02.o mne68705.o mne6811.o mnef8.o mne68908.o
