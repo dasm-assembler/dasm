@@ -46,11 +46,11 @@ typedef enum
 /* for -E option [phf] */
 typedef enum
 {
-  ERRORFORMAT_DEFAULT,
-  ERRORFORMAT_WOE = ERRORFORMAT_DEFAULT,
-  ERRORFORMAT_DILLON,
-  ERRORFORMAT_GNU,
-  ERRORFORMAT_MAX
+    ERRORFORMAT_DEFAULT,
+    ERRORFORMAT_WOE = ERRORFORMAT_DEFAULT,
+    ERRORFORMAT_DILLON,
+    ERRORFORMAT_GNU,
+    ERRORFORMAT_MAX
 } errorformat_t;
 
 #define DAD
@@ -123,46 +123,37 @@ enum ASM_ERROR_EQUATES
 
 typedef struct ERRORSTRUCT
 {
-    int nErrorType;                             /* ASM_ERROR_EQUATES value */
-    bool bFatal;                                /* 0 = OK, non-zero = cannot continue compilation */
+    int         nErrorType;                     /* ASM_ERROR_EQUATES value */
+    bool        bFatal;                         /* 0 = OK, non-zero = cannot continue compilation */
     const char *sDescription;                   /* Error message */
 
-    } ERROR_DEFINITION;
+} ERROR_DEFINITION;
 
 
-    enum REASON_CODES
-    {
-        REASON_MNEMONIC_NOT_RESOLVED = 1 << 0,
-        REASON_OBSCURE = 1 << 1,                        /* fix this! */
-        REASON_DC_NOT_RESOVED = 1 << 2,
-        REASON_DV_NOT_RESOLVED_PROBABLY = 1 << 3,
-        REASON_DV_NOT_RESOLVED_COULD = 1 << 4,
-        REASON_DS_NOT_RESOLVED = 1 << 5,
-        REASON_ALIGN_NOT_RESOLVED = 1 << 6,
-        REASON_ALIGN_RELOCATABLE_ORIGIN_NOT_KNOWN = 1 << 7,
-        REASON_ALIGN_NORMAL_ORIGIN_NOT_KNOWN = 1 << 8,
-        REASON_EQU_NOT_RESOLVED = 1 << 9,
-        REASON_EQU_VALUE_MISMATCH = 1 << 10,
-        REASON_IF_NOT_RESOLVED = 1 << 11,
-        REASON_REPEAT_NOT_RESOLVED = 1 << 12,
-        REASON_FORWARD_REFERENCE = 1 << 13,
-        REASON_PHASE_ERROR = 1 << 14,
-        REASON_BRANCH_OUT_OF_RANGE = 1 << 15,
-        REASON_INCLUDE_FAILED = 1 << 16,
-        REASON_INCBIN_NOT_RESOLVED = 1 << 17
-    };
+enum REASON_CODES
+{
+    REASON_MNEMONIC_NOT_RESOLVED = 1 << 0,
+    REASON_OBSCURE = 1 << 1,                        /* fix this! */
+    REASON_DC_NOT_RESOVED = 1 << 2,
+    REASON_DV_NOT_RESOLVED_PROBABLY = 1 << 3,
+    REASON_DV_NOT_RESOLVED_COULD = 1 << 4,
+    REASON_DS_NOT_RESOLVED = 1 << 5,
+    REASON_ALIGN_NOT_RESOLVED = 1 << 6,
+    REASON_ALIGN_RELOCATABLE_ORIGIN_NOT_KNOWN = 1 << 7,
+    REASON_ALIGN_NORMAL_ORIGIN_NOT_KNOWN = 1 << 8,
+    REASON_EQU_NOT_RESOLVED = 1 << 9,
+    REASON_EQU_VALUE_MISMATCH = 1 << 10,
+    REASON_IF_NOT_RESOLVED = 1 << 11,
+    REASON_REPEAT_NOT_RESOLVED = 1 << 12,
+    REASON_FORWARD_REFERENCE = 1 << 13,
+    REASON_PHASE_ERROR = 1 << 14,
+    REASON_BRANCH_OUT_OF_RANGE = 1 << 15,
+    REASON_INCLUDE_FAILED = 1 << 16,
+    REASON_INCBIN_NOT_RESOLVED = 1 << 17
+};
 
 
 #endif
-
-#define MNEMONIC    struct _MNE
-#define MACRO       struct _MACRO
-#define INCFILE     struct _INCFILE
-#define REPLOOP     struct _REPLOOP
-#define IFSTACK     struct _IFSTACK
-#define SEGMENT     struct _SEGMENT
-#define SYMBOL      struct _SYMBOL
-#define STRLIST     struct _STRLIST
 
 #define DEFORGFILL  255
 #define N_HASH_BITS 12          // 10 was in original implementation
@@ -172,45 +163,45 @@ typedef struct ERRORSTRUCT
 #define MHASHAND    (MHASHSIZE -1)
 #define ALLOCSIZE   16384
 #define MAXMACLEVEL 32
-#define TAB        9
+#define TAB         9
 
     /* 
      * See the file globals.c for what these correspond to (Cvt[] and Opsize[])
      */
-    enum ADDRESS_MODES {
-        AM_IMP,                 /*    1 - implied         */
-        AM_IMM8,                /*    2 - immediate 8  bits   */
-        AM_IMM16,               /*    3 - immediate 16 bits   */
-        AM_BYTEADR,             /*    4 - address 8 bits        */
-        AM_BYTEADRX,            /*    5 - index x + 8 bit offset     */
-        AM_BYTEADRY,            /*    6 - index y + 8 bit offset     */
-        AM_WORDADR,             /*    7 - extended addr        */
-        AM_WORDADRX,            /*    8 - index x + 16 bit offset       */
-        AM_WORDADRY,            /*    9 - index y + 16 bit offset      */
-        AM_REL,                 /*    10- relative 8 bits   */
-        AM_BYTEREL,             /*    11- 8 bits relative    */
-        AM_INDBYTEX,            /*    12- indirect x     */
-        AM_INDBYTEY,            /*    13- indirect y     */
-        AM_INDWORD,             /*    14- indirect immediate    */
-        AM_INDWORDX,            /*    15- indirect 16 bits x-indexed  */
-        AM_INDBYTE,             /*    16- indirect 8 bits        */
-        AM_0X,                  /*    17- index x 0 bits        */
-        AM_0Y,                  /*    18- index y 0 bits        */
-        AM_BITMOD,              /*    19- spec. bit modifcation     */
-        AM_BITBRAMOD,           /*    20- spec. bit-test rel. branch    */
-        AM_BYTEADR_SP,          /*    21- index SP +8 bits     */
-        AM_WORDADR_SP,          /*    22- index SP +16 bits   */
+enum ADDRESS_MODES {
+    AM_IMP,                 /*    1 - implied         */
+    AM_IMM8,                /*    2 - immediate 8  bits   */
+    AM_IMM16,               /*    3 - immediate 16 bits   */
+    AM_BYTEADR,             /*    4 - address 8 bits        */
+    AM_BYTEADRX,            /*    5 - index x + 8 bit offset     */
+    AM_BYTEADRY,            /*    6 - index y + 8 bit offset     */
+    AM_WORDADR,             /*    7 - extended addr        */
+    AM_WORDADRX,            /*    8 - index x + 16 bit offset       */
+    AM_WORDADRY,            /*    9 - index y + 16 bit offset      */
+    AM_REL,                 /*    10- relative 8 bits   */
+    AM_BYTEREL,             /*    11- 8 bits relative    */
+    AM_INDBYTEX,            /*    12- indirect x     */
+    AM_INDBYTEY,            /*    13- indirect y     */
+    AM_INDWORD,             /*    14- indirect immediate    */
+    AM_INDWORDX,            /*    15- indirect 16 bits x-indexed  */
+    AM_INDBYTE,             /*    16- indirect 8 bits        */
+    AM_0X,                  /*    17- index x 0 bits        */
+    AM_0Y,                  /*    18- index y 0 bits        */
+    AM_BITMOD,              /*    19- spec. bit modifcation     */
+    AM_BITBRAMOD,           /*    20- spec. bit-test rel. branch    */
+    AM_BYTEADR_SP,          /*    21- index SP +8 bits     */
+    AM_WORDADR_SP,          /*    22- index SP +16 bits   */
 
 
-        AM_SYMBOL,
-        AM_EXPLIST,
-        AM_LONG,
-        AM_BSS,
+    AM_SYMBOL,
+    AM_EXPLIST,
+    AM_LONG,
+    AM_BSS,
 
-        AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
+    AM_OTHER_ENDIAN,                /* force little endian to DC on big endian machines and the other way round */
 
-        NUMOC
-    };
+    NUMOC
+};
 
 #define AF_IMP                  ( 1L << AM_IMP )
 #define AF_IMM8                 ( 1L << AM_IMM8 )
@@ -240,9 +231,10 @@ typedef struct ERRORSTRUCT
 
 
 
-STRLIST {
-    STRLIST *next;
-    char    buf[4];
+typedef struct _STRLIST  STRLIST;
+struct _STRLIST {
+    STRLIST    *next;
+    char       buf[4];
 };
 
 #define STRLISTSIZE    sizeof(STRLIST *)
@@ -255,41 +247,44 @@ STRLIST {
 #define MF_IMOD                 0x40    /*  instruction byte mod.    */
 #define MF_ENDM                 0x80    /*  is v_endm            */
 
-MNEMONIC {
-    MNEMONIC     *next;        /*    hash        */
-    void    (*vect)(char *, MNEMONIC *);    /*  dispatch        */
-    const char    *name;        /*    actual name    */
-    unsigned char   flags;        /*    special flags    */
+typedef struct _MNEMONIC MNEMONIC;
+struct _MNEMONIC {
+    MNEMONIC        *next;          /*    hash        */
+    void            (*vect)(char *, MNEMONIC *);    /*  dispatch        */
+    const char      *name;          /*    actual name    */
+    unsigned char   flags;          /*    special flags    */
     unsigned long   okmask;
-    unsigned int opcode[NUMOC];  /*    hex codes, byte or word (>xFF) opcodes    */
+    unsigned int    opcode[NUMOC];  /*    hex codes, byte or word (>xFF) opcodes    */
 };
 
 /* MNEMONIC with all fields 0, used as end-of-table marker. */
 #define MNEMONIC_NULL {NULL, NULL, NULL, 0, 0, {0,}}
 
-MACRO {
-    MACRO   *next;
-    void    (*vect)(char *, MACRO *);
-    char    *name;
+typedef struct _MACRO   MACRO;
+struct _MACRO {
+    MACRO           *next;
+    void            (*vect)(char *, MACRO *);
+    char            *name;
     unsigned char   flags;
-    STRLIST *strlist;
-    int defpass;
+    STRLIST         *strlist;
+    int             defpass;
 };
 
 #define INF_MACRO   0x01
 #define INF_NOLIST  0x02
 
-INCFILE {
-    INCFILE *next;  /*      previously pushed context */
-    char    *name;  /*      file name            */
-    FILE    *fi;    /*      file handle            */
+typedef struct _INCFILE     INCFILE;
+struct _INCFILE {
+    INCFILE         *next;  /*      previously pushed context */
+    char            *name;  /*      file name            */
+    FILE            *fi;    /*      file handle            */
     unsigned long   lineno; /*      line number in file        */
     unsigned char   flags;  /*      flags (macro)         */
 
     /*    Only if Macro    */
 
-    STRLIST *args;    /*  arguments to macro        */
-    STRLIST *strlist;    /*  current string list     */
+    STRLIST         *args;      /*  arguments to macro        */
+    STRLIST         *strlist;   /*  current string list     */
     unsigned long   saveidx;    /*  save localindex        */
     unsigned long   savedolidx; /*  save localdollarindex   */
 
@@ -297,34 +292,37 @@ INCFILE {
 
 #define RPF_UNKNOWN 0x01    /*      value unknown     */
 
-REPLOOP {
-    REPLOOP *next;  /*      previously pushed context */
+typedef struct _REPLOOP  REPLOOP;
+struct _REPLOOP {
+    REPLOOP         *next;  /*      previously pushed context */
     unsigned long   count;  /*      repeat count            */
     unsigned long   seek;   /*      seek to top of repeat     */
     unsigned long   lineno; /*      line number of line before  */
-    INCFILE *file;  /*      which include file are we in*/
+    INCFILE         *file;  /*      which include file are we in*/
     unsigned char   flags;
 };
 
 #define IFF_UNKNOWN 0x01    /*      value unknown        */
 #define IFF_BASE    0x04
 
-IFSTACK {
-    IFSTACK *next;  /*      previous IF            */
-    INCFILE *file;  /*      which include file are we in*/
+typedef struct _IFSTACK  IFSTACK;
+struct _IFSTACK {
+    IFSTACK         *next;  /*      previous IF            */
+    INCFILE         *file;  /*      which include file are we in*/
     unsigned char   flags;
     unsigned char   xtrue;   /*      1 if true, 0 if false     */
     unsigned char   acctrue;/*      accumulatively true (not incl this one) */
 };
 
 #define SF_UNKNOWN  0x01    /*      ORG unknown            */
-#define SF_REF        0x04    /*      ORG referenced        */
-#define SF_BSS        0x10    /*      uninitialized area (U flag)    */
+#define SF_REF      0x04    /*      ORG referenced        */
+#define SF_BSS      0x10    /*      uninitialized area (U flag)    */
 #define SF_RORG     0x20    /*      relocatable origin active    */
 
-SEGMENT {
-    SEGMENT *next;  /*      next segment in segment list    */
-    char    *name;  /*      name of segment        */
+typedef struct _SEGMENT  SEGMENT;
+struct _SEGMENT {
+    SEGMENT         *next;  /*      next segment in segment list    */
+    char            *name;  /*      name of segment        */
     unsigned char   flags;  /*      for ORG            */
     unsigned char   rflags; /*      for RORG            */
     unsigned long   org;    /*      current org            */
@@ -342,35 +340,36 @@ SEGMENT {
 #define SYM_MACRO   0x20    /*      symbol is a macro    */
 #define SYM_MASREF  0x40    /*      master reference    */
 
-SYMBOL {
-    SYMBOL  *next;    /*  next symbol in hash list        */
-    char    *name;    /*  symbol name or string if expr.  */
-    char    *string;    /*  if symbol is actually a string  */
+typedef struct _SYMBOL  SYMBOL;
+struct _SYMBOL {
+    SYMBOL          *next;    /*  next symbol in hash list        */
+    char            *name;    /*  symbol name or string if expr.  */
+    char            *string;  /*  if symbol is actually a string  */
     unsigned char   flags;    /*  flags                */
-    unsigned char   addrmode;    /*  addressing mode (expressions)   */
-    long value; /* current value, never EVER change this to unsigned! */
-    unsigned int namelen;    /*  name length             */
-    long order;
+    unsigned char   addrmode; /*  addressing mode (expressions)   */
+    long            value;    /* current value, never EVER change this to unsigned! */
+    unsigned int    namelen;  /*  name length             */
+    long            order;
 };
 
-extern SYMBOL    *SHash[];
-extern MNEMONIC    *MHash[];
+extern SYMBOL     *SHash[];
+extern MNEMONIC   *MHash[];
 extern INCFILE    *pIncfile;
 extern REPLOOP    *Reploop;
 extern SEGMENT    *Seglist;
 extern IFSTACK    *Ifstack;
 
 extern SEGMENT    *Csegment;  /*      current segment */
-extern char    *Av[];
-extern char    Avbuf[];
+extern char       *Av[];
+extern char       Avbuf[];
 /*extern unsigned int Adrbytes[];*/
 extern unsigned int Cvt[];
-extern MNEMONIC    Ops[];
+extern MNEMONIC     Ops[];
 extern unsigned int    Opsize[];
-extern int    Mnext;          /*    mnemonic extension    */
+extern int             Mnext;          /*    mnemonic extension    */
 extern unsigned int    Mlevel;
 
-extern bool bTrace;
+extern bool     bTrace;
 extern bool     Xdebug;
 extern bool     bStrictMode;
 extern unsigned char    MsbOrder;
@@ -385,20 +384,20 @@ extern int Redo_eval;
 extern unsigned long    Redo_if;
 extern unsigned long    Localindex, Lastlocalindex;
 extern unsigned long    Localdollarindex, Lastlocaldollarindex;
-extern int   F_format;
-extern sortmode_t F_sortmode; /* -T option [phf] */
+extern int           F_format;
+extern sortmode_t    F_sortmode;    /* -T option [phf] */
 extern errorformat_t F_errorformat; /* -E option [phf] */
-extern unsigned char    F_verbose;
+extern unsigned char F_verbose;
 extern const char    *F_outfile;
-extern char    *F_listfile;
-extern char    *F_symfile;
-extern FILE    *FI_listfile;
-extern FILE    *FI_temp;
-extern unsigned char    Fisclear;
-extern unsigned long    Plab, Pflags;
-extern char    Inclevel;
-extern char    ListMode;
-extern unsigned long    Processor;
+extern char          *F_listfile;
+extern char          *F_symfile;
+extern FILE          *FI_listfile;
+extern FILE          *FI_temp;
+extern unsigned char Fisclear;
+extern unsigned long Plab, Pflags;
+extern char          Inclevel;
+extern char          ListMode;
+extern unsigned long Processor;
 
 /*extern unsigned int _fmode;*/
 extern unsigned long  SymbolCount;
@@ -410,7 +409,7 @@ extern int nMacroClosings;
 /* main.c */
 /*extern unsigned char Listing;*/
 void    findext(char *str);
-int    asmerr(int err, bool bAbort, const char *sText);
+int     asmerr(int err, bool bAbort, const char *sText);
 char   *sftos(long val, int flags);
 void    rmnode(void **base, int bytes);
 void    addhashtable(MNEMONIC *mne);
@@ -419,7 +418,7 @@ char   *permalloc(int bytes);
 char   *zmalloc(int bytes);
 char   *ckmalloc(int bytes);
 char   *strlower(char *str);
-void addmsg(char *message);
+void    addmsg(char *message);
 
 /* symbols.c */
 void    setspecial(int value, int flags);
@@ -427,7 +426,7 @@ SYMBOL *allocsymbol(void);
 SYMBOL *findsymbol(const char *str, int len);
 SYMBOL *CreateSymbol( const char *str, int len, bool addToOrder );
 void    FreeSymbolList(SYMBOL *sym);
-void    programlabel();
+void    programlabel(void);
 
 /* ops.c */
 extern    unsigned char Gen[];
