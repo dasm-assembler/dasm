@@ -173,6 +173,11 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         {
             ++Redo;
             Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+            if (!F_verbose)
+            {
+                sprintf( sBuffer, "%s %s", mne->name, str );
+                asmerr( ERROR_UNKNOWN_MNEMONIC, false, sBuffer );
+            }
         }
     }
     sym = symbase;
@@ -211,6 +216,11 @@ void v_mnemonic(char *str, MNEMONIC *mne)
         //FIX
             ++Redo;
             Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+            if (!F_verbose)
+            {
+                sprintf( sBuffer, "%s %s", mne->name, str );
+                asmerr( ERROR_UNKNOWN_MNEMONIC, false, sBuffer );
+            }
         return;
     }
 
@@ -231,6 +241,11 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                 //FIX: Cause assembly to fail when an invalid mode is used for an opcode...
                 ++Redo;
                 Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+                if (!F_verbose)
+                {
+                    sprintf( sBuffer, "%s %s", mne->name, str );
+                    asmerr( ERROR_UNKNOWN_MNEMONIC, false, sBuffer );
+                }
                 return;
 
         	case AM_BYTEADR_SP:
@@ -269,6 +284,11 @@ void v_mnemonic(char *str, MNEMONIC *mne)
                //FIX: Cause assembly to fail when an invalid mode is used for an opcode...
                ++Redo;
                Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
+               if (!F_verbose)
+               {
+                   sprintf( sBuffer, "%s %s", mne->name, str );
+                   asmerr( ERROR_UNKNOWN_MNEMONIC, false, sBuffer );
+               }
             return;
         }
     }
