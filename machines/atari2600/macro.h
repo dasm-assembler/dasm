@@ -93,7 +93,7 @@ VERSION_MACRO         = 110
 .VSLP1          sta WSYNC           ; 1st '0' bit resets Vsync, 2nd '0' bit exit loop
                 sta VSYNC
                 lsr
-                bne .VSLP1          ; branch until VYSNC has been reset
+                bne .VSLP1          ; branch until VSYNC has been reset
              ENDM
 
 ;-------------------------------------------------------------------------------
