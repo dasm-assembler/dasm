@@ -1830,6 +1830,7 @@ void passbuffer_update(int mbindex,char *message)
            strcpy(passbuffer[0],"Insufficient memeory to extend the pass buffer. Some output was lost.\n");
         else
         {
+            memset(tmpalloc+passbuffersize[mbindex],0,passbuffersize[mbindex]); // zero the newly allocated buffer
             passbuffer[mbindex] = tmpalloc;
             passbuffersize[mbindex]=newsizerequired;
         }
