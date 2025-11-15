@@ -1038,7 +1038,7 @@ static const char *cleanup(char *buf, bool bDisable)
             ++str;
             if (*str == TAB)
                 *str = ' ';
-            if (*str == '\n' || *str == 0)
+            if (*str == '\n' || *str == '\r' || *str == 0)
             {
                 str[0] = ' ';
                 str[1] = 0;
