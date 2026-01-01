@@ -50,6 +50,11 @@ typedef union unibin opfunc_t;
 #else			/* warning: Calling functions without prototype */
 
 typedef void (*opfunc_t)();
+
+/* Add specific prototypes for casting to satisfy modern compilers */
+typedef void (*unop_func_t)(long, int);
+typedef void (*binop_func_t)(long, long, int, int);
+
 #define _unary
 #define _binary
 
@@ -642,7 +647,12 @@ void evaltop(void)
             return;
         }
         --Argi;
-        (*Opdis[Opi]_unary)(Argstack[Argi], Argflags[Argi]);
+#if UNION
+        (*Opdis[Opi].unary)(Argstack[Argi], Argflags[Argi]);
+#else
+        /* Cast to specific prototype to avoid deprecated warning */
+        ((unop_func_t)Opdis[Opi])(Argstack[Argi], Argflags[Argi]);
+#endif
     }
     else
     {
@@ -654,8 +664,14 @@ void evaltop(void)
         }
 
         Argi -= 2;
-        (*Opdis[Opi]_binary)(Argstack[Argi], Argstack[Argi+1],
+#if UNION
+        (*Opdis[Opi].binary)(Argstack[Argi], Argstack[Argi+1],
             Argflags[Argi], Argflags[Argi+1]);
+#else
+        /* Cast to specific prototype to avoid deprecated warning */
+        ((binop_func_t)Opdis[Opi])(Argstack[Argi], Argstack[Argi+1],
+            Argflags[Argi], Argflags[Argi+1]);
+#endif
     }
 }
 
