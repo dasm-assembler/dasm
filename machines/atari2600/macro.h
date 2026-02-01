@@ -1,7 +1,7 @@
 ; MACRO.H
-; Version 1.10, 09/MAY/2022
+; Version 1.11, 01/FEB/2026
 
-VERSION_MACRO         = 110
+VERSION_MACRO         = 111
 
 ;
 ; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
@@ -17,6 +17,8 @@ VERSION_MACRO         = 110
 
 
 ; Latest Revisions...
+; 1.11  01/FEB/2026     - added macros ALIGN_PAGE, BYTE_COUNT, CHECK_PAGE, TIMER_SETUP 
+;                         and TIMER_WAIT
 ; 1.10  09/MAY/2022     - ("nop 0") should be changed to "nop VSYNC", to ensure that
 ;                         the instruction will access a "safe" memory location even
 ;                         when a different TIA_BASE_ADDRESS is defined - ale_79
@@ -37,7 +39,7 @@ VERSION_MACRO         = 110
 ;                       - NO_ILLEGAL_OPCODES switch implemented
 ; 1.0	22/MAR/2003		Initial release
 
-; Note: These macros use illegal opcodes.  To disable illegal opcode usage, 
+; Note: Some of these macros use illegal opcodes.  To disable illegal opcode usage, 
 ;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
 ;   If you do not allow illegal opcode usage, you must include this file 
 ;   *after* including VCS.H (as the non-illegal opcodes access hardware
@@ -48,6 +50,12 @@ VERSION_MACRO         = 110
 ;   VERTICAL_SYNC       - correct 3 scanline vertical synch code
 ;   CLEAN_START         - set machine to known state on startup
 ;   SET_POINTER         - load a 16-bit absolute to a 16-bit variable
+;   BOUNDARY byte#      - pad to byte # in page and count free bytes
+;   ALIGN_PAGE          - align code to 256-byte page boundary and report free space
+;   BYTE_COUNT          - report number of bytes used by a section
+;   CHECK_PAGE          - verify code/data hasn't crossed a page boundary
+;   TIMER_SETUP n       - setup a timer for n scanlines
+;   TIMER_WAIT          - wait for the timer to expire
 
 ;-------------------------------------------------------------------------------
 ; SLEEP duration
@@ -157,16 +165,102 @@ VERSION_MACRO         = 110
 ; eg: BOUNDARY 5    ; position at byte #5 in page
 
 .FREE_BYTES SET 0   
-   MAC BOUNDARY
-      REPEAT 256
-         IF <. % {1} = 0
-            MEXIT
-         ELSE
+    MAC BOUNDARY
+        REPEAT 256
+            IF <. % {1} = 0
+                MEXIT
+            ELSE
 .FREE_BYTES SET .FREE_BYTES + 1
-            .byte $00
-         ENDIF
-      REPEND
-   ENDM
+                .byte $00
+            ENDIF
+        REPEND
+    ENDM
 
+;-------------------------------------------------------
+; ALIGN_PAGE
+; Aligns code to a 256-byte page boundary and reports free space.
+; Useful for ensuring data tables don't cross page boundaries, which
+; can cause timing issues on the 6502.
+;
+; Usage: ALIGN_PAGE description
+; Example: ALIGN_PAGE "Sprite Data"
+;
+; Note: Echoes the number of free bytes before the specified section
+
+    MAC ALIGN_PAGE
+.Align
+    align 256
+    ECHO "###", [* - .Align]d, "bytes free before", {1}
+    ENDM
+
+;-------------------------------------------------------
+; BYTE_COUNT
+; Reports the number of bytes used by a section of code or data.
+; Useful for tracking ROM usage and optimizing code size.
+;
+; Usage: BYTE_COUNT start_label, "description"
+; Example: BYTE_COUNT SpriteStart, "Sprite Graphics"
+;
+; IN 1: Label marking the start position
+; IN 2: Description string for the section
+
+    MAC BYTE_COUNT
+	ECHO ">>>", {2}, ":", [* - {1}]d, "bytes"
+	ENDM
+
+;-------------------------------------------------------
+; CHECK_PAGE
+; Verifies that code/data hasn't crossed a page boundary.
+; Generates an assembly error if the boundary was crossed.
+; Critical for 6502 code where page crossing can affect timing
+; or cause indirect addressing issues.
+;
+; Usage: CHECK_PAGE position, "description"
+; Example: CHECK_PAGE TableStart, "Jump Table"
+;
+; IN 1: Starting position to check against
+; IN 2: Description string for error message
+
+	MAC CHECK_PAGE
+.PREV_POS   SET . - 1
+        IF >.PREV_POS != >{1}
+            ECHO ""
+            ECHO "ERROR:", {2}, "crosses page"
+            ECHO ""
+            ERR
+        ENDIF
+	ENDM
+
+;-------------------------------------------------------
+; Usage: TIMER_SETUP lines
+; where lines is the number of scanlines to skip (> 2).
+; The timer will be set so that it expires before this number
+; of scanlines. A WSYNC will be done first.
+
+    MAC TIMER_SETUP
+.lines  SET {1}
+.cycles SET ((.lines * 76) - 13)
+; special case for when we have two timer events in a line
+; and our 2nd event straddles the WSYNC boundary
+	if (.cycles % 64) < 12
+		lda #(.cycles / 64) - 1
+		sta WSYNC
+        else
+		lda #(.cycles / 64)
+		sta WSYNC
+        endif
+        sta TIM64T
+    ENDM
+
+;-------------------------------------------------------
+; Use with TIMER_SETUP to wait for timer to complete.
+; Performs a WSYNC afterwards.
+
+    MAC TIMER_WAIT
+.waittimer
+        lda INTIM
+        bne .waittimer
+        sta WSYNC
+    ENDM
 
 ; EOF
