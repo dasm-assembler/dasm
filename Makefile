@@ -22,29 +22,42 @@
 
 # Simple hack to build everything, test everything, make a beta
 # distribution, or make a real distribution. Default is to just
-# build everything. Installation is not implemented yet.
+# build everything.
 
 # TODO: need to do documentation stuff as well; don't forget to
 # delete automatically generated documentation in clean: below
 
 # just an alias for build really...
 all: build
-	echo "Build complete, use 'make test' to run tests."
+	@echo "Build complete, use 'make test' to run tests."
 
-# install, currently not implemented
-install: build
-	echo "Installation not implemented, you're on your own, sorry."
+DESTDIR =
+prefix = /usr/local
+bindir = ${prefix}/bin
+mandir = ${prefix}/share/man
+man1dir = ${mandir}/man1
+
+.PHONY: install install-bin install-man
+install: install-bin install-man
+install-bin: build
+	install -d ${DESTDIR}${bindir}
+	install -m555 ${BINS} ${DESTDIR}${bindir}
+
+man1pages = docs/dasm.1
+install-man: ${man1pages}
+	install -d ${DESTDIR}${man1dir}
+	install -m444 ${man1pages} ${DESTDIR}${man1dir}
 
 # just run all the tests
 test: build
 	@echo "Running tests..."
-	(cd test; $(MAKE); cd ..)
+	@${MAKE} -C test
 	@echo "Tests were run, but testing is not fully automated yet."
 	@echo "In other words, don't rely on what you saw too much."
 
 # just build everything and copy binaries to trunk/bin/
 build:
-	(cd src; $(MAKE); cd ..)
+	@${MAKE} -C src
 	mkdir -p bin
 	cp src/dasm bin/dasm
 	cp src/ftohex bin/ftohex
@@ -66,7 +79,7 @@ RELEASE=unknown-version-number
 BINARY=
 
 # binaries
-BINS=bin/*
+BINS = bin/dasm bin/ftohex
 # documentation
 DOCS=AUTHORS ChangeLog LICENSE CREDITS NEWS README  doc/*
 # support files for various machines
@@ -78,19 +91,18 @@ TSTS=test/*.asm test/*.bin.ref test/*.hex.ref test/Makefile test/run_tests.sh te
 # other files
 OTHS=Makefile
 
-ifeq ($(strip $(BINARY)),)
 # source release, no binaries
 CONTENTS=$(DOCS) $(MACS) $(SRCS) $(TSTS) $(OTHS)
 DIRNAME=dasm-$(RELEASE)
 ZIPNAME=dasm-$(RELEASE)
-else
+ifneq ($(strip $(BINARY)),)
 # binary release for specific platform
-CONTENTS=$(BINS) $(DOCS) $(MACS) $(SRCS) $(TSTS) $(OTHS)
-DIRNAME=dasm-$(RELEASE)
-ZIPNAME=dasm-$(RELEASE)-$(BINARY)
+CONTENTS += ${BINS}
+ZIPNAME := ${ZIPNAME}-${BINARY}
 endif
 
 # create a distribution archive for publication 
+.PHONY: dist
 dist: build
 	mkdir $(DIRNAME)
 	cp -p -r --parents $(CONTENTS) $(DIRNAME)
@@ -102,6 +114,7 @@ dist: build
 # machine files are included since tests may need them;
 # nothing else is in the archive since it is not intended
 # for the public, just designated volunteers
+.PHONY: beta
 beta:
 	echo "This is an incomplete beta release of the DASM assembler." >README.BETA
 	echo "The purpose is to identify regressions, nothing more." >>README.BETA
@@ -113,7 +126,8 @@ beta:
 # remove beta archives and bin/ directory created by
 # regular build from this Makefile; don't delete the
 # "real" distribution archives
+.PHONY: clean
 clean:
-	(cd src; $(MAKE) clean; cd ..)
-	(cd test; $(MAKE) clean; cd ..)
+	@${MAKE} -C src $@
+	@${MAKE} -C test $@
 	-rm -rf dasm-beta-*.tar.gz bin/
