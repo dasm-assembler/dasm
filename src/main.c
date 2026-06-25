@@ -1557,7 +1557,7 @@ int asmerr(int err, bool bAbort, const char *sText) {
         return asmerr(ERROR_BADERROR, true, "Bad error ERROR!");
     } else {
 
-        if (sErrorDef[err].bFatal)
+        if (sErrorDef[err].bFatal && pass >= 0 && pass <= nMaxPasses)
             bStopAtEnd[pass] = true;
 
         pincfile = pIncfile;

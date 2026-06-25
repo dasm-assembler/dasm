@@ -1,6 +1,6 @@
-============================
-DASM 2.20.15-SNAPSHOT readme
-============================
+====================
+DASM 2.20.16 readme
+====================
 
     Welcome to DASM, a versatile macro assembler with support for several
     8-bit microprocessors including MOS 6502 & 6507; Motorola 6803, 68705,
@@ -78,16 +78,15 @@ Compiling
     as of release 2.20.11 the test framework is incomplete and probably
     only remotely comprehensible for developers. :-/ The often-used
 
-    NOTE: Several compiler warnings will be displayed during the build
-          process. We are confident that you can ignore these warnings.
-          They will be dealt with in a future release. (And if you know
-          how to fix them reliably, we welcome your contributions!)
-
     DASM has been built and tested successfully on recent versions of Linux,
     macOS, BSD and Windows.
 
     If you have successfully built and tested DASM on a different machine
     or operating system, we would love to hear about it.
+
+    Build note: object files are placed in src/.objs/<OS>/ so that the
+    same source tree can be built for macOS and Linux simultaneously
+    without the object files clobbering each other.
 
 ----------
 Using DASM
@@ -115,6 +114,35 @@ Using DASM
     Stella emulator are a particularly useful resource for DASM users,
     not only those intent on programming for the VCS.
 
+---------------
+Security & Safety
+---------------
+
+    Release 2.20.16 included a thorough audit and repair of memory safety
+    and correctness issues across the codebase. Fixes include:
+
+    - Buffer overflows in parse(), cleanup(), and outlistfile() replaced
+      with bounds-checked snprintf/AVBUF_WRITE equivalents
+    - Heap buffer overflow in asmerr() when pass exceeds nMaxPasses
+      (triggered by deeply chained forward references)
+    - Use-after-free in the small allocator: small_free_all() now resets
+      the internal cursor so subsequent small_alloc() calls do not touch
+      freed memory
+    - Memory leaks in v_incbin() (SYMBOL list freed on every pass)
+    - Divide-by-zero in v_align() on zero alignment value
+    - Signed integer overflow UB in left-shift operations (exp.c, ops.c)
+    - Non-literal format strings passed to fprintf in asmerr()
+    - Wrong memset byte count for bStopAtEnd array
+    - getc() return value stored as unsigned in getwlh() (ftohex, ftobin),
+      causing garbage output on truncated input; ftohex now opens files
+      in binary mode to avoid text-mode mangling on Windows
+    - Missing include guards on asm.h (caused duplicate enum errors)
+    - symbols.h rewritten to match the actual symbols.c implementation
+    - panic() declared in errors.h so all translation units see the
+      prototype; implicit-declaration warnings on Linux eliminated
+
+    The codebase was also reformatted to K&R style throughout.
+
 --------
 Legalese
 --------
@@ -125,7 +153,7 @@ Legalese
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008-2015 by Peter H. Froehlich.
-    Copyright (c) 2019-2020 by the DASM team.
+    Copyright (c) 2019-2026 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

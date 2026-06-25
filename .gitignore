@@ -9,3 +9,5 @@ ftohex
 .DS_Store
 test/**/*.out
 
+test/test-report.txt
+test/cmdline_defs/declare_var_mac.sym
