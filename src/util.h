@@ -34,6 +34,16 @@
 #include <string.h>
 
 /**
+ * @brief Path separator character for the host OS.
+ * Used by setprogname() to strip directory components from argv[0].
+ */
+#if defined(_WIN32) || defined(_WIN64)
+#  define DASM_PATH_SEPARATOR '\\'
+#else
+#  define DASM_PATH_SEPARATOR '/'
+#endif
+
+/**
  * @brief
  *   Wrapper for malloc(3) that terminates DASM with panic() if no
  *   memory is available.

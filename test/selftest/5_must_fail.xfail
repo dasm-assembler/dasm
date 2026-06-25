@@ -1,0 +1,2 @@
+Harness meta-test: assembly must fail with error; verifies the harness catches a false-negative
+(dasm silently accepting .ORG with no argument is a known pre-existing bug).

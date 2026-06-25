@@ -464,11 +464,11 @@ fail:
             /* TODO: need to improve option parsing and errors for it */
             case 'E':
                 F_errorformat = atoi(str);
-                if (F_errorformat < ERRORFORMAT_DEFAULT
-                   || F_errorformat >= ERRORFORMAT_MAX )
+                if (!valid_error_format(F_errorformat))
                 {
-                    panic("Invalid error format for -E, must be 0, 1, 2");
+                    panic("Invalid error format for -E, must be 0 (WOE), 1 (Dillon), or 2 (GNU)");
                 }
+                set_error_format(F_errorformat);
                 break;
 
             case 'T':
@@ -542,6 +542,7 @@ nofile:
                 goto nofile;
             case 'v':   /*  F_verbose   */
                 F_verbose = atoi(str);
+                set_error_level(verbosity_to_error_level(F_verbose));
                 break;
 
             case 'I':
@@ -594,9 +595,11 @@ nofile:
         Ifstack = ifs;
     }
 
-    // ready error and message buffer...
+    // ready error and message buffers...
     passbuffer_clear(ERRORBUF);
     passbuffer_clear(MSGBUF);
+    reset_error_counts();
+    set_deferred_errors(true); /* buffer non-fatal errors until final pass */
 
 
 nextpass:
@@ -757,25 +760,28 @@ nextpass:
         {
             passbuffer_clear(ERRORBUF);
             passbuffer_clear(MSGBUF);
+            clear_deferred_errors(); /* discard errors from this pass; retry */
+            reset_error_counts();
 
             clearrefs();
             clearsegs();
             goto nextpass;
         }
     }
-    // Do not print any errors if assembly is successful!!!!! -FXQ
-    // only print messages from last pass and if there's no errors
+    // Only print messages/errors from the final pass.
     if (!bStopAtEnd[pass])
     {
+        /* Assembly succeeded — show informational messages, discard errors */
         passbuffer_output(MSGBUF);
+        clear_deferred_errors();
     }
     else
     {
-        // Only print errors if assembly is unsuccessful!!!!!
-        // by FXQ
-	passbuffer_output(ERRORBUF);
+        /* Assembly failed — flush buffered errors from this pass */
+        passbuffer_output(ERRORBUF);
+        flush_deferred_errors(stderr);
         printf("Unrecoverable error(s) in pass, aborting assembly!\n");
-	nError = ERROR_NON_ABORT;
+        nError = ERROR_NON_ABORT;
     }
 
     if (nMacroClosings != nMacroDeclarations) {
@@ -1459,7 +1465,7 @@ void v_macro(char *str, MNEMONIC *dummy)
     char buf[MAXLINE];
     int skipit = !(Ifstack->xtrue && Ifstack->acctrue);
 
-    strlower(str);
+    strlower_inplace(str);
     mne = findmne(str);
 
     if (skipit) {
@@ -1752,7 +1758,7 @@ char *permalloc(int bytes)
     return ptr;
 }
 
-char *strlower(char *str)
+char *strlower_inplace(char *str)
 {
     char c;
     char *ptr;

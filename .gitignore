@@ -6,3 +6,5 @@ bin
 dasm
 ftohex
 .DS_Store
+test/**/*.out
+

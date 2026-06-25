@@ -1,0 +1,2 @@
+Harness meta-test: .fail file intentionally has no expected error code; verifies the harness
+catches an incomplete test definition.

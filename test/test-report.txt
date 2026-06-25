@@ -30,10 +30,10 @@
  *                 recursive_macro0	binary is same,	pass
  *                       same_names	binary is same,	pass
  *                           sample	binary is same,	pass
- *           selftest/0_no_assembly		assembly	FAILED! [27]
- *             selftest/1_no_binary		file doesn't exist or has zero size	FAILED!
- *        selftest/2_hexref_missing		file [selftest/2_hexref_missing.hex.ref] missing	FAILED!
- *      selftest/3_binary_different		binaries differ	FAILED!
+ *           selftest/0_no_assembly	assembly failed [27] (xfail),	pass
+ *             selftest/1_no_binary	file doesn't exist or has zero size (xfail),	pass
+ *        selftest/2_hexref_missing	file [selftest/2_hexref_missing.hex.ref] missing (xfail),	pass
+ *      selftest/3_binary_different	binaries differ (xfail),	pass
  *            selftest/4_finally_OK	binary is same,	pass
  *                           setstr	binary is same,	pass
  *                           setsym	binary is same,	pass
@@ -52,50 +52,51 @@
  *                     ucasm_compat	binary is same,	pass
 
 === error test cases (strict=on)
- *                         6502_16b	error_code [5] pass
- *                         6502_16w	error_code [5] pass
- *                        6502_X16b	error_code [5] pass
- *                         6811_X16	error_code [5] pass
- *                         6811_Y16	error_code [5] pass
- *                  68908_cbeq_SP16	error_code [5] pass
- *                  68908_dbnz_SP16	error_code [5] pass
- *                      68908_SP16b	error_code [5] pass
- *                       badopcode1	error_code [5] pass
- *                       badopcode2	error_code [3] pass
- *                       concat_str	error_code [39] pass
- *              delete_empty_binary	file was deleted, pass
- *                      doublemacro	error_code [25] pass
- *                     improper_equ	error_code [5] pass
- *                        jentzsch2	error_code [3] pass
- *                       m_switch_0	error_code [38] pass
- *                       m_switch_2	error_code [1] pass
- *                       m_switch_3	error_code [38] pass
- *                   macro_included	error_code [14] pass
- *                     missing_endm	error_code [40] pass
- *                   negative1024_2	error_code [5] pass
- *                     negative1024	error_code [5] pass
- *                    negative256_2	error_code [5] pass
- *                      negative256	error_code [5] pass
- *                    recursive_eqm	error_code [38] pass
- *                    recursive_equ	error_code [3] pass
- *                 recursive_macro1	error_code [38] pass
- *                 recursive_macro2	error_code [38] pass
- *                    recursive_set	error_code [38] pass
- *                 reverse_segfault	error_code [38] pass
- *                         segfault	error_code [38] pass
- *             selftest/5_must_fail		no error	FAILED!
- *   selftest/6_false_positive_fail		got error_level (1) but expected (15), double FAULT!
- *   selftest/7_false_positive_fail		testcase definition incomplete, missing error_level (27), FAILED!
- *     selftest/8_false_positive_OK	error_code [27] pass
- *                            stabx	error_code [5] pass
- *                            staby	error_code [5] pass
- *                           staby2	error_code [3] pass
- *                           staby3	error_code [3] pass
- *                           staby4	error_code [3] pass
- *                            stawy	error_code [3] pass
- *                           stawy2	error_code [5] pass
- *                           stawy3	error_code [3] pass
- *                         supercat	error_code [18] pass
- *                       toobigbyte	error_code [5] pass
- *                       toobigword	error_code [5] pass
-executed 97 tests, 90 OK, 7 failed, result: overall PASS
+ *                         6502_16b	error_code [5],	pass
+ *                         6502_16w	error_code [5],	pass
+ *                        6502_X16b	error_code [5],	pass
+ *                         6811_X16	error_code [5],	pass
+ *                         6811_Y16	error_code [5],	pass
+ *                      68908_SP16b	error_code [5],	pass
+ *                  68908_cbeq_SP16	error_code [5],	pass
+ *                  68908_dbnz_SP16	error_code [5],	pass
+ *                       badopcode1	error_code [5],	pass
+ *                       badopcode2	error_code [3],	pass
+ *                       concat_str	error_code [39],	pass
+ *              delete_empty_binary	file was deleted,	pass
+ *                      doublemacro	error_code [25],	pass
+ *                     improper_equ	error_code [5],	pass
+ *                        jentzsch2	error_code [3],	pass
+ *                       m_switch_0	error_code [39],	pass
+ *                       m_switch_2	error_code [1],	pass
+ *                       m_switch_3	error_code [39],	pass
+ *                   macro_included	error_code [14],	pass
+ *                     missing_endm	error_code [40],	pass
+ *                     negative1024	error_code [5],	pass
+ *                   negative1024_2	error_code [5],	pass
+ *                      negative256	error_code [5],	pass
+ *                    negative256_2	error_code [5],	pass
+ *                    recursive_eqm	error_code [38],	pass
+ *                    recursive_equ	error_code [3],	pass
+ *                 recursive_macro1	error_code [38],	pass
+ *                 recursive_macro2	error_code [38],	pass
+ *                    recursive_set	error_code [39],	pass
+ *                 reverse_segfault	error_code [38],	pass
+ *                         segfault	error_code [38],	pass
+ *             selftest/5_must_fail	no error (xfail),	pass
+ *   selftest/6_false_positive_fail	got error_level (1) but expected (15) (xfail),	pass
+ *   selftest/7_false_positive_fail	testcase definition incomplete, missing error_level (27) (xfail),	pass
+ *     selftest/8_false_positive_OK	error_code [27],	pass
+ *                            stabx	error_code [5],	pass
+ *                            staby	error_code [5],	pass
+ *                           staby2	error_code [3],	pass
+ *                           staby3	error_code [3],	pass
+ *                           staby4	error_code [3],	pass
+ *                            stawy	error_code [3],	pass
+ *                           stawy2	error_code [5],	pass
+ *                           stawy3	error_code [3],	pass
+ *                         supercat	error_code [18],	pass
+ *                       toobigbyte	error_code [5],	pass
+ *                       toobigword	error_code [5],	pass
+
+executed 97 tests, 97 OK, 0 failed, result: overall PASS

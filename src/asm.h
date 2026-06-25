@@ -33,6 +33,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/* errors.h defines error_format_t and the ERRORFORMAT_* enum values */
+#include "errors.h"
+
 /* for -T option [phf] */
 typedef enum
 {
@@ -43,15 +46,9 @@ typedef enum
   SORTMODE_MAX
 } sortmode_t;
 
-/* for -E option [phf] */
-typedef enum
-{
-  ERRORFORMAT_DEFAULT,
-  ERRORFORMAT_WOE = ERRORFORMAT_DEFAULT,
-  ERRORFORMAT_DILLON,
-  ERRORFORMAT_GNU,
-  ERRORFORMAT_MAX
-} errorformat_t;
+/* error_format_t and ERRORFORMAT_* are defined in errors.h (included above).
+ * Provide a legacy alias so old code using errorformat_t keeps compiling. */
+typedef error_format_t errorformat_t;
 
 #define DAD
 
@@ -418,7 +415,7 @@ void    pushinclude(char *str);
 char   *permalloc(int bytes);
 char   *zmalloc(int bytes);
 char   *ckmalloc(int bytes);
-char   *strlower(char *str);
+char   *strlower_inplace(char *str);
 void addmsg(char *message);
 
 /* symbols.c */
