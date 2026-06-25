@@ -20,7 +20,7 @@ jobs:
     - run: |
         mkdir -p artifacts/windows
         cp bin/dasm.exe artifacts/windows/dasm.exe
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with :
         name: dasm snapshot builds
         path: artifacts
@@ -37,7 +37,7 @@ jobs:
     - run: |
         mkdir -p artifacts/macos
         cp bin/dasm artifacts/macos/dasm
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with :
         name: dasm snapshot builds
         path: artifacts
@@ -54,7 +54,7 @@ jobs:
     - run: |
         mkdir -p artifacts/linux
         cp bin/dasm artifacts/linux/dasm
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with :
         name: dasm snapshot builds
         path: artifacts
