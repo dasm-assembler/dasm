@@ -1,11 +1,13 @@
-name: Build, Test and Package Snapshots
+name: Build, Test and Package
 
 on:
   push:
     paths:
-    - 'src/**'
-    - 'test/**'
-    - '.github/workflows/main.yml'
+      - 'src/**'
+      - 'test/**'
+      - '.github/workflows/main.yml'
+    tags:
+      - 'v[0-9]*'
 
 jobs:
   build_for_windows:
@@ -21,9 +23,9 @@ jobs:
         mkdir -p artifacts/windows
         cp bin/dasm.exe artifacts/windows/dasm.exe
     - uses: actions/upload-artifact@v4
-      with :
-        name: dasm snapshot builds
-        path: artifacts
+      with:
+        name: dasm-windows
+        path: artifacts/windows/
 
   build_for_mac:
     runs-on: macos-latest
@@ -38,9 +40,9 @@ jobs:
         mkdir -p artifacts/macos
         cp bin/dasm artifacts/macos/dasm
     - uses: actions/upload-artifact@v4
-      with :
-        name: dasm snapshot builds
-        path: artifacts
+      with:
+        name: dasm-macos
+        path: artifacts/macos/
 
   build_for_linux:
     runs-on: ubuntu-latest
@@ -55,7 +57,41 @@ jobs:
         mkdir -p artifacts/linux
         cp bin/dasm artifacts/linux/dasm
     - uses: actions/upload-artifact@v4
-      with :
-        name: dasm snapshot builds
-        path: artifacts
-        
+      with:
+        name: dasm-linux
+        path: artifacts/linux/
+
+  release:
+    needs: [build_for_windows, build_for_mac, build_for_linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: dasm-windows
+        path: release/windows/
+    - uses: actions/download-artifact@v4
+      with:
+        name: dasm-macos
+        path: release/macos/
+    - uses: actions/download-artifact@v4
+      with:
+        name: dasm-linux
+        path: release/linux/
+    - name: Package binaries
+      run: |
+        cd release
+        zip -j dasm-${{ github.ref_name }}-windows.zip windows/dasm.exe
+        zip -j dasm-${{ github.ref_name }}-macos.zip  macos/dasm
+        zip -j dasm-${{ github.ref_name }}-linux.zip   linux/dasm
+    - uses: softprops/action-gh-release@v2
+      with:
+        name: DASM ${{ github.ref_name }}
+        draft: true
+        fail_on_unmatched_files: true
+        files: |
+          release/dasm-${{ github.ref_name }}-windows.zip
+          release/dasm-${{ github.ref_name }}-macos.zip
+          release/dasm-${{ github.ref_name }}-linux.zip
