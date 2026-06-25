@@ -169,3 +169,31 @@ Legalese
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+
+-------------------------
+GITHUB building a Release
+-------------------------
+
+
+    Artifact names are now unique per platform (dasm-windows, dasm-macos,
+    dasm-linux) — the old workflow used the same name for all three which
+    would conflict in parallel runs
+
+    Added a release job that only runs on v* tag pushes; it downloads all
+    three artifacts, zips each binary, and creates a GitHub release as a
+    draft
+
+    To cut a release:
+
+        git tag v2.20.16
+        git push origin v2.20.16
+
+    That triggers the CI. All three platforms build and test in parallel,
+    then the release job assembles dasm-v2.20.16-windows.zip,
+    dasm-v2.20.16-macos.zip, and dasm-v2.20.16-linux.zip and creates a
+    draft release on GitHub. You then go to the releases page, paste your
+    release notes, and hit Publish.
+
+    The draft step is intentional — gives you a chance to review and add
+    notes before it goes public.
+    
