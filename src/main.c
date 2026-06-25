@@ -237,7 +237,7 @@ static void ShowSymbols(FILE *file, int sortMode) {
 
     /* Malloc an array of pointers to data */
 
-    symArray = (SYMBOL **)ckmalloc(sizeof(SYMBOL *) * nSymbols);
+    symArray = (SYMBOL **)checked_malloc(sizeof(SYMBOL *) * nSymbols);
     if (!symArray) {
         fprintf(file, " (unsorted - not enough memory to sort!)\n");
 
@@ -558,14 +558,14 @@ static int MainShadow(int ac, char **av, int *pSortMode) {
     {
 
         SEGMENT *seg = (SEGMENT *)permalloc(sizeof(SEGMENT));
-        seg->name = strcpy(permalloc(sizeof(ISEGNAME)), ISEGNAME);
+        seg->name = strcpy(permalloc(strlen(ISEGNAME) + 1), ISEGNAME); /* was sizeof(ISEGNAME) = pointer size, not string length */
         seg->flags = seg->rflags = seg->initflags = seg->initrflags = SF_UNKNOWN;
         Csegment = Seglist = seg;
     }
     /*    TOP LEVEL IF    */
     {
 
-        IFSTACK *ifs = (IFSTACK *)zmalloc(sizeof(IFSTACK));
+        IFSTACK *ifs = (IFSTACK *)zero_malloc(sizeof(IFSTACK));
         ifs->file = NULL;
         ifs->flags = IFF_BASE;
         ifs->acctrue = 1;
@@ -732,7 +732,9 @@ nextpass:
         }
     }
     // Only print messages/errors from the final pass.
-    if (!bStopAtEnd[pass]) {
+    /* Bounds guard matches the write guard in asmerr(); pass is always valid here
+       (we return above if pass > nMaxPasses) but be defensive. */
+    if (pass < 0 || pass > nMaxPasses || !bStopAtEnd[pass]) {
         /* Assembly succeeded — show informational messages, discard errors */
         passbuffer_output(MSGBUF);
         clear_deferred_errors();
@@ -903,7 +905,7 @@ void clearsegs(void) {
 void clearrefs(void) {
 
     SYMBOL *sym;
-    short i;
+    int i; /* was short: SHASHSIZE may exceed SHORT_MAX on some platforms */
 
     for (i = 0; i < SHASHSIZE; ++i)
         for (sym = SHash[i]; sym; sym = sym->next)
@@ -1532,9 +1534,9 @@ void pushinclude(char *str) {
         if (F_listfile)
             fprintf(FI_listfile, "------- FILE %s LEVEL %d PASS %d\n", str, Inclevel, pass);
 
-        inf = (INCFILE *)zmalloc(sizeof(INCFILE));
+        inf = (INCFILE *)zero_malloc(sizeof(INCFILE));
         inf->next = pIncfile;
-        inf->name = strcpy(ckmalloc(strlen(str) + 1), str);
+        inf->name = strcpy(checked_malloc(strlen(str) + 1), str);
         inf->fi = fi;
         inf->lineno = 0;
         pIncfile = inf;
@@ -1658,28 +1660,10 @@ int asmerr(int err, bool bAbort, const char *sText) {
     return err;
 }
 
-char *zmalloc(int bytes) {
-
-    char *ptr = ckmalloc(bytes);
-    if (ptr)
-        memset(ptr, 0, bytes);
-    return ptr;
-}
-
-char *ckmalloc(int bytes) {
-
-    char *ptr = malloc(bytes);
-    if (ptr) {
-        return ptr;
-    }
-    panic("unable to malloc");
-    return NULL;
-}
-
-char *permalloc(int bytes) {
+char *permalloc(size_t bytes) {
 
     static char *buf;
-    static int left;
+    static size_t left;
     char *ptr;
 
     /* Assume sizeof(union align) is a power of 2 */

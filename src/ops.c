@@ -162,7 +162,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
             ++Redo;
             Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
             if (!F_verbose) {
-                sprintf(sBuffer, "%s %s", mne->name, str);
+                snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
                 asmerr(ERROR_UNKNOWN_MNEMONIC, false, sBuffer);
             }
         }
@@ -195,14 +195,14 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
                Cvt[addrmode], Mnext, sym->value);
 
     if (badcode(mne, addrmode)) {
-        sprintf(sBuffer, "%s %s", mne->name, str);
+        snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
         asmerr(ERROR_ILLEGAL_ADDRESSING_MODE, false, sBuffer);
         FreeSymbolList(symbase);
         // FIX
         ++Redo;
         Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
         if (!F_verbose) {
-            sprintf(sBuffer, "%s %s", mne->name, str);
+            snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
             asmerr(ERROR_UNKNOWN_MNEMONIC, false, sBuffer);
         }
         return;
@@ -227,7 +227,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
             ++Redo;
             Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
             if (!F_verbose) {
-                sprintf(sBuffer, "%s %s", mne->name, str);
+                snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
                 asmerr(ERROR_UNKNOWN_MNEMONIC, false, sBuffer);
             }
             return;
@@ -268,7 +268,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
             ++Redo;
             Redo_why |= REASON_MNEMONIC_NOT_RESOLVED;
             if (!F_verbose) {
-                sprintf(sBuffer, "%s %s", mne->name, str);
+                snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
                 asmerr(ERROR_UNKNOWN_MNEMONIC, false, sBuffer);
             }
             return;
@@ -287,7 +287,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
     case AM_BYTEADR_SP:
         byteRequested = true;
         if (opsize > 1) {
-            sprintf(sBuffer, "%s %s, user requested byte mode", mne->name, str);
+            snprintf(sBuffer, sizeof(sBuffer), "%s %s, user requested byte mode", mne->name, str);
             asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
         }
         break;
@@ -301,7 +301,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
     case AM_INDWORD:
     case AM_WORDADR_SP:
         if (bStrictMode && ((sym->value > 0xFFFF) || (sym->value < -0xFFFF))) {    // isn't this our space ?
-            sprintf(sBuffer, "%s %s", mne->name, str);
+            snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
             asmerr(ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer);
         }
         break;
@@ -312,7 +312,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
     case AM_BYTEADRY:
     case AM_BYTEADR_SP:
         if (sym->value < -0xFF) {    // isn't this our space ?
-            sprintf(sBuffer, "negative %s %s", mne->name, str);
+            snprintf(sBuffer, sizeof(sBuffer), "negative %s %s", mne->name, str);
             asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
         }
         break;
@@ -353,7 +353,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
                 }
             }
 
-            sprintf(sBuffer, "%s %s", mne->name, str);
+            snprintf(sBuffer, sizeof(sBuffer), "%s %s", mne->name, str);
 
             asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
             break;
@@ -374,7 +374,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
     case AM_BITMOD:
         sym = symbase->next;
         if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
-            sprintf(sBuffer, "unknown %s %ld", mne->name, sym->value);
+            snprintf(sBuffer, sizeof(sBuffer), "unknown %s %ld", mne->name, sym->value);
             asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
         }
         Gen[opidx++] = sym->value;
@@ -399,7 +399,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
         sym = symbase->next;
 
         if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
-            sprintf(sBuffer, "%s %ld", mne->name, sym->value);
+            snprintf(sBuffer, sizeof(sBuffer), "%s %ld", mne->name, sym->value);
             asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
         }
         Gen[opidx++] = sym->value;
@@ -428,7 +428,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
     if (mne->flags & MF_MASK) {
         if (sym) {
             if (!(sym->flags & SYM_UNKNOWN) && sym->value >= 0x100) {
-                sprintf(sBuffer, "unknown && > 256 %s %ld", mne->name, sym->value);
+                snprintf(sBuffer, sizeof(sBuffer), "unknown && > 256 %s %ld", mne->name, sym->value);
                 asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
             }
             Gen[opidx] = sym->value;
@@ -463,7 +463,7 @@ void v_mnemonic(char *str, MNEMONIC *mne) {
                     //      another pass. ERROR_BRANCH_OUT_OF_RANGE was made non-fatal,
                     //      but we keep pushing for Redo so assembly won't actually be
                     //      succesfull until the branch actually works.
-                    sprintf(sBuffer, "%ld", dest);
+                    snprintf(sBuffer, sizeof(sBuffer), "%ld", dest);
                     asmerr(ERROR_BRANCH_OUT_OF_RANGE, false, sBuffer);
                     ++Redo;
                     Redo_why |= REASON_BRANCH_OUT_OF_RANGE;
@@ -510,7 +510,7 @@ static char *getfilename(char *str) {
         char *buf;
 
         str++;
-        buf = ckmalloc(strlen(str) + 1);
+        buf = checked_malloc(strlen(str) + 1);
         strcpy(buf, str);
 
         for (str = buf; *str && *str != '\"'; ++str)
@@ -632,9 +632,9 @@ void v_seg(char *str, MNEMONIC *dummy) {
             return;
         }
     }
-    Csegment = seg = (SEGMENT *)zmalloc(sizeof(SEGMENT));
+    Csegment = seg = (SEGMENT *)zero_malloc(sizeof(SEGMENT));
     seg->next = Seglist;
-    seg->name = strcpy(ckmalloc(strlen(str) + 1), str);
+    seg->name = strcpy(checked_malloc(strlen(str) + 1), str);
     seg->flags = seg->rflags = seg->initflags = seg->initrflags = SF_UNKNOWN;
     Seglist = seg;
     if (Mnext == AM_BSS)
@@ -652,6 +652,12 @@ void v_hex(char *str, MNEMONIC *dummy) {
     for (i = 0; str[i]; ++i) {
         if (str[i] == ' ')
             continue;
+        /* If the high nibble has no paired low nibble, report an error and stop.
+           Calling gethexdig('\0') would produce a spurious "Bad Hex Digit" message. */
+        if (str[i + 1] == '\0') {
+            asmerr(ERROR_SYNTAX_ERROR, false, "odd number of hex digits in HEX directive");
+            break;
+        }
         result = (gethexdig(str[i]) << 4) + gethexdig(str[i + 1]);
         if (str[++i] == 0)
             break;
@@ -673,7 +679,7 @@ int gethexdig(int c) {
     if (c >= 'A' && c <= 'F')
         return c - 'A' + 10;
 
-    sprintf(sBuffer, "Bad Hex Digit %c", c);
+    snprintf(sBuffer, sizeof(sBuffer), "Bad Hex Digit %c", c);
     asmerr(ERROR_SYNTAX_ERROR, false, sBuffer);
 
     puts("(Must be a valid hex digit)");
@@ -831,7 +837,7 @@ void v_dc(char *str, MNEMONIC *mne) {
                 // any value outside two's complement +ve and +ve byte representation is
                 // invalid...
                 if ((value < -0xFF) || (value > 0xFF)) {
-                    sprintf(sBuffer, "byte %s %ld", mne->name, value);
+                    snprintf(sBuffer, sizeof(sBuffer), "byte %s %ld", mne->name, value);
                     asmerr(ERROR_ADDRESS_MUST_BE_LT_100, false, sBuffer);
                 }
                 Gen[Glen++] = value & 0xFF;
@@ -840,7 +846,7 @@ void v_dc(char *str, MNEMONIC *mne) {
                 // any value outside two's complement +ve and +ve word representation is
                 // invalid...
                 if ((bStrictMode) && ((value < -0xFFFF) || (value > 0xFFFF))) {
-                    sprintf(sBuffer, "word %s %ld", mne->name, value);
+                    snprintf(sBuffer, sizeof(sBuffer), "word %s %ld", mne->name, value);
                     asmerr(ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer);
                 }
 
@@ -855,7 +861,7 @@ void v_dc(char *str, MNEMONIC *mne) {
                 break;
             case AM_OTHER_ENDIAN:
                 if ((bStrictMode) && ((value < -0xFFFF) || (value > 0xFFFF))) {
-                    sprintf(sBuffer, "swapped %s %ld", mne->name, value);
+                    snprintf(sBuffer, sizeof(sBuffer), "swapped %s %ld", mne->name, value);
                     asmerr(ERROR_ADDRESS_MUST_BE_LT_10000, false, sBuffer);
                 }
                 if (MsbOrder == 0) {
@@ -1101,15 +1107,18 @@ void v_eqm(char *str, MNEMONIC *dummy) {
     int len = strlen(Av[0]);
 
     if ((lab = findsymbol(Av[0], len)) != NULL) {
-        if (lab->flags & SYM_STRING)
+        if (lab->flags & SYM_STRING) {
             free(lab->string);
+            lab->string = NULL;        /* prevent double-free on next pass */
+            lab->flags &= ~SYM_STRING; /* keep flags consistent with NULL string */
+        }
     } else {
 
         lab = CreateSymbol(Av[0], len, true);
     }
     lab->value = 0;
     lab->flags = SYM_STRING | SYM_SET | SYM_MACRO;
-    lab->string = strcpy(ckmalloc(strlen(str) + 1), str);
+    lab->string = strcpy(checked_malloc(strlen(str) + 1), str);
 }
 
 void v_echo(char *str, MNEMONIC *dummy) {
@@ -1214,7 +1223,7 @@ void v_set(char *str, MNEMONIC *dummy) {
 
             continue;    // process any remaining arguments
         }
-        dynamicname[i++] = 0;
+        dynamicname[j] = 0; /* was dynamicname[i++]=0: i scans str, j tracks write position in dynamicname */
         if (setundefined)    // not all of the arguments are defined yet, so skip this
                              // SET
         {
@@ -1275,12 +1284,12 @@ void v_execmac(char *str, MACRO *mac) {
 
     if (Mlevel == MAXMACLEVEL) {
         char errMsg[256];
-        sprintf(errMsg, " macro [%s] recursion > %d", mac->name, MAXMACLEVEL);
+        snprintf(errMsg, sizeof(errMsg), " macro [%s] recursion > %d", mac->name, MAXMACLEVEL);
         asmerr(ERROR_RECURSION_TOO_DEEP, true, errMsg);
         return;
     }
     ++Mlevel;
-    base = (STRLIST *)ckmalloc(STRLISTSIZE + strlen(str) + 1);
+    base = (STRLIST *)checked_malloc(STRLISTSIZE + strlen(str) + 1);
     base->next = NULL;
     strcpy(base->buf, str);
     psl = &base->next;
@@ -1288,7 +1297,7 @@ void v_execmac(char *str, MACRO *mac) {
         s1 = str;
         while (*str && *str != '\n' && *str != ',')
             ++str;
-        sl = (STRLIST *)ckmalloc(STRLISTSIZE + 1 + (str - s1));
+        sl = (STRLIST *)checked_malloc(STRLISTSIZE + 1 + (str - s1));
         sl->next = NULL;
         *psl = sl;
         psl = &sl->next;
@@ -1300,7 +1309,7 @@ void v_execmac(char *str, MACRO *mac) {
             ++str;
     }
 
-    inc = (INCFILE *)zmalloc(sizeof(INCFILE));
+    inc = (INCFILE *)zero_malloc(sizeof(INCFILE));
     inc->next = pIncfile;
     inc->name = mac->name;
     inc->fi = pIncfile->fi; /* garbage */
@@ -1460,13 +1469,21 @@ void v_repeat(char *str, MNEMONIC *dummy) {
 
 #endif
 
-    rp = (REPLOOP *)zmalloc(sizeof(REPLOOP));
+    rp = (REPLOOP *)zero_malloc(sizeof(REPLOOP));
     rp->next = Reploop;
     rp->file = pIncfile;
     if (pIncfile->flags & INF_MACRO)
         rp->seek = (long)pIncfile->strlist;
-    else
-        rp->seek = ftell(pIncfile->fi);
+    else {
+        long seekpos = ftell(pIncfile->fi);
+        if (seekpos < 0) {
+            asmerr(ERROR_FILE_ERROR, true, "ftell failed in REPEAT");
+            FreeSymbolList(sym);
+            free(rp);
+            return;
+        }
+        rp->seek = seekpos;
+    }
     rp->lineno = pIncfile->lineno;
     rp->count = sym->value;
     if ((rp->flags = sym->flags) != 0) {
@@ -1564,7 +1581,7 @@ FILE *pfopen(const char *name, const char *mode) {
     if (strchr(name, ':'))
         return NULL;
 
-    /* Bug Q fix: was zmalloc(512), overflows if incdir+"/"+name > 511 chars */
+    /* Bug Q fix: was zero_malloc(512), overflows if incdir+"/"+name > 511 chars */
     {
 
         size_t maxneeded = strlen(name) + 2;
@@ -1574,7 +1591,7 @@ FILE *pfopen(const char *name, const char *mode) {
             if (n > maxneeded)
                 maxneeded = n;
         }
-        buf = zmalloc((int)maxneeded);
+        buf = zero_malloc(maxneeded);
     }
 
     for (incdir = incdirlist; incdir; incdir = incdir->next) {
@@ -1619,6 +1636,10 @@ void generate(void) {
 
                     if (F_format == FORMAT_RAS) {
                         Seekback = ftell(FI_temp);
+                        if (Seekback < 0) {
+                            asmerr(ERROR_FILE_ERROR, true, "ftell failed in generate()");
+                            return;
+                        }
                         Seglen = 0;
                         putc(0, FI_temp);
                         putc(0, FI_temp);
@@ -1656,6 +1677,10 @@ void generate(void) {
                 if (org != Csegment->org) {
                     org = Csegment->org;
                     seekpos = ftell(FI_temp);
+                    if (seekpos < 0) {
+                        asmerr(ERROR_FILE_ERROR, true, "ftell failed in generate() FORMAT_RAS");
+                        return;
+                    }
                     fseek(FI_temp, Seekback, 0);
                     putc((Seglen & 0xFF), FI_temp);
                     putc(((Seglen >> 8) & 0xFF), FI_temp);
@@ -1663,6 +1688,10 @@ void generate(void) {
                     putc((org & 0xFF), FI_temp);
                     putc(((org >> 8) & 0xFF), FI_temp);
                     Seekback = ftell(FI_temp);
+                    if (Seekback < 0) {
+                        asmerr(ERROR_FILE_ERROR, true, "ftell failed in generate() FORMAT_RAS seek");
+                        return;
+                    }
                     Seglen = 0;
                     putc(0, FI_temp);
                     putc(0, FI_temp);
@@ -1680,6 +1709,12 @@ void generate(void) {
 
     if (Csegment->flags & SF_RORG)
         Csegment->rorg += Glen;
+
+    /* Check for any write failure accumulated during this call */
+    if (FI_temp && ferror(FI_temp)) {
+        asmerr(ERROR_FILE_ERROR, true, "write error on output file in generate()");
+        return;
+    }
 
     if (Csegment->org > maxFileSize) {
         char errMsg[128];
@@ -1700,6 +1735,9 @@ void closegenerate(void) {
             putc(((Seglen >> 8) & 0xFF), FI_temp);
             fseek(FI_temp, 0L, 2);
         }
+    }
+    if (FI_temp && ferror(FI_temp)) {
+        asmerr(ERROR_FILE_ERROR, true, "write error on output file in closegenerate()");
     }
 }
 
@@ -1772,7 +1810,7 @@ void genfill(long fill, long entries, int size) {
 
 void pushif(bool xbool) {
 
-    IFSTACK *ifs = (IFSTACK *)zmalloc(sizeof(IFSTACK));
+    IFSTACK *ifs = (IFSTACK *)zero_malloc(sizeof(IFSTACK));
     ifs->next = Ifstack;
     ifs->file = pIncfile;
     ifs->flags = 0;

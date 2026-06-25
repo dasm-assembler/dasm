@@ -204,7 +204,7 @@ void programlabel() {
 
                 if (!(Redo_if & (REASON_OBSCURE))) {
                     char sBuffer[MAX_SYM_LEN * 4];
-                    sprintf(sBuffer, "%s %s", sym->name, sftos(sym->value, 0));
+                    snprintf(sBuffer, sizeof(sBuffer), "%s %s", sym->name, sftos(sym->value, 0));
                     asmerr(ERROR_LABEL_MISMATCH, false, sBuffer);
                 }
                 ++Redo;

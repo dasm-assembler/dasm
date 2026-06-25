@@ -39,6 +39,7 @@
 
 /* errors.h defines error_format_t and the ERRORFORMAT_* enum values */
 #include "errors.h"
+#include "util.h"
 
 /* for -T option [phf] */
 typedef enum {
@@ -417,9 +418,8 @@ char *sftos(long val, int flags);
 void rmnode(void **base, int bytes);
 void addhashtable(MNEMONIC *mne);
 void pushinclude(char *str);
-char *permalloc(int bytes);
-char *zmalloc(int bytes);
-char *ckmalloc(int bytes);
+char *permalloc(size_t bytes);
+/* ckmalloc/zmalloc retired — use checked_malloc/zero_malloc from util.h */
 char *strlower_inplace(char *str);
 void addmsg(char *message);
 

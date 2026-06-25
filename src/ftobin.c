@@ -76,10 +76,10 @@ int main(int ac, char **av) {
         puts("Note: Format 3 is already a raw binary file, output will");
         puts("be equivalent to input");
     }
-    infile = fopen(av[2], "r");
+    infile = fopen(av[2], "rb"); /* binary mode: prevent CR/LF and 0x1A mangling on Windows */
     if (infile == NULL)
         exiterr("unable to open input file");
-    outfile = (av[3]) ? fopen(av[3], "w") : stdout;
+    outfile = (av[3]) ? fopen(av[3], "wb") : stdout; /* binary mode for same reason */
     if (outfile == NULL)
         exiterr("unable to open output file");
     convert(format, infile, outfile);

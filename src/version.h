@@ -57,7 +57,7 @@
  */
 #define DASM_PRINT_LEGAL                                                                                               \
     DASM_PRINT_COPYRIGHT                                                                                               \
-    puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE).");                                            \
+    (void)puts("License GPLv2+: GNU GPL version 2 or later (see file LICENSE).");                                     \
     (void)puts("DASM is free software: you are free to change and redistribute it.");                                  \
     (void)puts("There is ABSOLUTELY NO WARRANTY, to the extent permitted by law.");
 

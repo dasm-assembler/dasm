@@ -283,6 +283,12 @@ static void test_level_filtering(void) {
 /* Tests: deferred mode                                                 */
 /* ------------------------------------------------------------------ */
 
+/* Wrapper so we can pass flush_deferred_errors to capture_stderr() without
+   casting an incompatible function pointer (UB under C standard). */
+static void _flush_deferred_errors_wrapper(void) {
+    flush_deferred_errors(stderr);
+}
+
 static void _emit_deferred_error(void) {
 
     error_fmt("deferred test error");
@@ -321,8 +327,9 @@ static void test_deferred_buffering(void) {
 
     CHECK(strstr(buf, "deferred test error") != NULL);
 
-    /* after flush, buffer is empty — a second flush emits nothing */
-    out = capture_stderr((void (*)(void))flush_deferred_errors);
+    /* after flush, buffer is empty — a second flush emits nothing.
+       Use a wrapper to avoid incompatible function pointer cast UB. */
+    out = capture_stderr(_flush_deferred_errors_wrapper);
     CHECK(strlen(out) == 0);
     free(out);
 

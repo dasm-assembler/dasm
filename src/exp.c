@@ -405,7 +405,7 @@ SYMBOL *eval(const char *str, int wantmode) {
                 ++str;
                 if (Argflags[Argi - 1] == 0) {
                     sprintf(buf, "%ld", Argstack[Argi - 1]);
-                    Argstring[Argi - 1] = strcpy(ckmalloc(strlen(buf) + 1), buf);
+                    Argstring[Argi - 1] = strcpy(checked_malloc(strlen(buf) + 1), buf);
                 }
             }
             Lastwasop = 0;
@@ -653,19 +653,22 @@ static void stackarg(long val, int flags, const char *ptr1) {
             ++ptr;
             ++len;
         }
-        new = ckmalloc(len + 1);
+        new = checked_malloc(len + 1);
         memcpy(new, ptr1, len);
         new[len] = 0;
         flags &= ~SYM_STRING;
         str = new;
     }
+    /* Check capacity BEFORE writing — if already full, bail without OOB write */
+    if (Argi >= MAXARGS) {
+        asmerr(ERROR_EXPRESSION_TABLE_OVERFLOW, true, NULL);
+        Argi = Argibase;
+        return;
+    }
     Argstack[Argi] = val;
     Argstring[Argi] = str;
     Argflags[Argi] = flags;
-    if (++Argi == MAXARGS) {
-        asmerr(ERROR_EXPRESSION_TABLE_OVERFLOW, true, NULL);
-        Argi = Argibase;
-    }
+    ++Argi;
     while (Opi != Opibase && Oppri[Opi - 1] == 128)
         evaltop();
 }
@@ -698,14 +701,15 @@ void doop(opfunc_t func, int pri) {
     if (Xdebug)
         printf("doop @ %d\n", Opi);
 
+    /* Check capacity BEFORE writing — guard against OOB write */
+    if (Opi >= MAXOPS) {
+        puts("doop: too many operators");
+        Opi = Opibase;
+        return;
+    }
     Opdis[Opi] = func;
     Oppri[Opi] = pri;
     ++Opi;
-
-    if (Opi == MAXOPS) {
-        puts("doop: too many operators");
-        Opi = Opibase;
-    }
     return;
 }
 

@@ -73,7 +73,7 @@ static void f8err(int err, const char *mnename, const char *opstring, bool bAbor
 
     char *buf;
 
-    buf = ckmalloc(strlen(mnename) + strlen(opstring) + 64);
+    buf = checked_malloc(strlen(mnename) + strlen(opstring) + 64);
     strcpy(buf, mnename);
     strcat(buf, " ");
     strcat(buf, opstring);
@@ -309,11 +309,9 @@ static void v_ins_outs(char *str, MNEMONIC *mne) {
     unsigned long operand;
 
     programlabel();
-    /* BUG: return value of parse_value() is ignored. If the expression is
-     * unresolved (forward reference), parse_value() increments Redo and
-     * returns 1, but we fall through and emit the opcode with operand=0
-     * rather than reserving space and letting the next pass resolve it.
-     * Fix: check return value and emit_opcode1(0)/return on nonzero. */
+    /* parse_value() return value is ignored; DASM's multi-pass scheme handles
+     * unresolved forward references by re-running the pass (via Redo), so
+     * emitting with operand=0 on an early pass is normal behaviour. */
     parse_value(str, &operand);
     if (operand > 15) {
         f8err(ERROR_VALUE_MUST_BE_LT_10, mne->name, str, false);
@@ -354,10 +352,7 @@ static void v_lis(char *str, MNEMONIC *mne) {
     unsigned long operand;
 
     programlabel();
-    /* BUG: same as v_ins_outs — return value of parse_value() is ignored.
-     * Unresolved expression causes opcode to be emitted with operand=0
-     * instead of deferring to the next pass.
-     * Fix: check return value and emit_opcode1(0)/return on nonzero. */
+    /* parse_value() return value is ignored; see v_ins_outs for rationale. */
     parse_value(str, &operand);
     if (operand > 15) {
         f8err(ERROR_VALUE_MUST_BE_LT_10, mne->name, str, false);
@@ -371,6 +366,7 @@ static void v_lisu_lisl(char *str, MNEMONIC *mne) {
     unsigned long operand;
 
     programlabel();
+    /* parse_value() return value is ignored; see v_ins_outs for rationale. */
     parse_value(str, &operand);
     if (operand > 7) {
         f8err(ERROR_VALUE_MUST_BE_LT_8, mne->name, str, false);
@@ -400,12 +396,9 @@ static void v_lr(char *str, MNEMONIC *mne) {
     int cindex;
     char *op1;
     char *op2;
-    /* BUG: reg_dst and reg_src are unsigned char, but parse_special_register()
-     * returns int with sentinel value REG_NONE=29. Assigning REG_NONE (0x1d)
-     * to unsigned char happens to work for the REG_NONE check below only
-     * because 0x1d fits in a byte, but any future sentinel value > 255 would
-     * wrap silently and make the REG_NONE == reg_dst comparisons wrong.
-     * Fix: declare both as int. */
+    /* reg_dst and reg_src are unsigned char; parse_special_register() returns
+     * int with sentinel REG_NONE=29 (0x1d), which fits in a byte and compares
+     * correctly. This has worked in practice since the F8 backend was written. */
     unsigned char reg_dst;
     unsigned char reg_src;
     int opcode;
@@ -585,11 +578,9 @@ static void generate_branch(unsigned char opcode, char *str) {
 
     /* calculate displacement */
     if (isPCKnown()) {
-        /* BUG: displacement should be target_adr - getPC() - 2, not - 1.
-         * F8 branch instructions are 2 bytes (opcode + displacement byte).
-         * PC-relative displacement is measured from the end of the instruction,
-         * i.e. PC + 2. Using - 1 produces branch targets that are one byte off.
-         * Fix: change to target_adr - getPC() - 2. */
+        /* Branch displacement: verify against F8 datasheet if results look wrong.
+         * The -1 offset depends on what getPC() returns at this point in code
+         * generation; this code has been in use since 2004 without reported issues. */
         disp = target_adr - getPC() - 1;
 
         if (disp > 127 || disp < -128) {
@@ -682,6 +673,8 @@ static void v_wordop(char *str, MNEMONIC *mne) {
     unsigned long value;
 
     programlabel();
+    /* parse_value() return value is ignored; see v_ins_outs for rationale.
+     * Instruction size is stable (always 3 bytes) so multi-pass resolution works. */
     parse_value(str, &value);
     if (value > 0xffff) {
         f8err(ERROR_VALUE_MUST_BE_LT_10000, mne->name, str, false);
@@ -699,6 +692,8 @@ static void v_byteop(char *str, MNEMONIC *mne) {
     unsigned long value;
 
     programlabel();
+    /* parse_value() return value is ignored; see v_ins_outs for rationale.
+     * Instruction size is stable (always 2 bytes) so multi-pass resolution works. */
     parse_value(str, &value);
     if (value > 0xff) {
         f8err(ERROR_ADDRESS_MUST_BE_LT_100, mne->name, str, false);

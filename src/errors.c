@@ -235,7 +235,10 @@ static void deferred_append(const char *message) {
 static void print_error_message(error_level_t level, const char *message) {
 
     assert(message != NULL);
-    assert(strlen(message) > 0);
+    /* Use a runtime guard rather than assert so release builds don't silently crash
+       if an empty message somehow gets here (e.g. from a caller passing "" ). */
+    if (strlen(message) == 0)
+        return;
 
     bool immediate = (level >= ERRORLEVEL_FATAL) || !use_deferred;
 
