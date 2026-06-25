@@ -31,7 +31,7 @@
 /**
  * @brief Macro to provide current DASM release as a string.
  */
-#define DASM_RELEASE "2.20.15-DYNAMIC"
+#define DASM_RELEASE "2.20.16"
 
 /**
  * @brief Macro to provide current DASM headline, including
