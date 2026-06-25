@@ -303,6 +303,11 @@ static void v_ins_outs(char *str, MNEMONIC *mne) {
     unsigned long operand;
 
     programlabel();
+    /* BUG: return value of parse_value() is ignored. If the expression is
+     * unresolved (forward reference), parse_value() increments Redo and
+     * returns 1, but we fall through and emit the opcode with operand=0
+     * rather than reserving space and letting the next pass resolve it.
+     * Fix: check return value and emit_opcode1(0)/return on nonzero. */
     parse_value(str, &operand);
     if (operand > 15) {
         f8err(ERROR_VALUE_MUST_BE_LT_10, mne->name, str, false);
@@ -342,6 +347,10 @@ static void v_lis(char *str, MNEMONIC *mne) {
     unsigned long operand;
 
     programlabel();
+    /* BUG: same as v_ins_outs — return value of parse_value() is ignored.
+     * Unresolved expression causes opcode to be emitted with operand=0
+     * instead of deferring to the next pass.
+     * Fix: check return value and emit_opcode1(0)/return on nonzero. */
     parse_value(str, &operand);
     if (operand > 15) {
         f8err(ERROR_VALUE_MUST_BE_LT_10, mne->name, str, false);
@@ -384,6 +393,12 @@ static void v_lr(char *str, MNEMONIC *mne) {
     int cindex;
     char *op1;
     char *op2;
+    /* BUG: reg_dst and reg_src are unsigned char, but parse_special_register()
+     * returns int with sentinel value REG_NONE=29. Assigning REG_NONE (0x1d)
+     * to unsigned char happens to work for the REG_NONE check below only
+     * because 0x1d fits in a byte, but any future sentinel value > 255 would
+     * wrap silently and make the REG_NONE == reg_dst comparisons wrong.
+     * Fix: declare both as int. */
     unsigned char reg_dst;
     unsigned char reg_src;
     int opcode;
@@ -537,6 +552,11 @@ static void generate_branch(unsigned char opcode, char *str) {
 
     /* calculate displacement */
     if (isPCKnown()) {
+        /* BUG: displacement should be target_adr - getPC() - 2, not - 1.
+         * F8 branch instructions are 2 bytes (opcode + displacement byte).
+         * PC-relative displacement is measured from the end of the instruction,
+         * i.e. PC + 2. Using - 1 produces branch targets that are one byte off.
+         * Fix: change to target_adr - getPC() - 2. */
         disp = target_adr - getPC() - 1;
 
         if (disp > 127 || disp < -128)

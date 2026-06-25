@@ -47,6 +47,7 @@ GWARN= -ansi -std=c99 -pedantic -Wall \
 #CFLAGS= $(GOPTI) $(GWARN) $(GDEBG)
 #LDFLAGS= -m32 -L/usr/lib32
 
+
 ifeq ($(OS),Windows_NT)
       detected_OS := Windows
 else
@@ -69,7 +70,7 @@ all:  $(info    detected_OS is $(detected_OS)) \
       $(ALL)
 
 dasm: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o dasm $(LDFLAGS)
+	$(CC) -std=c11 $(CFLAGS) $(OBJS) -o dasm $(LDFLAGS)
 
 ftohex: ftohex.o
 

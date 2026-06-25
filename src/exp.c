@@ -709,7 +709,7 @@ static void stackarg(long val, int flags, const char *ptr1)
     Argstring[Argi] = str;
     Argflags[Argi] = flags;
     if (++Argi == MAXARGS) {
-        puts("stackarg: maxargs stacked");
+        asmerr( ERROR_EXPRESSION_TABLE_OVERFLOW, true, NULL );
         Argi = Argibase;
     }
     while (Opi != Opibase && Oppri[Opi-1] == 128)
@@ -813,7 +813,10 @@ void op_mod(long v1, long v2, int f1, int f2)
         return;
     }
     if (v2 == 0)
-        stackarg(v1, 0, NULL);
+    {
+        asmerr( ERROR_DIVISION_BY_0, true, NULL );
+        stackarg(0L, 0, NULL);
+    }
     else
         stackarg(v1 % v2, 0, NULL);
     Lastwasop = 1;
@@ -1003,6 +1006,8 @@ const char *pushsymbol(const char *str)
     if (symbolRecursionCount > 1000) {
     	fprintf(stderr, "error: %s:%d: recursion > 1000, too deep, aborting\n",__FILE__,__LINE__);
     	asmerr(ERROR_RECURSION_TOO_DEEP, true, "pushsymbol()");
+    	symbolRecursionCount--;
+    	return str + 1;
     }
 
     for (ptr = str;

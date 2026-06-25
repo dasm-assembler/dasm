@@ -5,3 +5,4 @@ test/**/*.list.txt
 bin
 dasm
 ftohex
+.DS_Store

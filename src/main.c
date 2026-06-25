@@ -205,7 +205,7 @@ static int CompareAddress( const void *arg1, const void *arg2 )
     const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
     const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
 
-    return sym1->value - sym2->value;
+    return (sym1->value > sym2->value) - (sym1->value < sym2->value);
 }
 
 static int CompareOrder( const void *arg1, const void *arg2 )
@@ -215,7 +215,7 @@ static int CompareOrder( const void *arg1, const void *arg2 )
     const SYMBOL *sym1 = *(SYMBOL * const *) arg1;
     const SYMBOL *sym2 = *(SYMBOL * const *) arg2;
 
-    return sym1->order - sym2->order;
+    return (sym1->order > sym2->order) - (sym1->order < sym2->order);
 }
 
 static void ShowSymbols( FILE *file, int sortMode )
@@ -408,7 +408,7 @@ static int MainShadow(int ac, char **av, int *pSortMode )
 
     char buf[MAXLINE];
     int i;
-    int argVal;
+    long argVal;
     MNEMONIC *mne;
 
     int oldredo = -1;
@@ -779,11 +779,8 @@ nextpass:
     }
 
     if (nMacroClosings != nMacroDeclarations) {
-        /* determine the file pointer to use */
-        FILE *error_file = (F_listfile != NULL) ? FI_listfile : stdout;
-
-    	fprintf(error_file, "premature end of file, macros opened:%d  closed:%d", nMacroDeclarations, nMacroClosings);
-        fprintf(error_file, "Aborting assembly\n");
+    	fprintf(stderr, "premature end of file, macros opened:%d  closed:%d", nMacroDeclarations, nMacroClosings);
+        fprintf(stderr, "Aborting assembly\n");
 
         exit(ERROR_MISSING_ENDM);
     }
@@ -833,8 +830,8 @@ static void outlistfile(const char *comment)
 {
     char xtrue;
     char c;
-    static char buf1[MAXLINE+32];
-    static char buf2[MAXLINE+32];
+    static char buf1[MAXLINE*2+64]; /* Bug N fix: was MAXLINE+32, overflowed on long lines */
+    static char buf2[MAXLINE*2+64];
     const char *ptr;
     const char *dot;
     int i, j;
@@ -875,13 +872,12 @@ static void outlistfile(const char *comment)
 
 char *sftos(long val, int flags)
 {
-    static char buf[ MAX_SYM_LEN + 14 ];
-    static char c;
-    char *ptr = (c) ? buf : buf + sizeof(buf) / 2;
+    static char buf[4][ MAX_SYM_LEN + 14 ];
+    static int slot = 0;
+    char *ptr = buf[slot];
+    slot = (slot + 1) % 4;
 
-    memset( buf, 0, sizeof( buf ) );
-
-    c = 1 - c;
+    memset( ptr, 0, sizeof( buf[0] ) );
 
     sprintf(ptr, "%04lx ", val);
 
@@ -962,63 +958,69 @@ static const char *cleanup(char *buf, bool bDisable)
     const char *comment = "";
 
     char *mlstart, *mlend, *semistart;
-    mlstart=strstr(buf,"/*");
-    mlend=strstr(buf,"*/");
-    semistart=strstr(buf,";");
 
-    if (mlflag) // a previous multi-line comment is in progress...
+    /* Iteratively process comment markers; was tail-recursive, now a loop */
+    while (1)
     {
-        if ( mlend )
+        mlstart   = strstr(buf, "/*");
+        mlend     = strstr(buf, "*/");
+        semistart = strstr(buf, ";");
+
+        if (mlflag) // a previous multi-line comment is in progress...
         {
-            mlflag=0; // turn off multiline comments
-	    char tempbuf[MAXLINE];
-            char *tmpc;
-            *mlend = 0;
-            tmpc = mlend+1;
-            while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
+            if ( mlend )
             {
-                if((*tmpc == '\r')||(*tmpc == '\n'))
-                    *tmpc=0;
-                tmpc++;
-            }
-	    snprintf(tempbuf,MAXLINE,"%s;*/%s",mlend+2,buf); // put the comment at the end of the line
-            strncpy(buf,tempbuf,MAXLINE);
-            return(cleanup(buf,bDisable)); // repeat for any single-line comments that may follow
-        }
-        else
-        {
-            memmove(buf+1,buf,strlen(buf)+1); // make room for the last comment
-            buf[0]=';';
-        }
-    }
-    else // we're not presently in the middle of a multi-line comment...
-    {
-        // check for spurious comment close
-        if (mlend && ( (!semistart) || (mlend < semistart) ) && ( (!mlstart) ||  (mlend < mlstart) ) )
-            asmerr( ERROR_SPURIOUS_COMMENT_CLOSE, false, NULL );
-        if (mlstart && ((!semistart) || (mlstart < semistart)))
-        {
-            if (mlend && (mlstart < mlend) && ((!semistart)||(mlend < semistart))) // single line /* */
-            {
-	        char tempbuf[MAXLINE];
+                mlflag=0; // turn off multiline comments
+                char tempbuf[MAXLINE * 2];
                 char *tmpc;
-                *mlstart = 0;
-                *(mlend+1)=0;
-                tmpc = mlend+2;
+                *mlend = 0;
+                tmpc = mlend+1;
                 while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
                 {
                     if((*tmpc == '\r')||(*tmpc == '\n'))
                         *tmpc=0;
                     tmpc++;
                 }
-	        snprintf(tempbuf,MAXLINE,"%s%s;/%s",buf,mlend+2,mlstart+1); // move the first comment to the end of the line
-                strcpy(buf,tempbuf);
-                return(cleanup(buf,bDisable)); // repeat for any single-line comments that may follow
+                snprintf(tempbuf,MAXLINE * 2,"%s;*/%s",mlend+2,buf); // put the comment at the end of the line
+                strncpy(buf,tempbuf,MAXLINE);
+                continue; // reprocess buf for any remaining comments
             }
-            mlflag=1; // turn on multiline comments
-            memmove(mlstart+1,mlstart,strlen(mlstart)+1); // make room for a comment
-            *mlstart=';';
+            else
+            {
+                memmove(buf+1,buf,strlen(buf)+1); // make room for the last comment
+                buf[0]=';';
+            }
         }
+        else // we're not presently in the middle of a multi-line comment...
+        {
+            // check for spurious comment close
+            if (mlend && ( (!semistart) || (mlend < semistart) ) && ( (!mlstart) ||  (mlend < mlstart) ) )
+                asmerr( ERROR_SPURIOUS_COMMENT_CLOSE, false, NULL );
+            if (mlstart && ((!semistart) || (mlstart < semistart)))
+            {
+                if (mlend && (mlstart < mlend) && ((!semistart)||(mlend < semistart))) // single line /* */
+                {
+                    char tempbuf[MAXLINE * 2];
+                    char *tmpc;
+                    *mlstart = 0;
+                    *(mlend+1)=0;
+                    tmpc = mlend+2;
+                    while(*tmpc!=0) // we need to purge any newlines before we reorder the parts of the line
+                    {
+                        if((*tmpc == '\r')||(*tmpc == '\n'))
+                            *tmpc=0;
+                        tmpc++;
+                    }
+                    snprintf(tempbuf,MAXLINE * 2,"%s%s;/%s",buf,mlend+2,mlstart+1); // move the first comment to the end of the line
+                    strcpy(buf,tempbuf);
+                    continue; // reprocess buf for any remaining comments
+                }
+                mlflag=1; // turn on multiline comments
+                memmove(mlstart+1,mlstart,strlen(mlstart)+1); // make room for a comment
+                *mlstart=';';
+            }
+        }
+        break; // no comment transformation this iteration, proceed
     }
 
     for (str = buf; *str; ++str)
@@ -1337,6 +1339,7 @@ MNEMONIC *parse(char *buf)
                         strcpy(Avbuf+j,tempval);
 			j=j+strlen(tempval);
                     }
+                    FreeSymbolList(symarg); /* Bug I fix: was leaking symarg on every pass */
                 }
                 i++;
                 while (buf[i] && buf[i] != ' ' && buf[i] != '=' && buf[i] != ','&& buf[i] != ':')
@@ -1410,7 +1413,7 @@ MNEMONIC *findmne(char *str)
     int i;
     char c;
     MNEMONIC *mne;
-    char buf[64];
+    char buf[MAX_SYM_LEN + 2]; /* Bug H fix: was buf[64], macro names can be MAX_SYM_LEN long */
 
 
     if (str[0] == '.') {    /* Allow .OP for OP */
@@ -1638,8 +1641,8 @@ int asmerr(int err, bool bAbort, const char *sText )
                 if(error_file!=stdout)
                     fprintf(error_file, "%s (%lu): error: ",
                         pincfile->name, pincfile->lineno);
-                sprintf(erroradd1, "%s (%lu): error: ",
-                    pincfile->name, pincfile->lineno); // -FXQ
+                snprintf(erroradd1, sizeof(erroradd1), "%s (%lu): error: ",
+                    pincfile->name, pincfile->lineno); // Bug K fix: was sprintf, overflow on long filenames
                 break;
             case ERRORFORMAT_DILLON:
                 /*
@@ -1654,8 +1657,8 @@ int asmerr(int err, bool bAbort, const char *sText )
                 if(error_file!=stdout)
                     fprintf(error_file, "line %7ld %-10s ",
                         pincfile->lineno, pincfile->name);
-                sprintf(erroradd1, "line %7ld %-10s ",
-                    pincfile->lineno, pincfile->name); // -FXQ
+                snprintf(erroradd1, sizeof(erroradd1), "line %7ld %-10s ",
+                    pincfile->lineno, pincfile->name); // Bug K fix: was sprintf, overflow on long filenames
                 break;
             case ERRORFORMAT_GNU:
                 /*
@@ -1665,8 +1668,8 @@ int asmerr(int err, bool bAbort, const char *sText )
                 if(error_file!=stdout)
                     fprintf(error_file, "%s:%lu: error: ",
                         pincfile->name, pincfile->lineno);
-                sprintf(erroradd1, "%s:%lu: error: ",
-                    pincfile->name, pincfile->lineno); // -FXQ
+                snprintf(erroradd1, sizeof(erroradd1), "%s:%lu: error: ",
+                    pincfile->name, pincfile->lineno); // Bug K fix: was sprintf, overflow on long filenames
                 break;
             default:
                 /* TODO: really panic here? [phf] */
@@ -1680,8 +1683,8 @@ int asmerr(int err, bool bAbort, const char *sText )
             fprintf(error_file, str, sText ? sText : "");
             fprintf(error_file, "\n");
         }
-        sprintf(erroradd2, str, sText ? sText : "");
-        sprintf(erroradd3, "\n");
+        snprintf(erroradd2, sizeof(erroradd2), str, sText ? sText : ""); /* Bug J fix: was sprintf, overflow on long sText (labels/filenames up to 1024 chars) */
+        snprintf(erroradd3, sizeof(erroradd3), "\n");
 
 	passbuffer_update(ERRORBUF,erroradd1);
 	passbuffer_update(ERRORBUF,erroradd2);
@@ -1818,7 +1821,7 @@ void passbuffer_update(int mbindex,char *message)
     }
 
     // check if we need to grow the buffer...
-    newsizerequired=strlen(passbuffer[mbindex])+strlen(message);
+    newsizerequired=strlen(passbuffer[mbindex])+strlen(message)+1;
     if( newsizerequired > passbuffersize[mbindex])
     {
         char *tmpalloc;
@@ -1827,7 +1830,7 @@ void passbuffer_update(int mbindex,char *message)
 
         tmpalloc = realloc(passbuffer[mbindex], newsizerequired);
         if(tmpalloc == NULL)
-           strcpy(passbuffer[0],"Insufficient memeory to extend the pass buffer. Some output was lost.\n");
+           strcpy(passbuffer[0],"Insufficient memory to extend the pass buffer. Some output was lost.\n");
         else
         {
             passbuffer[mbindex] = tmpalloc;
