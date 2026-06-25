@@ -27,107 +27,57 @@
 /**
  * @file
  *
- * @brief Dealing with symbols.
+ * @brief Symbol table management: creation, lookup, and memory.
+ *
+ * The sortmode_t enum and F_sortmode global are declared in asm.h.
+ * ShowSymbols() and DumpSymbolTable() are in main.c (they depend on
+ * display/output state that lives there).
  */
 
 #include "asm.h"
 
 #include <stdbool.h>
 
-void programlabel();
-void ShowSymbols(FILE *file);
-size_t ShowUnresolvedSymbols(void);
-void DumpSymbolTable(void);
-
 /**
- * @brief Remove the SYM_REF flag from all symbols in the
- * hash table.
+ * @brief Set the ".." special symbol value used by the DV pseudo-op.
+ * @note Only the value and flags fields of the symbol are set.
  */
-void clear_all_symbol_refs(void);
+void setspecial(int value, int flags);
 
 /**
- * @brief Set the special symbol for ".." used as part of
- * a DV pseudo-op.
- * @note Only the value and flags fields of the symbol are
- * set.
- */
-void set_special_dv_symbol(int value, dasm_flag_t flags);
-
-/**
- * @brief Create symbol with given name and add it to the hash table.
- * @warning Truncates names to MAX_SYM_LEN!
- * @note Generates custom names for local symbols (those starting
- * with '.' or ending with '$'). Uses alloc_symbol() internally.
- * Uses small_alloc() internally for the name of the symbol. The
- * created symbol is SYM_UNKNOWN.
+ * @brief Find a symbol by name in the hash table.
+ * @warning Truncates names to MAX_SYM_LEN.
+ * @note Handles '.' (current PC), '..' (DV special), '...' (checksum),
+ *       and local names starting with '.' or ending with '$'.
  * @pre str != NULL && len > 0
  */
-SYMBOL *create_symbol(const char *str, size_t len, bool addToOrder);
+SYMBOL *findsymbol(const char *str, int len);
 
 /**
- * @brief Find symbol with given name in hash table.
- * @warning Truncates names to MAX_SYM_LEN!
- * @note Handles special names such as '.' for current PC,
- * ".." for the special argument to EQM as part of DV (see
- * set_special_dv_symbol()), and "..." for the current checksum; also
- * handles local names (those starting with '.' or ending
- * with '$').
+ * @brief Create a new symbol and add it to the hash table.
+ * @warning Truncates names to MAX_SYM_LEN.
+ * @note Generates mangled names for local symbols ('.' prefix or '$' suffix).
+ *       The created symbol has SYM_UNKNOWN set.
  * @pre str != NULL && len > 0
  */
-SYMBOL *find_symbol(const char *str, size_t len);
+SYMBOL *CreateSymbol(const char *str, int len, bool addToOrder);
 
 /**
- * @brief Allocate a fresh symbol.
- * @note Uses small_alloc() internally and manages a custom
- * free list of symbols to reuse memory.
+ * @brief Allocate a fresh, zeroed symbol from the free list (or permalloc).
  */
-SYMBOL *alloc_symbol(void);
+SYMBOL *allocsymbol(void);
 
 /**
- * @brief Free zero or more symbols.
- * @note Manages a custom free list of symbols to reuse memory.
+ * @brief Return a chain of symbols to the free list.
+ * @note Frees any SYM_STRING string storage before recycling.
  */
-void free_symbol_list(SYMBOL *sym);
+void FreeSymbolList(SYMBOL *sym);
 
 /**
- * @brief A symbol file of the given name will be produced.
- * @warning Can only be called once!
- * @pre name != NULL
+ * @brief Define the label at the current program counter, handling
+ *        forward references and phase errors.
  */
-void set_symbol_file_name(const char *name);
-
-/**
- * @brief Sort mode for symbol table for -T option.
- */
-typedef enum
-{
-    /* actual sort modes */
-    SORTMODE_ALPHA,
-    SORTMODE_ADDRESS,
-    SORTMODE_ORDER,
-
-    /* meta data */
-    SORTMODE_MIN = SORTMODE_ALPHA,
-    SORTMODE_DEFAULT = SORTMODE_ALPHA,
-    SORTMODE_MAX = SORTMODE_ADDRESS
-}
-sortmode_t;
-
-/**
- * @brief Valid sort mode for -T option?
- */
-bool valid_sort_mode(int mode);
-
-/**
- * @brief Set sort mode, -T option.
- */
-void set_sort_mode(sortmode_t mode);
-
-/**
- * @brief Print statistics about symbol hash table.
- * @warning For debugging only.
- */
-void debug_symbol_hash_collisions(void);
+void programlabel(void);
 
 #endif /* _DASM_SYMBOLS_H */
 

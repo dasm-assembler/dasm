@@ -10,7 +10,7 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -63,14 +63,13 @@
 #include <sys/types.h>
 
 /*@out@*/
-void *checked_malloc(size_t bytes)
-{
+void *checked_malloc(size_t bytes) {
+
     void *p = NULL;
     assert(bytes > 0); /* rule out 0! */
 
     p = malloc(bytes);
-    if (p == NULL)
-    {
+    if (p == NULL) {
         panic_fmt(PANIC_MEMORY, bytes, SOURCE_LOCATION);
         exit(EXIT_FAILURE); /* makes splint happier */
     }
@@ -78,8 +77,8 @@ void *checked_malloc(size_t bytes)
     return p;
 }
 
-void *zero_malloc(size_t bytes)
-{
+void *zero_malloc(size_t bytes) {
+
     void *p = NULL;
     assert(bytes > 0); /* rule out 0! */
 
@@ -89,25 +88,29 @@ void *zero_malloc(size_t bytes)
     return p;
 }
 
-struct new_perm_block
-{
-  /*@temp@*/ struct new_perm_block *next;
-  char data[];
+struct new_perm_block {
+    /*@temp@*/ struct new_perm_block *next;
+    char data[];
 };
 
 /*@null@*/ /*@temp@*/
 static struct new_perm_block *new_permalloc_stack = NULL;
 
 #define ALLOCSIZE 16384
-#define ROUNDUP(x) ((x + alignment-1) & ~(alignment-1))
+#define ROUNDUP(x) ((x + alignment - 1) & ~(alignment - 1))
 
-void *small_alloc(size_t bytes)
-{
+/* File-scope so small_free_all() can reset them, preventing use-after-free */
+static void *small_alloc_buf = NULL;
+static size_t small_alloc_left = 0;
+
+void *small_alloc(size_t bytes) {
+
     /* Assume sizeof(union align) is a power of 2 */
-    union align { long l; void *p; void (*fp)(void); };
-
-    static void *buf;
-    static size_t left = 0;
+    union align {
+        long l;
+        void *p;
+        void (*fp)(void);
+    };
     void *ptr;
     struct new_perm_block *block;
     size_t alignment = sizeof(union align);
@@ -121,20 +124,18 @@ void *small_alloc(size_t bytes)
     bytes = ROUNDUP(bytes);
 
     /* do we not have enough left in the current block? */
-    if (bytes > left)
-    {
+    if (bytes > small_alloc_left) {
         debug_fmt("%s: new block needed", SOURCE_LOCATION);
 
         /* allocate a new block */
         block = zero_malloc(ALLOCSIZE);
-        debug_fmt("%s: block @ %p", SOURCE_LOCATION, (void*) block);
+        debug_fmt("%s: block @ %p", SOURCE_LOCATION, (void *)block);
 
         /* calculate bytes we have left */
-        left = ALLOCSIZE - ROUNDUP(sizeof(block->next));
+        small_alloc_left = ALLOCSIZE - ROUNDUP(sizeof(block->next));
 
         /* check again if we have enough space */
-        if (bytes > left)
-        {
+        if (bytes > small_alloc_left) {
             panic_fmt(PANIC_SMALL_MEMORY, bytes, SOURCE_LOCATION);
             exit(EXIT_FAILURE); /* makes splint happier */
         }
@@ -143,44 +144,47 @@ void *small_alloc(size_t bytes)
         block->next = new_permalloc_stack;
         new_permalloc_stack = block;
 
-        /* setup buf to point to actual memory area */
-        buf = ((char*)block) + ROUNDUP(sizeof(block->next)); /* char cast important! */
-        debug_fmt("%s: initial buf @ %p", SOURCE_LOCATION, (void*) buf);
+        /* setup small_alloc_buf to point to actual memory area */
+        small_alloc_buf = ((char *)block) + ROUNDUP(sizeof(block->next)); /* char cast important! */
+        debug_fmt("%s: initial small_alloc_buf @ %p", SOURCE_LOCATION, (void *)small_alloc_buf);
     }
 
-    ptr = buf;
-    buf = ((char*)buf) + bytes; /* char cast important! */
-    debug_fmt("%s: adjusted buf @ %p", SOURCE_LOCATION, (void*) buf);
-    assert(ptr < buf); /* TODO: good idea? [phf] */
-    left -= bytes;
+    ptr = small_alloc_buf;
+    small_alloc_buf = ((char *)small_alloc_buf) + bytes; /* char cast important! */
+    debug_fmt("%s: adjusted small_alloc_buf @ %p", SOURCE_LOCATION, (void *)small_alloc_buf);
+    assert(ptr < small_alloc_buf); /* TODO: good idea? [phf] */
+    small_alloc_left -= bytes;
     debug_fmt(DEBUG_LEAVE, SOURCE_LOCATION);
     return ptr;
 }
 
-void small_free_all(void)
-{
+void small_free_all(void) {
+
     /* the block we are about to free() */
     struct new_perm_block *current = NULL;
 
     debug_fmt(DEBUG_ENTER, SOURCE_LOCATION);
 
     /* as long as we have block left */
-    while (new_permalloc_stack != NULL)
-    {
+    while (new_permalloc_stack != NULL) {
         /* remember the top block */
         current = new_permalloc_stack;
         /* pop the top block, stack possibly empty after this */
         new_permalloc_stack = current->next;
         /* free() the block we popped */
-        debug_fmt("%s: freed block @ %p", SOURCE_LOCATION, (void*) current);
+        debug_fmt("%s: freed block @ %p", SOURCE_LOCATION, (void *)current);
         free(current);
     }
+
+    /* Reset file-scope cursor so small_alloc() doesn't use freed memory */
+    small_alloc_buf = NULL;
+    small_alloc_left = 0;
 
     debug_fmt(DEBUG_LEAVE, SOURCE_LOCATION);
 }
 
-unsigned int hash_string(const char *string, size_t length)
-{
+unsigned int hash_string(const char *string, size_t length) {
+
     /*
         Why is this a better hash function than Matt's original?
         For MNEMONICs we go from 14 to 5 collisons, woohoo. :-)
@@ -193,48 +197,47 @@ unsigned int hash_string(const char *string, size_t length)
     assert(length > 0);
     assert(length <= strlen(string));
 
-    while (length-- != 0)
-    {
-        hash = ((hash << 5) + hash) + (unsigned int) *string++;
+    while (length-- != 0) {
+        hash = ((hash << 5) + hash) + (unsigned int)*string++;
     }
 
     return hash;
 }
 
-char *checked_strdup(const char *s)
-{
-  assert(s != NULL);
-  /* v_seg() doesn't enforce this so we can't either for now [phf] */
-  /*assert(strlen(s) > 0);*/
-  return strcpy(checked_malloc(strlen(s)+1), s);
+char *checked_strdup(const char *s) {
+
+    assert(s != NULL);
+    /* v_seg() doesn't enforce this so we can't either for now [phf] */
+    /*assert(strlen(s) > 0);*/
+    return strcpy(checked_malloc(strlen(s) + 1), s);
 }
 
-size_t strlower(/*@out@*/ char *dst, const char *src, size_t size)
-{
+size_t strlower(/*@out@*/ char *dst, const char *src, size_t size) {
+
     /* strlcpy checks the assertions anyway */
     size_t result = strlcpy(dst, src, size);
 
     for (/* blank */; *dst != '\0'; dst++) {
-        *dst = (char) tolower((int)*dst);
+        *dst = (char)tolower((int)*dst);
     }
 
     return result;
 }
 
-size_t strupper(/*@out@*/ char *dst, const char *src, size_t size)
-{
+size_t strupper(/*@out@*/ char *dst, const char *src, size_t size) {
+
     /* strlcpy checks the assertions anyway */
     size_t result = strlcpy(dst, src, size);
 
     for (/* blank */; *dst != '\0'; dst++) {
-        *dst = (char) toupper((int)*dst);
+        *dst = (char)toupper((int)*dst);
     }
 
     return result;
 }
 
-size_t strip_whitespace(/*@out@*/ char *dst, const char *src, size_t size)
-{
+size_t strip_whitespace(/*@out@*/ char *dst, const char *src, size_t size) {
+
     /* TODO: there must be a simpler way to write this... */
     size_t n = size;
     size_t needed = 0;
@@ -255,8 +258,8 @@ size_t strip_whitespace(/*@out@*/ char *dst, const char *src, size_t size)
     while (n > 1 && *src != '\0') {
         if (isspace((int)*src) != 0) {
             src++;
-        }
-        else {
+        } else {
+
             *dst++ = *src++;
             n--;
         }
@@ -268,8 +271,8 @@ size_t strip_whitespace(/*@out@*/ char *dst, const char *src, size_t size)
     return needed;
 }
 
-bool match_either_case(const char *string, const char *either)
-{
+bool match_either_case(const char *string, const char *either) {
+
     char buffer[MAX_SYM_LEN];
     size_t res;
 
@@ -311,38 +314,37 @@ bool match_either_case(const char *string, const char *either)
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-size_t
-strlcat(/*@in@*/ /*@out@*/ char *dst, const char *src, size_t siz)
-{
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
-	size_t dlen;
+size_t strlcat(/*@in@*/ /*@out@*/ char *dst, const char *src, size_t siz) {
 
-	/* added [phf] */
-	assert(dst != NULL);
-	assert(src != NULL);
-	assert(siz > 0);
+    char *d = dst;
+    const char *s = src;
+    size_t n = siz;
+    size_t dlen;
 
-	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
-		d++;
+    /* added [phf] */
+    assert(dst != NULL);
+    assert(src != NULL);
+    assert(siz > 0);
+
+    /* Find the end of dst and adjust bytes left but don't go past end */
+    while (n-- != 0 && *d != '\0')
+        d++;
     assert(d - dst >= 0); /* added [phf] */
-	dlen = d - dst;
-	n = siz - dlen;
+    dlen = d - dst;
+    n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
-			*d++ = *s;
-			n--;
-		}
-		s++;
-	}
-	*d = '\0';
+    if (n == 0)
+        return (dlen + strlen(s));
+    while (*s != '\0') {
+        if (n != 1) {
+            *d++ = *s;
+            n--;
+        }
+        s++;
+    }
+    *d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+    return (dlen + (s - src)); /* count does not include NUL */
 }
 
 /*
@@ -361,56 +363,54 @@ strlcat(/*@in@*/ /*@out@*/ char *dst, const char *src, size_t siz)
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-size_t
-strlcpy(/*@out@*/ char *dst, const char *src, size_t siz)
-{
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
+size_t strlcpy(/*@out@*/ char *dst, const char *src, size_t siz) {
 
-	/* added [phf] */
-	assert(dst != NULL);
-	assert(src != NULL);
-	assert(siz > 0);
+    char *d = dst;
+    const char *s = src;
+    size_t n = siz;
 
-	/* Copy as many bytes as will fit */
-	if (n != 0) {
-		while (--n != 0) {
-			if ((*d++ = *s++) == '\0')
-				break;
-		}
-	}
+    /* added [phf] */
+    assert(dst != NULL);
+    assert(src != NULL);
+    assert(siz > 0);
 
-	/* Not enough room in dst, add NUL and traverse rest of src */
-	if (n == 0) {
-		if (siz != 0)
-			*d = '\0';		/* NUL-terminate dst */
-		while (*s++ != '\0') /* splinted [phf] */
-			;
-	}
+    /* Copy as many bytes as will fit */
+    if (n != 0) {
+        while (--n != 0) {
+            if ((*d++ = *s++) == '\0')
+                break;
+        }
+    }
+
+    /* Not enough room in dst, add NUL and traverse rest of src */
+    if (n == 0) {
+        if (siz != 0)
+            *d = '\0';       /* NUL-terminate dst */
+        while (*s++ != '\0') /* splinted [phf] */
+            ;
+    }
 
     assert(s - src - 1 >= 0); /* added [phf] */
-	return(s - src - 1);	/* count does not include NUL */
+    return (s - src - 1);     /* count does not include NUL */
 }
 
 /*@null@*/
 static const char *__dasm_progname = NULL;
 
 /*@temp@*/
-const char *getprogname(void)
-{
+const char *getprogname(void) {
+
     return (__dasm_progname != NULL) ? __dasm_progname : "(unknown progname)";
 }
 
-void setprogname(const char *name)
-{
+void setprogname(const char *name) {
+
     char *slash = NULL;
     assert(name != NULL);
 
     slash = strrchr(name, DASM_PATH_SEPARATOR);
-    if (slash != NULL)
-    {
-        name = slash+1;
+    if (slash != NULL) {
+        name = slash + 1;
     }
     __dasm_progname = name;
 }

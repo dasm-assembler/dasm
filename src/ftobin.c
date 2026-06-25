@@ -56,42 +56,39 @@ static uword getwlh(FILE *in);
 static void exiterr(const char *str);
 static void convert(short format, FILE *in, FILE *out);
 
-int
-main(int ac, char **av)
-{
+int main(int ac, char **av) {
+
     short format;
     FILE *infile;
     FILE *outfile;
 
     if (ac < 3) {
-	puts("FTOBIN format infile [outfile]");
-	puts("format 1,2, or 3.  3=raw");
-	puts("(C)Copyright 1988 by Matthew Dillon, All Rights Reserved");
-	exit(EXIT_FAILURE);
+        puts("FTOBIN format infile [outfile]");
+        puts("format 1,2, or 3.  3=raw");
+        puts("(C)Copyright 1988 by Matthew Dillon, All Rights Reserved");
+        exit(EXIT_FAILURE);
     }
     format = strtol(av[1], NULL, 0);
     if (format < 1 || format > 3)
-	exiterr("specify infile format 1, 2, or 3");
+        exiterr("specify infile format 1, 2, or 3");
     if (format == 3) {
-	puts("Note: Format 3 is already a raw binary file, output will");
-	puts("be equivalent to input");
+        puts("Note: Format 3 is already a raw binary file, output will");
+        puts("be equivalent to input");
     }
     infile = fopen(av[2], "r");
     if (infile == NULL)
-	exiterr("unable to open input file");
+        exiterr("unable to open input file");
     outfile = (av[3]) ? fopen(av[3], "w") : stdout;
     if (outfile == NULL)
-	exiterr("unable to open output file");
+        exiterr("unable to open output file");
     convert(format, infile, outfile);
     fclose(infile);
     fclose(outfile);
-    return(0);
+    return (0);
 }
 
-static
-void
-exiterr(const char *str)
-{
+static void exiterr(const char *str) {
+
     fputs(str, stderr);
     fputs("\n", stderr);
     exit(EXIT_FAILURE);
@@ -111,10 +108,8 @@ exiterr(const char *str)
  *					  cc=invert of checksum all codes
  */
 
-static
-void
-convert(short format, FILE *in, FILE *out)
-{
+static void convert(short format, FILE *in, FILE *out) {
+
     uword org = 0;
     uword base = 0;
     long len;
@@ -122,72 +117,74 @@ convert(short format, FILE *in, FILE *out)
     ubyte buf[256];
 
     if (format < 3)
-	base = org = getwlh(in);
+        base = org = getwlh(in);
     if (format == 2) {
-	len = getwlh(in);
+        len = getwlh(in);
     } else {
-	long begin = ftell(in);
-	fseek(in, 0L, 2);
-	len = ftell(in) - begin;
-	fseek(in, begin, 0);
+
+        long begin = ftell(in);
+        fseek(in, 0L, 2);
+        len = ftell(in) - begin;
+        fseek(in, begin, 0);
     }
     for (;;) {
-	if (len > 0) {
-	    while (len >= ((long) sizeof(buf))) {
-		fread(buf, sizeof(buf), 1, in);
-		fwrite(buf, sizeof(buf), 1, out);
-		len -= sizeof(buf);
-		org += sizeof(buf);
-	    }
-	    if (len) {
-		fread(buf, (short)len, 1, in);
-		fwrite(buf, (short)len, 1, out);
-		org += len;
-	    }
-	}
-	if (format == 2) {
-	    if (maxseek < org - base)
-		maxseek = org - base;
-	    org = getwlh(in);
-	    if (feof(in))
-		break;
-	    len = org - base;
-	    if (len < 0) {
-		puts("ERROR!  Reverse indexed to before beginning");
-		puts("*Initial* origin must be the lowest address");
-		return;
-	    }
-	    len -= maxseek;
-	    if (len > 0)
-		memset(buf, 255, sizeof(buf));
-	    while (len > 0) {
-		if (len >= ((long) sizeof(buf))) {
-		    fwrite(buf, sizeof(buf), 1, out);
-		    maxseek += sizeof(buf);
-		    len -= sizeof(buf);
-		} else {
-		    fwrite(buf, (short)len, 1, out);
-		    maxseek += len;
-		    len = 0;
-		}
-	    }
-	    fseek(out, (long)(org - base), 0);
-	    len = getwlh(in);
-	} else {
-	    break;
-	}
+        if (len > 0) {
+            while (len >= ((long)sizeof(buf))) {
+                fread(buf, sizeof(buf), 1, in);
+                fwrite(buf, sizeof(buf), 1, out);
+                len -= sizeof(buf);
+                org += sizeof(buf);
+            }
+            if (len) {
+                fread(buf, (short)len, 1, in);
+                fwrite(buf, (short)len, 1, out);
+                org += len;
+            }
+        }
+        if (format == 2) {
+            if (maxseek < org - base)
+                maxseek = org - base;
+            org = getwlh(in);
+            if (feof(in))
+                break;
+            len = org - base;
+            if (len < 0) {
+                puts("ERROR!  Reverse indexed to before beginning");
+                puts("*Initial* origin must be the lowest address");
+                return;
+            }
+            len -= maxseek;
+            if (len > 0)
+                memset(buf, 255, sizeof(buf));
+            while (len > 0) {
+                if (len >= ((long)sizeof(buf))) {
+                    fwrite(buf, sizeof(buf), 1, out);
+                    maxseek += sizeof(buf);
+                    len -= sizeof(buf);
+                } else {
+
+                    fwrite(buf, (short)len, 1, out);
+                    maxseek += len;
+                    len = 0;
+                }
+            }
+            fseek(out, (long)(org - base), 0);
+            len = getwlh(in);
+        } else {
+
+            break;
+        }
     }
 }
 
-static
-uword
-getwlh(FILE *in)
-{
-    uword result;
+static uword getwlh(FILE *in) {
 
-    result = getc(in);
-    result += getc(in) << 8;
-    return(result);
+    int lo = getc(in);
+    int hi = getc(in);
+    /* getc() returns EOF (-1) on truncated input; treat as zero to avoid garbage */
+    if (lo == EOF || hi == EOF)
+        return 0;
+    return (uword)((unsigned int)lo + ((unsigned int)hi << 8));
 }
 
 /* vim: set tabstop=4 softtabstop=4 expandtab shiftwidth=4 autoindent: */

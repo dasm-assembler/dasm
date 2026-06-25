@@ -1,4 +1,5 @@
 *.o
+src/.objs/
 test/**/*.bin
 test/**/*.hex
 test/**/*.list.txt

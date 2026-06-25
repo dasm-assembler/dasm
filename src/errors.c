@@ -30,7 +30,6 @@
 
 #include "asm.h"
 #include "util.h"
-#include "version.h"
 
 #include <assert.h>
 #include <stdarg.h>
@@ -38,18 +37,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /* ------------------------------------------------------------------ */
 /* Module state                                                         */
 /* ------------------------------------------------------------------ */
 
 static error_format_t F_error_format = ERRORFORMAT_DEFAULT;
-static error_level_t  F_error_level  = ERRORLEVEL_DEFAULT;
+static error_level_t F_error_level = ERRORLEVEL_DEFAULT;
 
-static size_t nof_fatals   = 0;
-static size_t nof_errors   = 0;
+static size_t nof_fatals = 0;
+static size_t nof_errors = 0;
 static size_t nof_warnings = 0;
-static size_t nof_notices  = 0;
+static size_t nof_notices = 0;
 
 char source_location_buffer[SOURCE_LOCATION_LENGTH];
 
@@ -57,26 +55,21 @@ char source_location_buffer[SOURCE_LOCATION_LENGTH];
  * Human-readable level names, indexed by error_level_t.
  * Used in the formatted message prefix: "file:line: warning: ..."
  */
-static const char *level_names[] =
-{
-    [ERRORLEVEL_DEBUG]   = "debug",
-    [ERRORLEVEL_INFO]    = "info",
-    [ERRORLEVEL_NOTICE]  = "notice",
-    [ERRORLEVEL_WARNING] = "warning",
-    [ERRORLEVEL_ERROR]   = "error",
-    [ERRORLEVEL_FATAL]   = "fatal",
-    [ERRORLEVEL_PANIC]   = "***panic***",
-};
+static const char *level_names[] = {
 
+    [ERRORLEVEL_DEBUG] = "debug",       [ERRORLEVEL_INFO] = "info",   [ERRORLEVEL_NOTICE] = "notice",
+    [ERRORLEVEL_WARNING] = "warning",   [ERRORLEVEL_ERROR] = "error", [ERRORLEVEL_FATAL] = "fatal",
+    [ERRORLEVEL_PANIC] = "***panic***",
+};
 
 /* ------------------------------------------------------------------ */
 /* Deferred (pass-buffered) output state                                */
 /* ------------------------------------------------------------------ */
 
-static bool   use_deferred    = false;
-static char  *deferred_buf    = NULL;
-static size_t deferred_cap    = 0;
-static size_t deferred_len    = 0;
+static bool use_deferred = false;
+static char *deferred_buf = NULL;
+static size_t deferred_cap = 0;
+static size_t deferred_len = 0;
 
 /*
  * Internal buffer size for formatting individual message components.
@@ -84,29 +77,28 @@ static size_t deferred_len    = 0;
  */
 #define MSG_BUF_SIZE 4096
 
-
 /* ------------------------------------------------------------------ */
 /* Validation and configuration                                         */
 /* ------------------------------------------------------------------ */
 
-bool valid_error_format(int format)
-{
+bool valid_error_format(int format) {
+
     return (format >= ERRORFORMAT_MIN && format < ERRORFORMAT_MAX);
 }
 
-void set_error_format(error_format_t format)
-{
+void set_error_format(error_format_t format) {
+
     assert(valid_error_format(format));
     F_error_format = format;
 }
 
-bool valid_error_level(int level)
-{
+bool valid_error_level(int level) {
+
     return (level >= ERRORLEVEL_MIN && level < ERRORLEVEL_MAX);
 }
 
-void set_error_level(error_level_t level)
-{
+void set_error_level(error_level_t level) {
+
     assert(valid_error_level(level));
     F_error_level = level;
 }
@@ -119,64 +111,77 @@ void set_error_level(error_level_t level)
  * Verbosity 2          : show info and above.
  * Verbosity 3+         : show everything including debug.
  */
-error_level_t verbosity_to_error_level(int verbosity)
-{
+error_level_t verbosity_to_error_level(int verbosity) {
+
     switch (verbosity) {
-        case 0:  return ERRORLEVEL_WARNING;
-        case 1:  return ERRORLEVEL_NOTICE;
-        case 2:  return ERRORLEVEL_INFO;
-        default: return ERRORLEVEL_DEBUG;
+    case 0:
+        return ERRORLEVEL_WARNING;
+    case 1:
+        return ERRORLEVEL_NOTICE;
+    case 2:
+        return ERRORLEVEL_INFO;
+    default:
+        return ERRORLEVEL_DEBUG;
     }
 }
 
-static bool visible_error_level(error_level_t level)
-{
+static bool visible_error_level(error_level_t level) {
+
     return (level >= F_error_level);
 }
-
 
 /* ------------------------------------------------------------------ */
 /* Statistics                                                           */
 /* ------------------------------------------------------------------ */
 
-size_t number_of_fatals(void)   { return nof_fatals;   }
-size_t number_of_errors(void)   { return nof_errors;   }
-size_t number_of_warnings(void) { return nof_warnings; }
-size_t number_of_notices(void)  { return nof_notices;  }
+size_t number_of_fatals(void) {
 
-void reset_error_counts(void)
-{
-    nof_fatals   = 0;
-    nof_errors   = 0;
-    nof_warnings = 0;
-    nof_notices  = 0;
+    return nof_fatals;
+}
+size_t number_of_errors(void) {
+
+    return nof_errors;
+}
+size_t number_of_warnings(void) {
+
+    return nof_warnings;
+}
+size_t number_of_notices(void) {
+
+    return nof_notices;
 }
 
+void reset_error_counts(void) {
+
+    nof_fatals = 0;
+    nof_errors = 0;
+    nof_warnings = 0;
+    nof_notices = 0;
+}
 
 /* ------------------------------------------------------------------ */
 /* Deferred output                                                      */
 /* ------------------------------------------------------------------ */
 
-void set_deferred_errors(bool deferred)
-{
+void set_deferred_errors(bool deferred) {
+
     use_deferred = deferred;
 }
 
-void flush_deferred_errors(FILE *fp)
-{
+void flush_deferred_errors(FILE *fp) {
+
     if (deferred_buf != NULL && deferred_len > 0) {
         fputs(deferred_buf, fp);
     }
     clear_deferred_errors();
 }
 
-void clear_deferred_errors(void)
-{
+void clear_deferred_errors(void) {
+
     deferred_len = 0;
     if (deferred_buf != NULL)
         deferred_buf[0] = '\0';
 }
-
 
 /* ------------------------------------------------------------------ */
 /* Internal helpers                                                     */
@@ -186,20 +191,17 @@ void clear_deferred_errors(void)
  * Super low-level panic for disasters *inside* the errors module itself.
  * Cannot use notify_fmt() here — that would recurse.
  */
-static void internal_panic(const char *message)
-{
-    fprintf(stderr,
-            "\n%s: FATAL INTERNAL PANIC (errors.c): %s\n\n",
-            getprogname(),
-            message);
+static void internal_panic(const char *message) {
+
+    fprintf(stderr, "\n%s: FATAL INTERNAL PANIC (errors.c): %s\n\n", getprogname(), message);
     exit(EXIT_FAILURE);
 }
 
 /*
  * Append message to the deferred buffer, growing it as needed.
  */
-static void deferred_append(const char *message)
-{
+static void deferred_append(const char *message) {
+
     size_t msglen = strlen(message);
     /* +2: newline + null */
     if (deferred_len + msglen + 2 > deferred_cap) {
@@ -217,7 +219,7 @@ static void deferred_append(const char *message)
     memcpy(deferred_buf + deferred_len, message, msglen);
     deferred_len += msglen;
     deferred_buf[deferred_len++] = '\n';
-    deferred_buf[deferred_len]   = '\0';
+    deferred_buf[deferred_len] = '\0';
 }
 
 /*
@@ -229,8 +231,8 @@ static void deferred_append(const char *message)
  * All visible messages also go to the listing file (with a '*' prefix
  * matching Matt's original convention).
  */
-static void print_error_message(error_level_t level, const char *message)
-{
+static void print_error_message(error_level_t level, const char *message) {
+
     assert(message != NULL);
     assert(strlen(message) > 0);
 
@@ -239,6 +241,7 @@ static void print_error_message(error_level_t level, const char *message)
     if (immediate) {
         fprintf(stderr, "%s\n", message);
     } else {
+
         deferred_append(message);
     }
 
@@ -251,9 +254,8 @@ static void print_error_message(error_level_t level, const char *message)
 /*
  * Sane wrapper for vsnprintf() — panics on encoding error.
  */
-static size_t
-sane_vsnprintf(char *restrict str, size_t size, const char *restrict fmt, va_list ap)
-{
+static size_t sane_vsnprintf(char *restrict str, size_t size, const char *restrict fmt, va_list ap) {
+
     int res;
     assert(str != NULL);
     assert(size > 0);
@@ -263,16 +265,14 @@ sane_vsnprintf(char *restrict str, size_t size, const char *restrict fmt, va_lis
     if (res < 0)
         internal_panic("sane_vsnprintf: encoding error");
 
-    return (size_t) res;
+    return (size_t)res;
 }
 
-static size_t
-sane_snprintf(char *restrict str, size_t size, const char *restrict fmt, ...)
-__attribute__((format(printf, 3, 4)));
+static size_t sane_snprintf(char *restrict str, size_t size, const char *restrict fmt, ...)
+    __attribute__((format(printf, 3, 4)));
 
-static size_t
-sane_snprintf(char *restrict str, size_t size, const char *restrict fmt, ...)
-{
+static size_t sane_snprintf(char *restrict str, size_t size, const char *restrict fmt, ...) {
+
     size_t res;
     va_list ap;
     va_start(ap, fmt);
@@ -295,40 +295,37 @@ sane_snprintf(char *restrict str, size_t size, const char *restrict fmt, ...)
  * and lineno tracks the macro body line, not the source file line.
  * We skip macro frames to report the innermost real file location.
  */
-static size_t append_location(char *buffer, const INCFILE *file, size_t size)
-{
+static size_t append_location(char *buffer, const INCFILE *file, size_t size) {
+
     char location[MSG_BUF_SIZE];
     size_t res = 0;
     location[0] = '\0';
 
     switch (F_error_format) {
-        case ERRORFORMAT_WOE:
-            if (file != NULL) {
-                res = sane_snprintf(location, sizeof(location),
-                                    "%s (%lu): ", file->name, file->lineno);
-            }
-            break;
+    case ERRORFORMAT_WOE:
+        if (file != NULL) {
+            res = sane_snprintf(location, sizeof(location), "%s (%lu): ", file->name, file->lineno);
+        }
+        break;
 
-        case ERRORFORMAT_DILLON:
-            if (file != NULL) {
-                res = sane_snprintf(location, sizeof(location),
-                                    "line %7lu %-10s ", file->lineno, file->name);
-            }
-            break;
+    case ERRORFORMAT_DILLON:
+        if (file != NULL) {
+            res = sane_snprintf(location, sizeof(location), "line %7lu %-10s ", file->lineno, file->name);
+        }
+        break;
 
-        case ERRORFORMAT_GNU:
-            if (file != NULL) {
-                res = sane_snprintf(location, sizeof(location),
-                                    "%s:%lu: ", file->name, file->lineno);
-            } else {
-                res = sane_snprintf(location, sizeof(location),
-                                    "%s: ", getprogname());
-            }
-            break;
+    case ERRORFORMAT_GNU:
+        if (file != NULL) {
+            res = sane_snprintf(location, sizeof(location), "%s:%lu: ", file->name, file->lineno);
+        } else {
 
-        default:
-            internal_panic("Invalid error format in append_location!");
-            break;
+            res = sane_snprintf(location, sizeof(location), "%s: ", getprogname());
+        }
+        break;
+
+    default:
+        internal_panic("Invalid error format in append_location!");
+        break;
     }
 
     if (res >= sizeof(location))
@@ -340,8 +337,8 @@ static size_t append_location(char *buffer, const INCFILE *file, size_t size)
 /*
  * Append "levelname: " to buffer.
  */
-static size_t append_level(char *buffer, error_level_t level, size_t size)
-{
+static size_t append_level(char *buffer, error_level_t level, size_t size) {
+
     char name[64];
     size_t res;
     assert(valid_error_level(level));
@@ -354,9 +351,8 @@ static size_t append_level(char *buffer, error_level_t level, size_t size)
 /*
  * Format the message body from fmt+ap and append to buffer.
  */
-static size_t
-append_information(char *buffer, const char *fmt, va_list ap, size_t size)
-{
+static size_t append_information(char *buffer, const char *fmt, va_list ap, size_t size) {
+
     char information[MSG_BUF_SIZE];
     size_t res = sane_vsnprintf(information, sizeof(information), fmt, ap);
     if (res >= sizeof(information))
@@ -364,13 +360,12 @@ append_information(char *buffer, const char *fmt, va_list ap, size_t size)
     return strlcat(buffer, information, size);
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Core notification function                                           */
 /* ------------------------------------------------------------------ */
 
-static void vanotify(error_level_t level, const char *fmt, va_list ap)
-{
+static void vanotify(error_level_t level, const char *fmt, va_list ap) {
+
     char buffer[MSG_BUF_SIZE];
     size_t res;
 
@@ -406,12 +401,23 @@ static void vanotify(error_level_t level, const char *fmt, va_list ap)
 
     /* Maintain per-level statistics */
     switch (level) {
-        case ERRORLEVEL_NOTICE:  nof_notices++;  break;
-        case ERRORLEVEL_WARNING: nof_warnings++; break;
-        case ERRORLEVEL_ERROR:   nof_errors++;   break;
-        case ERRORLEVEL_FATAL:   nof_fatals++;   break;
-        case ERRORLEVEL_PANIC:   nof_fatals++;   break;
-        default: break; /* debug/info not counted */
+    case ERRORLEVEL_NOTICE:
+        nof_notices++;
+        break;
+    case ERRORLEVEL_WARNING:
+        nof_warnings++;
+        break;
+    case ERRORLEVEL_ERROR:
+        nof_errors++;
+        break;
+    case ERRORLEVEL_FATAL:
+        nof_fatals++;
+        break;
+    case ERRORLEVEL_PANIC:
+        nof_fatals++;
+        break;
+    default:
+        break; /* debug/info not counted */
     }
 
     /* PANIC exits immediately, unconditionally */
@@ -420,42 +426,40 @@ static void vanotify(error_level_t level, const char *fmt, va_list ap)
     }
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Public API                                                           */
 /* ------------------------------------------------------------------ */
 
-#define IMPLEMENT_FMT(level) \
-    va_list ap; \
-    va_start(ap, fmt); \
-    vanotify(level, fmt, ap); \
+#define IMPLEMENT_FMT(level)                                                                                           \
+    va_list ap;                                                                                                        \
+    va_start(ap, fmt);                                                                                                 \
+    vanotify(level, fmt, ap);                                                                                          \
     va_end(ap)
 
-#define DEFINE_FMT(name, level) \
-void name(const char *fmt, ...) \
-{ \
-    IMPLEMENT_FMT(level); \
-}
+#define DEFINE_FMT(name, level)                                                                                        \
+    void name(const char *fmt, ...) {                                                                                  \
+        IMPLEMENT_FMT(level);                                                                                          \
+    }
 
-void notify_fmt(error_level_t level, const char *fmt, ...)
-{
+void notify_fmt(error_level_t level, const char *fmt, ...) {
+
     IMPLEMENT_FMT(level);
 }
 
-DEFINE_FMT(debug_fmt,   ERRORLEVEL_DEBUG)
-DEFINE_FMT(info_fmt,    ERRORLEVEL_INFO)
-DEFINE_FMT(notice_fmt,  ERRORLEVEL_NOTICE)
+DEFINE_FMT(debug_fmt, ERRORLEVEL_DEBUG)
+DEFINE_FMT(info_fmt, ERRORLEVEL_INFO)
+DEFINE_FMT(notice_fmt, ERRORLEVEL_NOTICE)
 DEFINE_FMT(warning_fmt, ERRORLEVEL_WARNING)
-DEFINE_FMT(error_fmt,   ERRORLEVEL_ERROR)
-DEFINE_FMT(fatal_fmt,   ERRORLEVEL_FATAL)
+DEFINE_FMT(error_fmt, ERRORLEVEL_ERROR)
+DEFINE_FMT(fatal_fmt, ERRORLEVEL_FATAL)
 
 /*
  * panic_fmt is separate because it is __attribute__((noreturn)).
  * The macro expansion hides the va_end / return structure from the
  * compiler, so we spell it out explicitly so noreturn is satisfied.
  */
-void panic_fmt(const char *fmt, ...)
-{
+void panic_fmt(const char *fmt, ...) {
+
     va_list ap;
     va_start(ap, fmt);
     vanotify(ERRORLEVEL_PANIC, fmt, ap);

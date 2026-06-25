@@ -13,7 +13,7 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
- 
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -38,9 +38,9 @@
  * Used by setprogname() to strip directory components from argv[0].
  */
 #if defined(_WIN32) || defined(_WIN64)
-#  define DASM_PATH_SEPARATOR '\\'
+#define DASM_PATH_SEPARATOR '\\'
 #else
-#  define DASM_PATH_SEPARATOR '/'
+#define DASM_PATH_SEPARATOR '/'
 #endif
 
 /**

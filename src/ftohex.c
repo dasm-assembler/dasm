@@ -43,28 +43,27 @@ void convert(int format, FILE *in, FILE *out);
 unsigned int getwlh(FILE *in);
 void puth(unsigned char c, FILE *out);
 
-int
-main(int ac, char **av)
-{
+int main(int ac, char **av) {
+
     int format;
     FILE *infile;
     FILE *outfile;
 
     if (ac < 3) {
-	puts("FTOHEX format infile [outfile]");
-	puts("format 1 = DEFAULT, 2 = RAS, or 3 = RAW");
-	puts("Copyright (c) 1988-2008 by various authors (see file AUTHORS).");
-	exit(1);
+        puts("FTOHEX format infile [outfile]");
+        puts("format 1 = DEFAULT, 2 = RAS, or 3 = RAW");
+        puts("Copyright (c) 1988-2008 by various authors (see file AUTHORS).");
+        exit(1);
     }
     format = atoi(av[1]);
     if (format < 1 || format > 3)
-	exiterr("specify infile format 1, 2, or 3");
-    infile = fopen(av[2], "r");
+        exiterr("specify infile format 1, 2, or 3");
+    infile = fopen(av[2], "rb"); /* must be binary: text mode mangles 0x1A and \r\n on Windows */
     if (infile == NULL)
-	exiterr("unable to open input file");
+        exiterr("unable to open input file");
     outfile = (av[3]) ? fopen(av[3], "w") : stdout;
     if (outfile == NULL)
-	exiterr("unable to open output file");
+        exiterr("unable to open output file");
     convert(format, infile, outfile);
     fclose(infile);
     fclose(outfile);
@@ -72,9 +71,8 @@ main(int ac, char **av)
     return 0;
 }
 
-void
-exiterr(const char *str)
-{
+void exiterr(const char *str) {
+
     fputs(str, stderr);
     fputs("\n", stderr);
     exit(1);
@@ -94,74 +92,74 @@ exiterr(const char *str)
  *			cc=invert of checksum all codes
  */
 
-void
-convert(int format, FILE *in, FILE *out)
-{
+void convert(int format, FILE *in, FILE *out) {
+
     unsigned int org = 0;
     unsigned int idx;
     long len;
     unsigned char buf[256];
 
     if (format < 3)
-    org = getwlh(in);
+        org = getwlh(in);
     if (format == 2) {
-	len = getwlh(in);
+        len = getwlh(in);
     } else {
-	long begin = ftell(in);
-	fseek(in, 0, SEEK_END);
-	len = ftell(in) - begin;
-	fseek(in, begin, 0);
+
+        long begin = ftell(in);
+        fseek(in, 0, SEEK_END);
+        len = ftell(in) - begin;
+        fseek(in, begin, 0);
     }
     for (;;) {
-	while (len > 0) {
-	    register unsigned char chk;
-	    register unsigned int i;
+        while (len > 0) {
+            register unsigned char chk;
+            register unsigned int i;
 
-	    idx = (len > PERLINE) ? PERLINE : len;
-	    fread(buf, idx, 1, in);
-	    putc(':', out);
-	    puth(idx, out);
-	    puth(org >> 8, out);
-	    puth(org & 0xFF, out);
-	    putc('0', out);
-	    putc('0', out);
-	    chk = idx + (org >> 8) + (org & 0xFF);
-	    for (i = 0; i < idx; ++i) {
-		chk += buf[i];
-		puth(buf[i], out);
-	    }
-	    puth((unsigned char)-chk, out);
-	    putc('\r', out);
-	    putc('\n', out);
-	    len -= idx;
-	    org += idx;
-	}
-	if (format == 2) {
-	    org = getwlh(in);
-	    if (feof(in))
-		break;
-	    len = getwlh(in);
-	} else {
-	    break;
-	}
+            idx = (len > PERLINE) ? PERLINE : len;
+            fread(buf, idx, 1, in);
+            putc(':', out);
+            puth(idx, out);
+            puth(org >> 8, out);
+            puth(org & 0xFF, out);
+            putc('0', out);
+            putc('0', out);
+            chk = idx + (org >> 8) + (org & 0xFF);
+            for (i = 0; i < idx; ++i) {
+                chk += buf[i];
+                puth(buf[i], out);
+            }
+            puth((unsigned char)-chk, out);
+            putc('\r', out);
+            putc('\n', out);
+            len -= idx;
+            org += idx;
+        }
+        if (format == 2) {
+            org = getwlh(in);
+            if (feof(in))
+                break;
+            len = getwlh(in);
+        } else {
+
+            break;
+        }
     }
     fprintf(out, ":00000001FF\r\n");
 }
 
-unsigned int getwlh(FILE *in)
-{
-    unsigned int result;
+unsigned int getwlh(FILE *in) {
 
-    result = getc(in);
-    result += getc(in) << 8;
-    return result;
+    int lo = getc(in);
+    int hi = getc(in);
+    /* getc() returns EOF (-1) on truncated input; treat as zero to avoid garbage */
+    if (lo == EOF || hi == EOF)
+        return 0;
+    return (unsigned int)lo + ((unsigned int)hi << 8);
 }
 
-void
-puth(unsigned char c, FILE *out)
-{
-    static char dig[] = { "0123456789ABCDEF" };
-    putc(dig[c>>4], out);
-    putc(dig[c&15], out);
-}
+void puth(unsigned char c, FILE *out) {
 
+    static char dig[] = {"0123456789ABCDEF"};
+    putc(dig[c >> 4], out);
+    putc(dig[c & 15], out);
+}

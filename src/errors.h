@@ -50,7 +50,7 @@
  * Placed here since errors.h is included by almost everything.
  */
 #ifndef __GNUC__
-#define __attribute__(x)  /* GNU C __attribute__ not available */
+#define __attribute__(x) /* GNU C __attribute__ not available */
 #endif
 
 
@@ -65,15 +65,14 @@
  * consistent with the SORTMODE_MAX sentinel in asm.h.
  * Use: valid = (fmt >= ERRORFORMAT_MIN && fmt < ERRORFORMAT_MAX)
  */
-typedef enum
-{
-    ERRORFORMAT_WOE     = 0,  /* "file (line): error: msg"  -- MS Visual Studio */
-    ERRORFORMAT_DILLON  = 1,  /* "line N  file msg"         -- Matthew Dillon original */
-    ERRORFORMAT_GNU     = 2,  /* "file:line: error: msg"    -- GNU coding standards */
+typedef enum {
+    ERRORFORMAT_WOE = 0,    /* "file (line): error: msg"  -- MS Visual Studio */
+    ERRORFORMAT_DILLON = 1, /* "line N  file msg"         -- Matthew Dillon original */
+    ERRORFORMAT_GNU = 2,    /* "file:line: error: msg"    -- GNU coding standards */
     /* sentinels */
-    ERRORFORMAT_MIN     = ERRORFORMAT_WOE,
+    ERRORFORMAT_MIN = ERRORFORMAT_WOE,
     ERRORFORMAT_DEFAULT = ERRORFORMAT_WOE,
-    ERRORFORMAT_MAX     = 3   /* exclusive upper bound — keep in sync with last entry */
+    ERRORFORMAT_MAX = 3 /* exclusive upper bound — keep in sync with last entry */
 } error_format_t;
 
 bool valid_error_format(int format);
@@ -98,19 +97,18 @@ void set_error_format(error_format_t format);
  *
  * ERRORLEVEL_MAX is one past the last valid value (exclusive).
  */
-typedef enum
-{
-    ERRORLEVEL_DEBUG   = 0, /**< internal tracing, very verbose */
-    ERRORLEVEL_INFO    = 1, /**< informational, enabled by -v2  */
-    ERRORLEVEL_NOTICE  = 2, /**< notable events, enabled by -v1 */
+typedef enum {
+    ERRORLEVEL_DEBUG = 0,   /**< internal tracing, very verbose */
+    ERRORLEVEL_INFO = 1,    /**< informational, enabled by -v2  */
+    ERRORLEVEL_NOTICE = 2,  /**< notable events, enabled by -v1 */
     ERRORLEVEL_WARNING = 3, /**< potential problem (default minimum) */
-    ERRORLEVEL_ERROR   = 4, /**< assembly error; pass continues */
-    ERRORLEVEL_FATAL   = 5, /**< assembly stops after this pass */
-    ERRORLEVEL_PANIC   = 6, /**< internal error; process exits immediately */
+    ERRORLEVEL_ERROR = 4,   /**< assembly error; pass continues */
+    ERRORLEVEL_FATAL = 5,   /**< assembly stops after this pass */
+    ERRORLEVEL_PANIC = 6,   /**< internal error; process exits immediately */
     /* sentinels */
-    ERRORLEVEL_MIN     = ERRORLEVEL_DEBUG,
+    ERRORLEVEL_MIN = ERRORLEVEL_DEBUG,
     ERRORLEVEL_DEFAULT = ERRORLEVEL_WARNING,
-    ERRORLEVEL_MAX     = 7  /**< exclusive upper bound */
+    ERRORLEVEL_MAX = 7 /**< exclusive upper bound */
 } error_level_t;
 
 bool valid_error_level(int level);
@@ -193,10 +191,9 @@ extern char source_location_buffer[SOURCE_LOCATION_LENGTH];
  * @warning Uses a single global buffer — do not use more than once
  * per expression (e.g. in a single printf argument list).
  */
-#define SOURCE_LOCATION \
-    (snprintf(source_location_buffer, SOURCE_LOCATION_LENGTH, \
-              "%s/%s()/%d", __FILE__, __func__, __LINE__), \
-              source_location_buffer)
+#define SOURCE_LOCATION                                                                                                \
+    (snprintf(source_location_buffer, SOURCE_LOCATION_LENGTH, "%s/%s()/%d", __FILE__, __func__, __LINE__),             \
+     source_location_buffer)
 
 
 /* ------------------------------------------------------------------ */
@@ -206,27 +203,31 @@ extern char source_location_buffer[SOURCE_LOCATION_LENGTH];
 /**
  * @brief Emit a message at an explicit level.
  */
-void notify_fmt(error_level_t level, const char *fmt, ...)
-     __attribute__((format(printf, 2, 3)));
+void notify_fmt(error_level_t level, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
 
 /** Emit at ERRORLEVEL_DEBUG. */
-void debug_fmt  (const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+void debug_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /** Emit at ERRORLEVEL_INFO. */
-void info_fmt   (const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+void info_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /** Emit at ERRORLEVEL_NOTICE. */
-void notice_fmt (const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+void notice_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /** Emit at ERRORLEVEL_WARNING. */
 void warning_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /** Emit at ERRORLEVEL_ERROR. */
-void error_fmt  (const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+void error_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /** Emit at ERRORLEVEL_FATAL. Assembly stops after current pass. */
-void fatal_fmt  (const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+void fatal_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 /**
  * @brief Emit at ERRORLEVEL_PANIC and exit immediately.
  * Never returns.
  */
-void panic_fmt  (const char *fmt, ...) __attribute__((format(printf, 1, 2)))
-                                       __attribute__((noreturn));
+void panic_fmt(const char *fmt, ...) __attribute__((format(printf, 1, 2))) __attribute__((noreturn));
+
+/**
+ * @brief Print message to stderr and exit. Never returns.
+ * Declared here so all translation units can call it without implicit declaration.
+ */
+void panic(const char *str) __attribute__((noreturn));
 
 
 /* ------------------------------------------------------------------ */
@@ -234,32 +235,32 @@ void panic_fmt  (const char *fmt, ...) __attribute__((format(printf, 1, 2)))
 /* ------------------------------------------------------------------ */
 
 /* Unclassified */
-#define LOG_NOTHING         "Nothing to tell you — this is a bug, please report it!"
-#define LOG_GENERIC         "%s"
+#define LOG_NOTHING "Nothing to tell you — this is a bug, please report it!"
+#define LOG_GENERIC "%s"
 
 /* Debug */
-#define DEBUG_ENTER         "<<< Entered %s."
-#define DEBUG_LEAVE         ">>> Left %s."
+#define DEBUG_ENTER "<<< Entered %s."
+#define DEBUG_LEAVE ">>> Left %s."
 #define DEBUG_HASH_COLLISIONS "%d mnemonic hash collisions, %d symbol hash collisions."
 
 /* Warnings */
-#define WARNING_RANGE       "The %s value in '%s' should be between %d and %d!"
+#define WARNING_RANGE "The %s value in '%s' should be between %d and %d!"
 
 /* Errors */
-#define ERROR_SYNTAX_NONE   "Syntax error!"
-#define ERROR_SYNTAX_ONE    "Syntax error in '%s'!"
-#define ERROR_SYNTAX_TWO    "Syntax error in '%s %s'!"
-#define ERROR_VALUE_RANGE   "The %s value in '%s' should be between %d and %d!"
-#define ERROR_VALUE_ONEOF   "The %s value in '%s' should be one of %s!"
-#define ERROR_BRANCH_RANGE  "Branch out of range (%ld bytes)!"
+#define ERROR_SYNTAX_NONE "Syntax error!"
+#define ERROR_SYNTAX_ONE "Syntax error in '%s'!"
+#define ERROR_SYNTAX_TWO "Syntax error in '%s %s'!"
+#define ERROR_VALUE_RANGE "The %s value in '%s' should be between %d and %d!"
+#define ERROR_VALUE_ONEOF "The %s value in '%s' should be one of %s!"
+#define ERROR_BRANCH_RANGE "Branch out of range (%ld bytes)!"
 #define ERROR_ADDRESS_RANGE_DETAIL "The %s address in '%s' should be between %d and %d!"
 #define ERROR_ADDRESS_RANGE "Address should be between %d and %d!"
-#define ERROR_INVALID_BIT   "Invalid bit specification in '%s', must be < 8!"
-#define ERROR_INVALID_ARGS  "Not enough arguments!"
+#define ERROR_INVALID_BIT "Invalid bit specification in '%s', must be < 8!"
+#define ERROR_INVALID_ARGS "Not enough arguments!"
 
 /* Panics */
-#define PANIC_MEMORY        "Failed to allocate %zu bytes in %s!"
-#define PANIC_SMALL_MEMORY  "Failed to allocate %zu bytes (small alloc) in %s!"
+#define PANIC_MEMORY "Failed to allocate %zu bytes in %s!"
+#define PANIC_SMALL_MEMORY "Failed to allocate %zu bytes (small alloc) in %s!"
 
 
 #endif /* _DASM_ERRORS_H */
