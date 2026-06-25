@@ -23,10 +23,9 @@ are hiding the file all the way down here for a reason...
       - probably hard since it can differ by opcode of
         course, given a certain machine...
 
-- use GNU indent to make code more consistent
-  - current .indent.pro not right, need to adjust
-  - when to do this? before 2.20.12?
-  - maybe astyle is a better, more conservative choice?
+- [DONE 2.20.16] use GNU indent to make code more consistent
+  - applied clang-format with K&R style across all source files;
+    .clang-format committed to repo so style is enforced going forward
 
 - work on refactoring hash?() has found some problems
   - first hash_symbols() has a length argument because DASM
@@ -51,36 +50,38 @@ are hiding the file all the way down here for a reason...
     the relevant information might work just
     as well...
 
-- both memusage and valgrind say that we are leaking
-  - however, this probably only matters for Amiga OS 3 users
-    - even there the C library hopefully takes care of it?
-  - any OS out there where memory is not freed on exit?
-  - I think the reason is permalloc() which doesn't have a
-    corresponding free(), I already had some replacement
-    code that can free() but it ended up to complicated to
-    be a good replacement for now :-/
+- [PARTIALLY DONE 2.20.16] both memusage and valgrind say that we are leaking
+  - the per-pass v_incbin() SYMBOL list leak is fixed
+  - the small allocator use-after-free (small_free_all leaving a
+    dangling cursor) is fixed
+  - permalloc() still has no corresponding free(); this is by design
+    for the permanent arena but worth revisiting
 
 - Matt Dillon's fixes and extensions
   - dasm-2.15 permalloc patch for SPARC? seems simple
     - actually, the union hack in our DASM seems to make it
       superflous after all; did Olaf come up with that or
       Andrew? nice either way... :-)
-  - new version of ftohex? should import easily...
-    - actually, there's more to this as we should add options
-      - to select CTRL-Z at the end (old EEPROM programmers)
-      - CR/LF separators (Intel's standard is flexible)
-      - see Matt's email 2008/04/06
+  - [PARTIALLY DONE 2.20.16] new version of ftohex?
+    - getwlh() EOF handling fixed; input now opened in binary mode
+    - CTRL-Z terminator option and CR/LF separator option still missing
+      (see Matt's email 2008/04/06)
   - harder: compare DASM code bases for other fixes! :-/
 
 - new copyright/license header
   - should Thomas be in there because of F8 support?
   - who else holds a copyright on some piece of DASM?
+  - README copyright year updated to 2026 in 2.20.16; per-file
+    headers not yet updated
 
-- remember the >> issue for signed left operands
-  - details in ftohex.c
+- [DONE 2.20.16] remember the >> issue for signed left operands
+  - fixed in exp.c (op_shiftleft/op_shiftright) and ops.c (genfill);
+    cast to unsigned before shifting, out-of-range counts clamped to zero
 
-- strlcpy/strlcat should be used throughout instead of strcpy/strcat
-  - huge job to adjust everything, not even started... :-/
+- [DONE 2.20.16] strlcpy/strlcat should be used throughout instead of strcpy/strcat
+  - all unsafe strcpy/sprintf calls found in the audit were replaced
+    with snprintf or bounds-checked equivalents; no bare strcpy/sprintf
+    remain on hot paths
 
 - need to address unit testing (and system testing)
   - minunit looks too simplistic to be useful
@@ -91,9 +92,13 @@ are hiding the file all the way down here for a reason...
     - however it wants autotools for almost everything
   - at least add coverage analysis darn it
     - gcov is not hard to add to current scripts
+  - [NOTE 2.20.16] full test suite now run under AddressSanitizer +
+    UBSan as part of development; consider adding this to CI
 
 - remember that NULL in printf() segfaults on Solaris, seems that
   only the Apple version has the nice "(null)" feature... :-/
+  - [NOTE 2.20.16] format strings in asmerr() fixed; broader audit
+    of all printf call sites not yet done
 
 - fseeko/ftello instead of fseek/ftell could be useful to some
   extent

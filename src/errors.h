@@ -8,6 +8,7 @@
     Copyright (c) 1995 by Olaf "Rhialto" Seibert.
     Copyright (c) 2003-2008 by Andrew Davie.
     Copyright (c) 2008 by Peter H. Froehlich.
+    Copyright (c) 2019-2026 by the DASM team.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

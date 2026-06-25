@@ -4,6 +4,88 @@ closely related files (Makefile, test cases) only, this
 is *not* a complete record of every single change ever
 made. Check the GitHub commit history for that. :-)
 
+new in DASM version 2.20.16:
+
+    * Comprehensive memory safety and correctness audit of all C source
+      files. Every bug found was fixed.
+
+    * Fixed heap buffer overflow in asmerr(): when deeply chained forward
+      references force more passes than the -p limit, pass exceeded
+      nMaxPasses and bStopAtEnd[pass] wrote one element past the end of
+      the allocated array. Found via AddressSanitizer.
+
+    * Fixed stack buffer overflows in parse() (no bounds check on the
+      Avbuf write loop), cleanup() (buffer sized for input but not for
+      reformatted output), and outlistfile() (unbounded sprintf).
+
+    * Fixed use-after-free in the small block allocator: small_free_all()
+      freed all memory blocks but did not reset the internal cursor
+      (buf/left), so the next small_alloc() call wrote into freed memory.
+      Cursor variables promoted to file scope and reset in small_free_all().
+
+    * Fixed getc() return value stored as unsigned int in getwlh() in
+      both ftohex.c and ftobin.c, masking the EOF sentinel and producing
+      garbage output on truncated binary input. ftohex now opens input
+      files in binary mode to prevent text-mode mangling of 0x1A and
+      line endings on Windows.
+
+    * Fixed wrong memset byte count for bStopAtEnd array (was
+      nMaxPasses+1 bytes, missing *sizeof(bool)).
+
+    * Fixed non-literal format string passed directly to fprintf in
+      asmerr(), a format-string injection risk.
+
+    * Fixed undefined behaviour from signed left-shifts in the expression
+      evaluator (exp.c) and the DS directive handler (ops.c); values cast
+      to unsigned before shifting.
+
+    * Fixed divide-by-zero in v_align() when the alignment value is zero.
+
+    * Fixed per-pass memory leak in v_incbin(): SYMBOL list was not freed
+      on each pass. Also fixed a premature-free bug and added a guard
+      against negative skip values.
+
+    * Fixed buffer overflow risk in v_dc() when generating multi-byte
+      character constants: Gen[] buffer now flushed before each character.
+
+    * Fixed v_setsym() using strcpy instead of snprintf.
+
+    * Fixed local symbol name buffer in findsymbol() and CreateSymbol()
+      in symbols.c: buffer was 14 bytes too small for worst-case index
+      values; widened and switched to snprintf.
+
+    * Fixed asm.h missing its include guard entirely, causing duplicate
+      enum declarations when two headers both included it.
+
+    * Rewrote symbols.h to match the actual symbols.c implementation;
+      the previous version was an aspirational redesign with wrong function
+      names, wrong sortmode_t values, and functions that do not exist.
+
+    * Fixed version.h DASM_PRINT_LEGAL macro: expanded to syntactically
+      invalid C (void)puts("...")(void) -- compile error if invoked.
+
+    * Declared panic() in errors.h so all translation units see the
+      prototype; previously only forward-declared inside main.c, causing
+      implicit-declaration errors on Clang.
+
+    * Added missing #include "util.h" to errors.c, making getprogname()
+      and strlcat() visible on Linux and eliminating implicit-declaration
+      warnings.
+
+    * Build system: object files now placed in src/.objs/<OS>/ so that
+      macOS and Linux builds can coexist in the same source tree without
+      object files from one platform overwriting the other.
+
+    * CI/CD: GitHub Actions workflow updated to create an official GitHub
+      release (as a draft) with platform-specific zip archives when a
+      version tag (v*) is pushed. Previous workflow only uploaded
+      short-lived build artifacts.
+
+    * Full test suite run under AddressSanitizer and UndefinedBehaviourSan;
+      no sanitiser errors remain on any input including adversarial cases.
+
+    * All source files reformatted to consistent K&R style.
+
 new in DASM version 2.20.14:
 
     * Technical Documentation / User Guide for dasm in PDF format,

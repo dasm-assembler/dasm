@@ -6,6 +6,33 @@ file records all internal changes as well (almost all anyway).
 DASM News
 =========
 
+2.20.16 -- 25 June 2026
+
+    * No new assembler features or syntax changes. Assembly of valid
+      source files is identical to previous releases.
+
+    * DASM is now significantly more robust against malformed or
+      adversarial input. A systematic audit found and fixed over a dozen
+      memory safety and correctness bugs, including crashes triggered by
+      deeply chained forward references, zero ALIGN arguments, and
+      pathologically long source lines. DASM now exits cleanly with a
+      diagnostic in all cases that previously caused undefined behaviour
+      or silent crashes.
+
+    * ftohex and ftobin now handle truncated binary input files correctly
+      rather than producing garbage output. ftohex also now opens its
+      input in binary mode, fixing corruption of 0x1A bytes and line
+      endings on Windows.
+
+    * ALIGN with a zero argument now produces a proper error message
+      instead of a division-by-zero crash.
+
+    * The build now produces zero compiler warnings on GCC and Clang.
+
+    * Official binary releases for Windows, macOS, and Linux are now
+      produced automatically by CI on each version tag and published
+      to the GitHub releases page.
+
 2.20.12 -- 08 August 2019
 
     * DASM moved to GitHub! The new website for dasm is now available 
